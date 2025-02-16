@@ -8,6 +8,8 @@ namespace DUH_Trends_Palas_POS.Views
 {
     public partial class LogIn : Form
     {
+        private int loginHistoryId; // Stores the login_history ID for logout update
+        String connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=test;";
 
         public LogIn()
         {
@@ -18,6 +20,88 @@ namespace DUH_Trends_Palas_POS.Views
 
             // Ensure first item is selected by default
             cmbUserLevel.SelectedIndex = 0;
+        }
+
+        public void login()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+
+                    // Secure query with parameters
+                    string query = "SELECT id, username FROM user WHERE username = @username AND password = @password AND user_level = @userlevel";
+                    using (MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection))
+                    {
+                        commandDatabase.Parameters.AddWithValue("@username", txtUsername.Text);
+                        commandDatabase.Parameters.AddWithValue("@password", txtPassword.Text);
+                        commandDatabase.Parameters.AddWithValue("@userlevel", cmbUserLevel.Text);
+
+                        using (MySqlDataReader reader = commandDatabase.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                int userId = 0;
+                                string username = "";
+
+                                while (reader.Read()) // Read first
+                                {
+                                    userId = reader.GetInt32("id");
+                                    username = reader.GetString("username");
+                                }
+
+                                reader.Close(); // Close the reader after reading
+
+                                // Insert login details into login_history
+                                string insertQuery = "INSERT INTO login_history (user_id, username) VALUES (@userId, @username); SELECT LAST_INSERT_ID();";
+                                using (MySqlCommand insertCommand = new MySqlCommand(insertQuery, databaseConnection))
+                                {
+                                    insertCommand.Parameters.AddWithValue("@userId", userId);
+                                    insertCommand.Parameters.AddWithValue("@username", username);
+                                    loginHistoryId = Convert.ToInt32(insertCommand.ExecuteScalar()); // Get inserted ID
+                                }
+
+                                MessageBox.Show("Login successful");
+                                Home home = new Home();
+                                home.FormClosed += Home_FormClosed; // Attach logout event
+                                home.Show();
+                                this.Hide();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Oops! Something went wrong!");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+
+        // Logout function to update logout_time when the user closes the Home form
+        private void Home_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+
+                    string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId";
+                    MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection);
+                    updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
+                    updateCommand.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating logout time: " + ex.Message);
+                }
+            }
         }
 
         private void btnShowPassword_Click(object sender, EventArgs e)
@@ -42,7 +126,7 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-
+            login();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace DUH_Trends_Palas_POS.Views
     public partial class LogIn : Form
     {
         private int loginHistoryId; // Stores the login_history ID for logout update
-        String connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=test;";
+        private string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=test;";
 
         public LogIn()
         {
@@ -18,11 +18,11 @@ namespace DUH_Trends_Palas_POS.Views
             // Initially hide the password
             txtPassword.PasswordChar = '•';
 
-            // Ensure first item is selected by default
+            // Ensure the first item is selected by default
             cmbUserLevel.SelectedIndex = 0;
         }
 
-        public void login()
+        private void login()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
@@ -63,9 +63,13 @@ namespace DUH_Trends_Palas_POS.Views
                                 }
 
                                 MessageBox.Show("Login successful");
-                                Home home = new Home();
-                                home.FormClosed += Home_FormClosed; // Attach logout event
-                                home.Show();
+
+                                // Open the Order form and pass loginHistoryId
+                                Order order = new Order(loginHistoryId);
+                                order.FormClosed += Order_FormClosed; // Attach logout event
+                                order.Show();
+
+                                // Hide the login form
                                 this.Hide();
                             }
                             else
@@ -77,14 +81,13 @@ namespace DUH_Trends_Palas_POS.Views
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show("Error: " + ex.Message);
                 }
             }
         }
 
-
-        // Logout function to update logout_time when the user closes the Home form
-        private void Home_FormClosed(object sender, FormClosedEventArgs e)
+        // Logout function to update logout_time when the user closes the Order form
+        private void Order_FormClosed(object sender, FormClosedEventArgs e)
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
@@ -93,15 +96,20 @@ namespace DUH_Trends_Palas_POS.Views
                     databaseConnection.Open();
 
                     string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId";
-                    MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection);
-                    updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
-                    updateCommand.ExecuteNonQuery();
+                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
+                        updateCommand.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error updating logout time: " + ex.Message);
                 }
             }
+
+            // Show the login form again when Order form is closed
+            this.Show();
         }
 
         private void btnShowPassword_Click(object sender, EventArgs e)

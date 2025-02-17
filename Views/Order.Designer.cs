@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel1 = new Panel();
+            btnLogout = new Button();
             label9 = new Label();
             panel2 = new Panel();
             textBox1 = new TextBox();
@@ -37,6 +38,7 @@
             panel3 = new Panel();
             label1 = new Label();
             txtTotal = new TextBox();
+            btnInventory = new Button();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
@@ -47,12 +49,25 @@
             // panel1
             // 
             panel1.BackColor = Color.DimGray;
+            panel1.Controls.Add(btnInventory);
+            panel1.Controls.Add(btnLogout);
             panel1.Controls.Add(label9);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
             panel1.Size = new Size(1399, 149);
             panel1.TabIndex = 1;
+            // 
+            // btnLogout
+            // 
+            btnLogout.BackgroundImage = Properties.Resources.logout;
+            btnLogout.BackgroundImageLayout = ImageLayout.Zoom;
+            btnLogout.Location = new Point(1309, 46);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(73, 64);
+            btnLogout.TabIndex = 7;
+            btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.Click += btnLogout_Click;
             // 
             // label9
             // 
@@ -137,6 +152,17 @@
             txtTotal.Size = new Size(203, 38);
             txtTotal.TabIndex = 0;
             // 
+            // btnInventory
+            // 
+            btnInventory.BackgroundImage = Properties.Resources.inventory;
+            btnInventory.BackgroundImageLayout = ImageLayout.Zoom;
+            btnInventory.Location = new Point(1212, 46);
+            btnInventory.Name = "btnInventory";
+            btnInventory.Size = new Size(73, 64);
+            btnInventory.TabIndex = 8;
+            btnInventory.UseVisualStyleBackColor = true;
+            btnInventory.Click += btnInventory_Click;
+            // 
             // Order
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -171,5 +197,7 @@
         private Panel panel3;
         private Label label1;
         private TextBox txtTotal;
+        private Button btnLogout;
+        private Button btnInventory;
     }
 }

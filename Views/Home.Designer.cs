@@ -30,12 +30,14 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
             panel1 = new Panel();
+            btnLogout = new Button();
             label9 = new Label();
             pictureBox1 = new PictureBox();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             tabControl2 = new TabControl();
             tabPage5 = new TabPage();
+            textBox6 = new TextBox();
             groupBox1 = new GroupBox();
             button4 = new Button();
             button3 = new Button();
@@ -56,15 +58,7 @@
             dataGridView2 = new DataGridView();
             label2 = new Label();
             tabPage7 = new TabPage();
-            tabPage9 = new TabPage();
-            tabPage10 = new TabPage();
-            tabPage11 = new TabPage();
-            tabPage2 = new TabPage();
-            tabPage3 = new TabPage();
-            tabPage4 = new TabPage();
-            textBox6 = new TextBox();
-            dataGridView3 = new DataGridView();
-            label10 = new Label();
+            textBox12 = new TextBox();
             groupBox2 = new GroupBox();
             button5 = new Button();
             button6 = new Button();
@@ -82,7 +76,9 @@
             label14 = new Label();
             label15 = new Label();
             label16 = new Label();
-            textBox12 = new TextBox();
+            dataGridView3 = new DataGridView();
+            label10 = new Label();
+            tabPage9 = new TabPage();
             textBox13 = new TextBox();
             groupBox3 = new GroupBox();
             button9 = new Button();
@@ -103,6 +99,7 @@
             label22 = new Label();
             dataGridView4 = new DataGridView();
             label23 = new Label();
+            tabPage10 = new TabPage();
             textBox19 = new TextBox();
             groupBox4 = new GroupBox();
             button13 = new Button();
@@ -123,31 +120,32 @@
             label29 = new Label();
             dataGridView5 = new DataGridView();
             label30 = new Label();
+            tabPage11 = new TabPage();
             textBox25 = new TextBox();
             dataGridView6 = new DataGridView();
             label31 = new Label();
-            textBox26 = new TextBox();
+            tabPage2 = new TabPage();
+            txtSearchBrandPartner = new TextBox();
             groupBox5 = new GroupBox();
+            txtBPEmail = new TextBox();
+            label38 = new Label();
             button17 = new Button();
             button18 = new Button();
             button19 = new Button();
             button20 = new Button();
             dateTimePicker5 = new DateTimePicker();
-            textBox27 = new TextBox();
-            textBox28 = new TextBox();
-            textBox29 = new TextBox();
-            textBox30 = new TextBox();
-            textBox31 = new TextBox();
-            label1 = new Label();
+            txtBPFirstname = new TextBox();
+            txtBPLastname = new TextBox();
+            txtBPContactnum = new TextBox();
+            txtBPAddress = new TextBox();
             label32 = new Label();
             label33 = new Label();
             label34 = new Label();
             label35 = new Label();
             label36 = new Label();
-            dataGridView1 = new DataGridView();
+            dgvBrandPartnerList = new DataGridView();
             label37 = new Label();
-            textBox32 = new TextBox();
-            label38 = new Label();
+            tabPage3 = new TabPage();
             textBox33 = new TextBox();
             groupBox6 = new GroupBox();
             textBox34 = new TextBox();
@@ -170,6 +168,12 @@
             label45 = new Label();
             dataGridView7 = new DataGridView();
             label46 = new Label();
+            tabPage4 = new TabPage();
+            tabControl3 = new TabControl();
+            tabPage6 = new TabPage();
+            dgvLoginHistory = new DataGridView();
+            label47 = new Label();
+            tabPage8 = new TabPage();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabControl1.SuspendLayout();
@@ -179,27 +183,32 @@
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             tabPage7.SuspendLayout();
-            tabPage9.SuspendLayout();
-            tabPage10.SuspendLayout();
-            tabPage11.SuspendLayout();
-            tabPage2.SuspendLayout();
-            tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            tabPage9.SuspendLayout();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView4).BeginInit();
+            tabPage10.SuspendLayout();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
+            tabPage11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView6).BeginInit();
+            tabPage2.SuspendLayout();
             groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvBrandPartnerList).BeginInit();
+            tabPage3.SuspendLayout();
             groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView7).BeginInit();
+            tabPage4.SuspendLayout();
+            tabControl3.SuspendLayout();
+            tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvLoginHistory).BeginInit();
             SuspendLayout();
             // 
             // panel1
             // 
             panel1.BackColor = Color.FromArgb(232, 200, 153);
+            panel1.Controls.Add(btnLogout);
             panel1.Controls.Add(label9);
             panel1.Controls.Add(pictureBox1);
             panel1.Dock = DockStyle.Top;
@@ -207,6 +216,17 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(1507, 149);
             panel1.TabIndex = 0;
+            // 
+            // btnLogout
+            // 
+            btnLogout.BackgroundImage = Properties.Resources.logout;
+            btnLogout.BackgroundImageLayout = ImageLayout.Zoom;
+            btnLogout.Location = new Point(1390, 52);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(73, 64);
+            btnLogout.TabIndex = 6;
+            btnLogout.UseVisualStyleBackColor = true;
+            btnLogout.Click += btnLogout_Click;
             // 
             // label9
             // 
@@ -281,6 +301,14 @@
             tabPage5.TabIndex = 0;
             tabPage5.Text = "Products";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // textBox6
+            // 
+            textBox6.Location = new Point(1139, 26);
+            textBox6.Name = "textBox6";
+            textBox6.PlaceholderText = "Search Product";
+            textBox6.Size = new Size(313, 34);
+            textBox6.TabIndex = 5;
             // 
             // groupBox1
             // 
@@ -457,7 +485,6 @@
             dataGridView2.RowHeadersWidth = 51;
             dataGridView2.Size = new Size(1436, 525);
             dataGridView2.TabIndex = 3;
-            dataGridView2.CellContentClick += dataGridView2_CellContentClick;
             // 
             // label2
             // 
@@ -475,116 +502,20 @@
             tabPage7.Controls.Add(groupBox2);
             tabPage7.Controls.Add(dataGridView3);
             tabPage7.Controls.Add(label10);
-            tabPage7.Location = new Point(4, 36);
+            tabPage7.Location = new Point(4, 29);
             tabPage7.Name = "tabPage7";
-            tabPage7.Size = new Size(1485, 881);
+            tabPage7.Size = new Size(1485, 888);
             tabPage7.TabIndex = 2;
             tabPage7.Text = "Add Defective Items";
             tabPage7.UseVisualStyleBackColor = true;
             // 
-            // tabPage9
+            // textBox12
             // 
-            tabPage9.Controls.Add(textBox13);
-            tabPage9.Controls.Add(groupBox3);
-            tabPage9.Controls.Add(dataGridView4);
-            tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 36);
-            tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1485, 881);
-            tabPage9.TabIndex = 4;
-            tabPage9.Text = "Stock In Details";
-            tabPage9.UseVisualStyleBackColor = true;
-            // 
-            // tabPage10
-            // 
-            tabPage10.Controls.Add(textBox19);
-            tabPage10.Controls.Add(groupBox4);
-            tabPage10.Controls.Add(dataGridView5);
-            tabPage10.Controls.Add(label30);
-            tabPage10.Location = new Point(4, 36);
-            tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1485, 881);
-            tabPage10.TabIndex = 5;
-            tabPage10.Text = "Pull Out Items";
-            tabPage10.UseVisualStyleBackColor = true;
-            // 
-            // tabPage11
-            // 
-            tabPage11.Controls.Add(textBox25);
-            tabPage11.Controls.Add(dataGridView6);
-            tabPage11.Controls.Add(label31);
-            tabPage11.Location = new Point(4, 36);
-            tabPage11.Name = "tabPage11";
-            tabPage11.Size = new Size(1485, 881);
-            tabPage11.TabIndex = 6;
-            tabPage11.Text = "Stocks Expiration";
-            tabPage11.UseVisualStyleBackColor = true;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(textBox26);
-            tabPage2.Controls.Add(groupBox5);
-            tabPage2.Controls.Add(dataGridView1);
-            tabPage2.Controls.Add(label37);
-            tabPage2.Location = new Point(4, 36);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1499, 927);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Brand Partners";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // tabPage3
-            // 
-            tabPage3.Controls.Add(textBox33);
-            tabPage3.Controls.Add(groupBox6);
-            tabPage3.Controls.Add(dataGridView7);
-            tabPage3.Controls.Add(label46);
-            tabPage3.Location = new Point(4, 36);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1499, 927);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "Sales";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tabPage4
-            // 
-            tabPage4.Location = new Point(4, 36);
-            tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(1499, 927);
-            tabPage4.TabIndex = 3;
-            tabPage4.Text = "Report";
-            tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // textBox6
-            // 
-            textBox6.Location = new Point(1139, 26);
-            textBox6.Name = "textBox6";
-            textBox6.PlaceholderText = "Search Product";
-            textBox6.Size = new Size(313, 34);
-            textBox6.TabIndex = 5;
-            // 
-            // dataGridView3
-            // 
-            dataGridView3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Location = new Point(16, 73);
-            dataGridView3.Name = "dataGridView3";
-            dataGridView3.RowHeadersWidth = 51;
-            dataGridView3.Size = new Size(1436, 525);
-            dataGridView3.TabIndex = 5;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(3, 24);
-            label10.Name = "label10";
-            label10.Size = new Size(167, 38);
-            label10.TabIndex = 4;
-            label10.Text = "Product List";
+            textBox12.Location = new Point(1139, 26);
+            textBox12.Name = "textBox12";
+            textBox12.PlaceholderText = "Search Product";
+            textBox12.Size = new Size(313, 34);
+            textBox12.TabIndex = 7;
             // 
             // groupBox2
             // 
@@ -607,7 +538,7 @@
             groupBox2.Controls.Add(label16);
             groupBox2.Location = new Point(16, 620);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1436, 233);
+            groupBox2.Size = new Size(1436, 240);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Product Details:";
@@ -750,13 +681,40 @@
             label16.TabIndex = 0;
             label16.Text = "Product Barcode:";
             // 
-            // textBox12
+            // dataGridView3
             // 
-            textBox12.Location = new Point(1139, 26);
-            textBox12.Name = "textBox12";
-            textBox12.PlaceholderText = "Search Product";
-            textBox12.Size = new Size(313, 34);
-            textBox12.TabIndex = 7;
+            dataGridView3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView3.Location = new Point(16, 73);
+            dataGridView3.Name = "dataGridView3";
+            dataGridView3.RowHeadersWidth = 51;
+            dataGridView3.Size = new Size(1436, 525);
+            dataGridView3.TabIndex = 5;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label10.Location = new Point(3, 24);
+            label10.Name = "label10";
+            label10.Size = new Size(167, 38);
+            label10.TabIndex = 4;
+            label10.Text = "Product List";
+            // 
+            // tabPage9
+            // 
+            tabPage9.Controls.Add(textBox13);
+            tabPage9.Controls.Add(groupBox3);
+            tabPage9.Controls.Add(dataGridView4);
+            tabPage9.Controls.Add(label23);
+            tabPage9.Location = new Point(4, 29);
+            tabPage9.Name = "tabPage9";
+            tabPage9.Size = new Size(1485, 888);
+            tabPage9.TabIndex = 4;
+            tabPage9.Text = "Stock In Details";
+            tabPage9.UseVisualStyleBackColor = true;
             // 
             // textBox13
             // 
@@ -787,7 +745,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(16, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1436, 233);
+            groupBox3.Size = new Size(1436, 240);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
@@ -952,6 +910,19 @@
             label23.TabIndex = 6;
             label23.Text = "Product List";
             // 
+            // tabPage10
+            // 
+            tabPage10.Controls.Add(textBox19);
+            tabPage10.Controls.Add(groupBox4);
+            tabPage10.Controls.Add(dataGridView5);
+            tabPage10.Controls.Add(label30);
+            tabPage10.Location = new Point(4, 29);
+            tabPage10.Name = "tabPage10";
+            tabPage10.Size = new Size(1485, 888);
+            tabPage10.TabIndex = 5;
+            tabPage10.Text = "Pull Out Items";
+            tabPage10.UseVisualStyleBackColor = true;
+            // 
             // textBox19
             // 
             textBox19.Location = new Point(1139, 26);
@@ -981,7 +952,7 @@
             groupBox4.Controls.Add(label29);
             groupBox4.Location = new Point(16, 620);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1436, 233);
+            groupBox4.Size = new Size(1436, 240);
             groupBox4.TabIndex = 12;
             groupBox4.TabStop = false;
             groupBox4.Text = "Product Details:";
@@ -1146,6 +1117,18 @@
             label30.TabIndex = 10;
             label30.Text = "Product List";
             // 
+            // tabPage11
+            // 
+            tabPage11.Controls.Add(textBox25);
+            tabPage11.Controls.Add(dataGridView6);
+            tabPage11.Controls.Add(label31);
+            tabPage11.Location = new Point(4, 29);
+            tabPage11.Name = "tabPage11";
+            tabPage11.Size = new Size(1485, 888);
+            tabPage11.TabIndex = 6;
+            tabPage11.Text = "Stocks Expiration";
+            tabPage11.UseVisualStyleBackColor = true;
+            // 
             // textBox25
             // 
             textBox25.Location = new Point(1139, 26);
@@ -1176,30 +1159,44 @@
             label31.TabIndex = 14;
             label31.Text = "Product List";
             // 
-            // textBox26
+            // tabPage2
             // 
-            textBox26.Location = new Point(1161, 51);
-            textBox26.Name = "textBox26";
-            textBox26.PlaceholderText = "Search Brand Partner";
-            textBox26.Size = new Size(313, 34);
-            textBox26.TabIndex = 9;
+            tabPage2.Controls.Add(txtSearchBrandPartner);
+            tabPage2.Controls.Add(groupBox5);
+            tabPage2.Controls.Add(dgvBrandPartnerList);
+            tabPage2.Controls.Add(label37);
+            tabPage2.Location = new Point(4, 36);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(1499, 927);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Brand Partners";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // txtSearchBrandPartner
+            // 
+            txtSearchBrandPartner.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSearchBrandPartner.Location = new Point(1302, 51);
+            txtSearchBrandPartner.Name = "txtSearchBrandPartner";
+            txtSearchBrandPartner.PlaceholderText = "Search Brand Partner";
+            txtSearchBrandPartner.Size = new Size(172, 34);
+            txtSearchBrandPartner.TabIndex = 9;
+            txtSearchBrandPartner.TextChanged += txtSearchBrandPartner_TextChanged;
             // 
             // groupBox5
             // 
             groupBox5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox5.Controls.Add(textBox32);
+            groupBox5.Controls.Add(txtBPEmail);
             groupBox5.Controls.Add(label38);
             groupBox5.Controls.Add(button17);
             groupBox5.Controls.Add(button18);
             groupBox5.Controls.Add(button19);
             groupBox5.Controls.Add(button20);
             groupBox5.Controls.Add(dateTimePicker5);
-            groupBox5.Controls.Add(textBox27);
-            groupBox5.Controls.Add(textBox28);
-            groupBox5.Controls.Add(textBox29);
-            groupBox5.Controls.Add(textBox30);
-            groupBox5.Controls.Add(textBox31);
-            groupBox5.Controls.Add(label1);
+            groupBox5.Controls.Add(txtBPFirstname);
+            groupBox5.Controls.Add(txtBPLastname);
+            groupBox5.Controls.Add(txtBPContactnum);
+            groupBox5.Controls.Add(txtBPAddress);
             groupBox5.Controls.Add(label32);
             groupBox5.Controls.Add(label33);
             groupBox5.Controls.Add(label34);
@@ -1211,6 +1208,23 @@
             groupBox5.TabIndex = 8;
             groupBox5.TabStop = false;
             groupBox5.Text = "Brand Partner Details:";
+            // 
+            // txtBPEmail
+            // 
+            txtBPEmail.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBPEmail.Location = new Point(237, 180);
+            txtBPEmail.Name = "txtBPEmail";
+            txtBPEmail.Size = new Size(316, 31);
+            txtBPEmail.TabIndex = 17;
+            // 
+            // label38
+            // 
+            label38.AutoSize = true;
+            label38.Location = new Point(6, 180);
+            label38.Name = "label38";
+            label38.Size = new Size(63, 27);
+            label38.TabIndex = 16;
+            label38.Text = "Email:";
             // 
             // button17
             // 
@@ -1251,64 +1265,47 @@
             // dateTimePicker5
             // 
             dateTimePicker5.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker5.Location = new Point(715, 67);
+            dateTimePicker5.Location = new Point(716, 32);
             dateTimePicker5.Name = "dateTimePicker5";
             dateTimePicker5.Size = new Size(316, 31);
             dateTimePicker5.TabIndex = 11;
             // 
-            // textBox27
+            // txtBPFirstname
             // 
-            textBox27.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox27.Location = new Point(715, 29);
-            textBox27.Name = "textBox27";
-            textBox27.Size = new Size(316, 31);
-            textBox27.TabIndex = 10;
+            txtBPFirstname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBPFirstname.Location = new Point(237, 29);
+            txtBPFirstname.Name = "txtBPFirstname";
+            txtBPFirstname.Size = new Size(316, 31);
+            txtBPFirstname.TabIndex = 9;
             // 
-            // textBox28
+            // txtBPLastname
             // 
-            textBox28.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox28.Location = new Point(237, 29);
-            textBox28.Name = "textBox28";
-            textBox28.Size = new Size(316, 31);
-            textBox28.TabIndex = 9;
+            txtBPLastname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBPLastname.Location = new Point(237, 63);
+            txtBPLastname.Name = "txtBPLastname";
+            txtBPLastname.Size = new Size(316, 31);
+            txtBPLastname.TabIndex = 8;
             // 
-            // textBox29
+            // txtBPContactnum
             // 
-            textBox29.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox29.Location = new Point(237, 63);
-            textBox29.Name = "textBox29";
-            textBox29.Size = new Size(316, 31);
-            textBox29.TabIndex = 8;
+            txtBPContactnum.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBPContactnum.Location = new Point(237, 103);
+            txtBPContactnum.Name = "txtBPContactnum";
+            txtBPContactnum.Size = new Size(316, 31);
+            txtBPContactnum.TabIndex = 7;
             // 
-            // textBox30
+            // txtBPAddress
             // 
-            textBox30.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox30.Location = new Point(237, 103);
-            textBox30.Name = "textBox30";
-            textBox30.Size = new Size(316, 31);
-            textBox30.TabIndex = 7;
-            // 
-            // textBox31
-            // 
-            textBox31.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox31.Location = new Point(237, 143);
-            textBox31.Name = "textBox31";
-            textBox31.Size = new Size(316, 31);
-            textBox31.TabIndex = 6;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(576, 29);
-            label1.Name = "label1";
-            label1.Size = new Size(88, 27);
-            label1.TabIndex = 5;
-            label1.Text = "Address:";
+            txtBPAddress.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtBPAddress.Location = new Point(237, 143);
+            txtBPAddress.Name = "txtBPAddress";
+            txtBPAddress.Size = new Size(316, 31);
+            txtBPAddress.TabIndex = 6;
             // 
             // label32
             // 
             label32.AutoSize = true;
-            label32.Location = new Point(576, 67);
+            label32.Location = new Point(577, 32);
             label32.Name = "label32";
             label32.Size = new Size(103, 27);
             label32.TabIndex = 4;
@@ -1319,9 +1316,9 @@
             label33.AutoSize = true;
             label33.Location = new Point(6, 143);
             label33.Name = "label33";
-            label33.Size = new Size(214, 27);
+            label33.Size = new Size(88, 27);
             label33.TabIndex = 3;
-            label33.Text = "Name of Brand Partner:";
+            label33.Text = "Address:";
             // 
             // label34
             // 
@@ -1350,17 +1347,17 @@
             label36.TabIndex = 0;
             label36.Text = "First Name:";
             // 
-            // dataGridView1
+            // dgvBrandPartnerList
             // 
-            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(38, 98);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1436, 525);
-            dataGridView1.TabIndex = 7;
+            dgvBrandPartnerList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvBrandPartnerList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvBrandPartnerList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvBrandPartnerList.Location = new Point(38, 98);
+            dgvBrandPartnerList.Name = "dgvBrandPartnerList";
+            dgvBrandPartnerList.RowHeadersWidth = 51;
+            dgvBrandPartnerList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvBrandPartnerList.Size = new Size(1436, 525);
+            dgvBrandPartnerList.TabIndex = 7;
             // 
             // label37
             // 
@@ -1371,24 +1368,19 @@
             label37.Size = new Size(243, 38);
             label37.TabIndex = 6;
             label37.Text = "Brand Partner List";
-            label37.Click += label37_Click;
             // 
-            // textBox32
+            // tabPage3
             // 
-            textBox32.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox32.Location = new Point(237, 180);
-            textBox32.Name = "textBox32";
-            textBox32.Size = new Size(316, 31);
-            textBox32.TabIndex = 17;
-            // 
-            // label38
-            // 
-            label38.AutoSize = true;
-            label38.Location = new Point(6, 180);
-            label38.Name = "label38";
-            label38.Size = new Size(63, 27);
-            label38.TabIndex = 16;
-            label38.Text = "Email:";
+            tabPage3.Controls.Add(textBox33);
+            tabPage3.Controls.Add(groupBox6);
+            tabPage3.Controls.Add(dataGridView7);
+            tabPage3.Controls.Add(label46);
+            tabPage3.Location = new Point(4, 36);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Size = new Size(1499, 927);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Sales";
+            tabPage3.UseVisualStyleBackColor = true;
             // 
             // textBox33
             // 
@@ -1603,6 +1595,70 @@
             label46.TabIndex = 10;
             label46.Text = "Brand Partner List";
             // 
+            // tabPage4
+            // 
+            tabPage4.Controls.Add(tabControl3);
+            tabPage4.Location = new Point(4, 36);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Size = new Size(1499, 927);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Report";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabControl3
+            // 
+            tabControl3.Controls.Add(tabPage6);
+            tabControl3.Controls.Add(tabPage8);
+            tabControl3.Dock = DockStyle.Fill;
+            tabControl3.Location = new Point(0, 0);
+            tabControl3.Name = "tabControl3";
+            tabControl3.SelectedIndex = 0;
+            tabControl3.Size = new Size(1499, 927);
+            tabControl3.TabIndex = 0;
+            // 
+            // tabPage6
+            // 
+            tabPage6.Controls.Add(dgvLoginHistory);
+            tabPage6.Controls.Add(label47);
+            tabPage6.Location = new Point(4, 36);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(1491, 887);
+            tabPage6.TabIndex = 0;
+            tabPage6.Text = "Login History";
+            tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // dgvLoginHistory
+            // 
+            dgvLoginHistory.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvLoginHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvLoginHistory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvLoginHistory.Location = new Point(27, 95);
+            dgvLoginHistory.Name = "dgvLoginHistory";
+            dgvLoginHistory.RowHeadersWidth = 51;
+            dgvLoginHistory.Size = new Size(1428, 739);
+            dgvLoginHistory.TabIndex = 13;
+            // 
+            // label47
+            // 
+            label47.AutoSize = true;
+            label47.Font = new Font("Segoe UI Semibold", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label47.Location = new Point(27, 48);
+            label47.Name = "label47";
+            label47.Size = new Size(188, 38);
+            label47.TabIndex = 12;
+            label47.Text = "Login History";
+            // 
+            // tabPage8
+            // 
+            tabPage8.Location = new Point(4, 29);
+            tabPage8.Name = "tabPage8";
+            tabPage8.Padding = new Padding(3);
+            tabPage8.Size = new Size(1491, 894);
+            tabPage8.TabIndex = 1;
+            tabPage8.Text = "tabPage8";
+            tabPage8.UseVisualStyleBackColor = true;
+            // 
             // Home
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1627,32 +1683,37 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             tabPage7.ResumeLayout(false);
             tabPage7.PerformLayout();
-            tabPage9.ResumeLayout(false);
-            tabPage9.PerformLayout();
-            tabPage10.ResumeLayout(false);
-            tabPage10.PerformLayout();
-            tabPage11.ResumeLayout(false);
-            tabPage11.PerformLayout();
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
-            tabPage3.ResumeLayout(false);
-            tabPage3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            tabPage9.ResumeLayout(false);
+            tabPage9.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView4).EndInit();
+            tabPage10.ResumeLayout(false);
+            tabPage10.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
+            tabPage11.ResumeLayout(false);
+            tabPage11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView6).EndInit();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             groupBox5.ResumeLayout(false);
             groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvBrandPartnerList).EndInit();
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView7).EndInit();
+            tabPage4.ResumeLayout(false);
+            tabControl3.ResumeLayout(false);
+            tabPage6.ResumeLayout(false);
+            tabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvLoginHistory).EndInit();
             ResumeLayout(false);
         }
 
@@ -1755,27 +1816,25 @@
         private TextBox textBox25;
         private DataGridView dataGridView6;
         private Label label31;
-        private TextBox textBox26;
+        private TextBox txtSearchBrandPartner;
         private GroupBox groupBox5;
         private Button button17;
         private Button button18;
         private Button button19;
         private Button button20;
         private DateTimePicker dateTimePicker5;
-        private TextBox textBox27;
-        private TextBox textBox28;
-        private TextBox textBox29;
-        private TextBox textBox30;
-        private TextBox textBox31;
-        private Label label1;
+        private TextBox txtBPFirstname;
+        private TextBox txtBPLastname;
+        private TextBox txtBPContactnum;
+        private TextBox txtBPAddress;
         private Label label32;
         private Label label33;
         private Label label34;
         private Label label35;
         private Label label36;
-        private DataGridView dataGridView1;
+        private DataGridView dgvBrandPartnerList;
         private Label label37;
-        private TextBox textBox32;
+        private TextBox txtBPEmail;
         private Label label38;
         private TextBox textBox33;
         private GroupBox groupBox6;
@@ -1799,5 +1858,11 @@
         private Label label45;
         private DataGridView dataGridView7;
         private Label label46;
+        private Button btnLogout;
+        private TabControl tabControl3;
+        private TabPage tabPage6;
+        private TabPage tabPage8;
+        private DataGridView dgvLoginHistory;
+        private Label label47;
     }
 }

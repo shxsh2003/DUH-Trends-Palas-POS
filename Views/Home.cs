@@ -8,13 +8,15 @@ namespace DUH_Trends_Palas_POS.Views
     public partial class Home : Form
     {
         private int loginHistoryId;
-        private string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=test;";
+        private string userLevel; // To store the user level
+        private string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=duhtrendspalas;";
         private DataTable brandPartnerData; // Store the original brand partner data
 
-        public Home(int loginHistoryId)
+        public Home(int loginHistoryId, string userLevel)
         {
             InitializeComponent();
             this.loginHistoryId = loginHistoryId;
+            this.userLevel = userLevel; // Store the user level
             LoadLoginHistory(); // Load login history data when the form initializes
             LoadBrandPartnerList(); // Load brand partner data when the form initializes
 
@@ -113,7 +115,7 @@ namespace DUH_Trends_Palas_POS.Views
                     MessageBox.Show("Error updating logout time: " + ex.Message);
                 }
             }
-            MessageBox.Show("Logged out successfully");
+
             Application.Exit();
         }
     }

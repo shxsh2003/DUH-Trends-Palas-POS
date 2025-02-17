@@ -7,12 +7,14 @@ namespace DUH_Trends_Palas_POS.Views
     public partial class Order : Form
     {
         private int loginHistoryId;
-        String connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=test;";
+        private string userLevel; // To store the user level
+        String connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=duhtrendspalas;";
 
-        public Order(int loginHistoryId)
+        public Order(int loginHistoryId, string userLevel)
         {
             InitializeComponent();
             this.loginHistoryId = loginHistoryId;
+            this.userLevel = userLevel;  // Store the user level
         }
 
         private void btnLogout_Click(object sender, EventArgs e)
@@ -38,7 +40,8 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnInventory_Click(object sender, EventArgs e)
         {
-            Home homeForm = new Home(loginHistoryId); // Pass loginHistoryId to Home
+            // Pass loginHistoryId and userLevel to the Home form
+            Home homeForm = new Home(loginHistoryId, userLevel); // Pass both parameters
             homeForm.Show(); // Show the Home form
         }
     }

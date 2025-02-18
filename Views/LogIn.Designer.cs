@@ -44,37 +44,40 @@
             // 
             pictureBox1.BackgroundImage = Properties.Resources.logo;
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Location = new Point(33, 45);
+            pictureBox1.Dock = DockStyle.Left;
+            pictureBox1.Location = new Point(0, 0);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(336, 331);
+            pictureBox1.Size = new Size(419, 445);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 26F, FontStyle.Bold);
+            label1.Font = new Font("Century Gothic", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = SystemColors.ControlLightLight;
             label1.Location = new Point(518, 45);
             label1.Name = "label1";
-            label1.Size = new Size(160, 60);
+            label1.Size = new Size(160, 51);
             label1.TabIndex = 1;
             label1.Text = "LOGIN";
             // 
             // cmbUserLevel
             // 
             cmbUserLevel.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbUserLevel.Font = new Font("Segoe UI", 13F);
+            cmbUserLevel.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbUserLevel.FormattingEnabled = true;
             cmbUserLevel.Items.AddRange(new object[] { "Owner", "Admin", "Cashier" });
-            cmbUserLevel.Location = new Point(425, 130);
+            cmbUserLevel.Location = new Point(425, 131);
             cmbUserLevel.Name = "cmbUserLevel";
-            cmbUserLevel.Size = new Size(344, 38);
+            cmbUserLevel.Size = new Size(344, 33);
             cmbUserLevel.TabIndex = 2;
             // 
             // btnLogin
             // 
             btnLogin.BackColor = SystemColors.Highlight;
+            btnLogin.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnLogin.Location = new Point(452, 324);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(125, 42);
@@ -86,6 +89,7 @@
             // btnExit
             // 
             btnExit.BackColor = Color.Red;
+            btnExit.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnExit.Location = new Point(619, 324);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(125, 42);
@@ -96,26 +100,26 @@
             // 
             // txtUsername
             // 
-            txtUsername.Font = new Font("Segoe UI", 13F);
+            txtUsername.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtUsername.Location = new Point(425, 194);
             txtUsername.Name = "txtUsername";
             txtUsername.PlaceholderText = "Username";
-            txtUsername.Size = new Size(344, 36);
+            txtUsername.Size = new Size(344, 34);
             txtUsername.TabIndex = 5;
             // 
             // txtPassword
             // 
-            txtPassword.Font = new Font("Segoe UI", 13F);
+            txtPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtPassword.Location = new Point(425, 253);
             txtPassword.Name = "txtPassword";
             txtPassword.PlaceholderText = "Password";
-            txtPassword.Size = new Size(344, 36);
+            txtPassword.Size = new Size(344, 34);
             txtPassword.TabIndex = 6;
             // 
             // btnShowPassword
             // 
             btnShowPassword.BackgroundImageLayout = ImageLayout.Zoom;
-            btnShowPassword.Font = new Font("Segoe UI Variable Display Semib", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnShowPassword.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnShowPassword.Location = new Point(775, 253);
             btnShowPassword.Name = "btnShowPassword";
             btnShowPassword.Size = new Size(61, 36);
@@ -140,6 +144,7 @@
             Controls.Add(pictureBox1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "LogIn";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Duh Trends Palas";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);

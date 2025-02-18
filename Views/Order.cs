@@ -17,6 +17,15 @@ namespace DUH_Trends_Palas_POS.Views
             this.userLevel = userLevel;  // Store the user level
         }
 
+
+
+        private void btnInventory_Click(object sender, EventArgs e)
+        {
+            // Pass loginHistoryId and userLevel to the Home form
+            Home homeForm = new Home(loginHistoryId, userLevel); // Pass both parameters
+            homeForm.Show(); // Show the Home form
+        }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -38,11 +47,6 @@ namespace DUH_Trends_Palas_POS.Views
             Application.Exit();
         }
 
-        private void btnInventory_Click(object sender, EventArgs e)
-        {
-            // Pass loginHistoryId and userLevel to the Home form
-            Home homeForm = new Home(loginHistoryId, userLevel); // Pass both parameters
-            homeForm.Show(); // Show the Home form
-        }
+
     }
 }

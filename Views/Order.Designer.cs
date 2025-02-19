@@ -30,23 +30,23 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Order));
             panel1 = new Panel();
+            panel4 = new Panel();
             btnLogout = new Button();
             btnInventory = new Button();
             label9 = new Label();
             panel2 = new Panel();
-            textBox1 = new TextBox();
-            dataGridView2 = new DataGridView();
+            txtSearch = new TextBox();
+            dgvProducts = new DataGridView();
             dataGridView1 = new DataGridView();
             panel3 = new Panel();
             label1 = new Label();
             txtTotal = new TextBox();
-            panel4 = new Panel();
             panel1.SuspendLayout();
+            panel4.SuspendLayout();
             panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProducts).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel3.SuspendLayout();
-            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -57,8 +57,17 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1399, 149);
+            panel1.Size = new Size(1530, 149);
             panel1.TabIndex = 1;
+            // 
+            // panel4
+            // 
+            panel4.Controls.Add(btnLogout);
+            panel4.Controls.Add(btnInventory);
+            panel4.Location = new Point(1162, 34);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(220, 89);
+            panel4.TabIndex = 11;
             // 
             // btnLogout
             // 
@@ -101,33 +110,34 @@
             // panel2
             // 
             panel2.BackColor = Color.Silver;
-            panel2.Controls.Add(textBox1);
-            panel2.Controls.Add(dataGridView2);
+            panel2.Controls.Add(txtSearch);
+            panel2.Controls.Add(dgvProducts);
             panel2.Dock = DockStyle.Right;
-            panel2.Location = new Point(479, 149);
+            panel2.Location = new Point(505, 149);
             panel2.Name = "panel2";
-            panel2.Size = new Size(920, 936);
+            panel2.Size = new Size(1025, 961);
             panel2.TabIndex = 2;
             // 
-            // textBox1
+            // txtSearch
             // 
-            textBox1.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(584, 36);
-            textBox1.Name = "textBox1";
-            textBox1.PlaceholderText = "Search Product";
-            textBox1.Size = new Size(222, 32);
-            textBox1.TabIndex = 1;
+            txtSearch.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSearch.Location = new Point(786, 31);
+            txtSearch.Name = "txtSearch";
+            txtSearch.PlaceholderText = "Search Product";
+            txtSearch.Size = new Size(222, 32);
+            txtSearch.TabIndex = 1;
             // 
-            // dataGridView2
+            // dgvProducts
             // 
-            dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView2.BackgroundColor = SystemColors.ControlLight;
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Location = new Point(17, 83);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(886, 616);
-            dataGridView2.TabIndex = 0;
+            dgvProducts.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvProducts.BackgroundColor = SystemColors.ControlLight;
+            dgvProducts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvProducts.Location = new Point(17, 83);
+            dgvProducts.Name = "dgvProducts";
+            dgvProducts.RowHeadersWidth = 51;
+            dgvProducts.Size = new Size(991, 616);
+            dgvProducts.TabIndex = 0;
             // 
             // dataGridView1
             // 
@@ -136,7 +146,7 @@
             dataGridView1.Location = new Point(0, 149);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(487, 725);
+            dataGridView1.Size = new Size(516, 725);
             dataGridView1.TabIndex = 3;
             // 
             // panel3
@@ -146,7 +156,7 @@
             panel3.Controls.Add(txtTotal);
             panel3.Location = new Point(0, 870);
             panel3.Name = "panel3";
-            panel3.Size = new Size(487, 215);
+            panel3.Size = new Size(516, 240);
             panel3.TabIndex = 3;
             // 
             // label1
@@ -167,20 +177,11 @@
             txtTotal.Size = new Size(203, 38);
             txtTotal.TabIndex = 0;
             // 
-            // panel4
-            // 
-            panel4.Controls.Add(btnLogout);
-            panel4.Controls.Add(btnInventory);
-            panel4.Location = new Point(1162, 34);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(220, 89);
-            panel4.TabIndex = 11;
-            // 
             // Order
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1399, 1085);
+            ClientSize = new Size(1530, 1110);
             Controls.Add(panel3);
             Controls.Add(dataGridView1);
             Controls.Add(panel2);
@@ -191,13 +192,13 @@
             WindowState = FormWindowState.Maximized;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            panel4.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvProducts).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
-            panel4.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -206,8 +207,8 @@
         private Panel panel1;
         private Label label9;
         private Panel panel2;
-        private TextBox textBox1;
-        private DataGridView dataGridView2;
+        private TextBox txtSearch;
+        private DataGridView dgvProducts;
         private DataGridView dataGridView1;
         private Panel panel3;
         private Label label1;

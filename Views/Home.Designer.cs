@@ -38,7 +38,7 @@
             tabPage1 = new TabPage();
             tabControl2 = new TabControl();
             tabPage5 = new TabPage();
-            textBox6 = new TextBox();
+            txtSearchProduct = new TextBox();
             groupBox1 = new GroupBox();
             button4 = new Button();
             button3 = new Button();
@@ -305,7 +305,7 @@
             // 
             // tabPage5
             // 
-            tabPage5.Controls.Add(textBox6);
+            tabPage5.Controls.Add(txtSearchProduct);
             tabPage5.Controls.Add(groupBox1);
             tabPage5.Controls.Add(dgvProductList);
             tabPage5.Controls.Add(label2);
@@ -317,13 +317,13 @@
             tabPage5.Text = "Products";
             tabPage5.UseVisualStyleBackColor = true;
             // 
-            // textBox6
+            // txtSearchProduct
             // 
-            textBox6.Location = new Point(1281, 26);
-            textBox6.Name = "textBox6";
-            textBox6.PlaceholderText = "Search Product";
-            textBox6.Size = new Size(352, 32);
-            textBox6.TabIndex = 5;
+            txtSearchProduct.Location = new Point(1281, 26);
+            txtSearchProduct.Name = "txtSearchProduct";
+            txtSearchProduct.PlaceholderText = "Search Product";
+            txtSearchProduct.Size = new Size(352, 32);
+            txtSearchProduct.TabIndex = 5;
             // 
             // groupBox1
             // 
@@ -517,9 +517,9 @@
             tabPage7.Controls.Add(groupBox2);
             tabPage7.Controls.Add(dataGridView3);
             tabPage7.Controls.Add(label10);
-            tabPage7.Location = new Point(4, 32);
+            tabPage7.Location = new Point(4, 29);
             tabPage7.Name = "tabPage7";
-            tabPage7.Size = new Size(1673, 889);
+            tabPage7.Size = new Size(1673, 892);
             tabPage7.TabIndex = 2;
             tabPage7.Text = "Add Defective Items";
             tabPage7.UseVisualStyleBackColor = true;
@@ -553,7 +553,7 @@
             groupBox2.Controls.Add(label16);
             groupBox2.Location = new Point(18, 620);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1617, 241);
+            groupBox2.Size = new Size(1617, 244);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Product Details:";
@@ -724,9 +724,9 @@
             tabPage9.Controls.Add(groupBox3);
             tabPage9.Controls.Add(dataGridView4);
             tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 32);
+            tabPage9.Location = new Point(4, 29);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 889);
+            tabPage9.Size = new Size(1673, 892);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -760,7 +760,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 241);
+            groupBox3.Size = new Size(1617, 244);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
@@ -931,9 +931,9 @@
             tabPage10.Controls.Add(groupBox4);
             tabPage10.Controls.Add(dataGridView5);
             tabPage10.Controls.Add(label30);
-            tabPage10.Location = new Point(4, 32);
+            tabPage10.Location = new Point(4, 29);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1673, 889);
+            tabPage10.Size = new Size(1673, 892);
             tabPage10.TabIndex = 5;
             tabPage10.Text = "Pull Out Items";
             tabPage10.UseVisualStyleBackColor = true;
@@ -967,7 +967,7 @@
             groupBox4.Controls.Add(label29);
             groupBox4.Location = new Point(18, 620);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1617, 241);
+            groupBox4.Size = new Size(1617, 244);
             groupBox4.TabIndex = 12;
             groupBox4.TabStop = false;
             groupBox4.Text = "Product Details:";
@@ -1137,9 +1137,9 @@
             tabPage11.Controls.Add(textBox25);
             tabPage11.Controls.Add(dataGridView6);
             tabPage11.Controls.Add(label31);
-            tabPage11.Location = new Point(4, 32);
+            tabPage11.Location = new Point(4, 29);
             tabPage11.Name = "tabPage11";
-            tabPage11.Size = new Size(1673, 889);
+            tabPage11.Size = new Size(1673, 892);
             tabPage11.TabIndex = 6;
             tabPage11.Text = "Stocks Expiration";
             tabPage11.UseVisualStyleBackColor = true;
@@ -1768,7 +1768,7 @@
         private Label label7;
         private PictureBox pictureBox1;
         private Label label9;
-        private TextBox textBox6;
+        private TextBox txtSearchProduct;
         private GroupBox groupBox2;
         private Button button5;
         private Button button6;

@@ -8,25 +8,24 @@ namespace DUH_Trends_Palas_POS.Views
     public partial class Home : Form
     {
         private int loginHistoryId;
-        private string userLevel; // To store the user level
+        private string userLevel;
         private string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=duhtrendspalas;";
-        private DataTable brandPartnerData; // Store the original brand partner data
-        private DataTable productData; // Store the original product data
+        private DataTable brandPartnerData;
+        private DataTable productData;
 
         public Home(int loginHistoryId, string userLevel)
         {
             InitializeComponent();
             this.loginHistoryId = loginHistoryId;
-            this.userLevel = userLevel; // Store the user level
-            LoadLoginHistory(); // Load login history data when the form initializes
-            LoadBrandPartnerList(); // Load brand partner data when the form initializes
-            LoadProductList(); // Load product list with brand partner details when the form initializes
+            this.userLevel = userLevel;
+            LoadLoginHistory();
+            LoadBrandPartnerList();
+            LoadProductList();
 
-            // Make sure to connect the event handler for text change
             this.txtSearchBrandPartner.TextChanged += new EventHandler(this.txtSearchBrandPartner_TextChanged);
+            this.txtSearchProduct.TextChanged += new EventHandler(this.txtSearchProduct_TextChanged);
         }
 
-        // Method to load login history data
         private void LoadLoginHistory()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -40,7 +39,7 @@ namespace DUH_Trends_Palas_POS.Views
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         DataTable dataTable = new DataTable();
                         adapter.Fill(dataTable);
-                        dgvLoginHistory.DataSource = dataTable; // Bind data to DataGridView
+                        dgvLoginHistory.DataSource = dataTable;
                     }
                 }
                 catch (Exception ex)
@@ -50,7 +49,6 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        // Method to load brand partner list data
         private void LoadBrandPartnerList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -62,9 +60,9 @@ namespace DUH_Trends_Palas_POS.Views
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
-                        brandPartnerData = new DataTable(); // Initialize the DataTable
-                        adapter.Fill(brandPartnerData); // Fill the DataTable with data
-                        dgvBrandPartnerList.DataSource = brandPartnerData; // Bind data to DataGridView
+                        brandPartnerData = new DataTable();
+                        adapter.Fill(brandPartnerData);
+                        dgvBrandPartnerList.DataSource = brandPartnerData;
                     }
                 }
                 catch (Exception ex)
@@ -74,7 +72,6 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        // Method to load product list with brand partner name
         private void LoadProductList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -99,9 +96,9 @@ namespace DUH_Trends_Palas_POS.Views
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
-                        productData = new DataTable(); // Initialize the DataTable
-                        adapter.Fill(productData); // Fill the DataTable with data
-                        dgvProductList.DataSource = productData; // Bind data to DataGridView
+                        productData = new DataTable();
+                        adapter.Fill(productData);
+                        dgvProductList.DataSource = productData;
                     }
                 }
                 catch (Exception ex)
@@ -111,30 +108,36 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        // Event handler for search functionality (brand partner search)
         private void txtSearchBrandPartner_TextChanged(object sender, EventArgs e)
         {
-            // Get the search text
             string searchText = txtSearchBrandPartner.Text.Trim().ToLower();
-
-            // Create a DataView to filter the brand partner data
             DataView dataView = new DataView(brandPartnerData);
-
-            // Check if the searchText is not empty, and apply the filter
             if (!string.IsNullOrEmpty(searchText))
             {
                 dataView.RowFilter = string.Format("Firstname LIKE '%{0}%' OR Lastname LIKE '%{0}%' OR BrandPartner_ContactNum LIKE '%{0}%' OR BrandPartner_Email LIKE '%{0}%' OR BrandPartner_Address LIKE '%{0}%'", searchText);
             }
             else
             {
-                dataView.RowFilter = string.Empty; // No filter if searchText is empty
+                dataView.RowFilter = string.Empty;
             }
-
-            // Apply the filtered data to the DataGridView
             dgvBrandPartnerList.DataSource = dataView;
         }
 
-        // Method to handle logout event
+        private void txtSearchProduct_TextChanged(object sender, EventArgs e)
+        {
+            string searchText = txtSearchProduct.Text.Trim().ToLower();
+            DataView dataView = new DataView(productData);
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                dataView.RowFilter = string.Format("product_barcode LIKE '%{0}%' OR product_name LIKE '%{0}%' OR BrandPartnerName LIKE '%{0}%'", searchText);
+            }
+            else
+            {
+                dataView.RowFilter = string.Empty;
+            }
+            dgvProductList.DataSource = dataView;
+        }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -154,7 +157,6 @@ namespace DUH_Trends_Palas_POS.Views
                     MessageBox.Show("Error updating logout time: " + ex.Message);
                 }
             }
-
             Application.Exit();
         }
     }

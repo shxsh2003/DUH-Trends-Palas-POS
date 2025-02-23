@@ -37,7 +37,7 @@
             panel2 = new Panel();
             txtSearch = new TextBox();
             dgvProducts = new DataGridView();
-            dataGridView1 = new DataGridView();
+            dgvOrders = new DataGridView();
             panel3 = new Panel();
             label1 = new Label();
             txtTotal = new TextBox();
@@ -45,7 +45,7 @@
             panel4.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProducts).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrders).BeginInit();
             panel3.SuspendLayout();
             SuspendLayout();
             // 
@@ -139,15 +139,15 @@
             dgvProducts.Size = new Size(991, 616);
             dgvProducts.TabIndex = 0;
             // 
-            // dataGridView1
+            // dgvOrders
             // 
-            dataGridView1.BackgroundColor = Color.LightGray;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(0, 149);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(516, 725);
-            dataGridView1.TabIndex = 3;
+            dgvOrders.BackgroundColor = Color.LightGray;
+            dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOrders.Location = new Point(0, 149);
+            dgvOrders.Name = "dgvOrders";
+            dgvOrders.RowHeadersWidth = 51;
+            dgvOrders.Size = new Size(516, 725);
+            dgvOrders.TabIndex = 3;
             // 
             // panel3
             // 
@@ -183,7 +183,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1530, 1110);
             Controls.Add(panel3);
-            Controls.Add(dataGridView1);
+            Controls.Add(dgvOrders);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -196,7 +196,7 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProducts).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvOrders).EndInit();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             ResumeLayout(false);
@@ -209,7 +209,7 @@
         private Panel panel2;
         private TextBox txtSearch;
         private DataGridView dgvProducts;
-        private DataGridView dataGridView1;
+        private DataGridView dgvOrders;
         private Panel panel3;
         private Label label1;
         private TextBox txtTotal;

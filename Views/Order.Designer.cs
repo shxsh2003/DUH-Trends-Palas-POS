@@ -39,9 +39,9 @@
             dgvProducts = new DataGridView();
             dgvOrders = new DataGridView();
             panel3 = new Panel();
+            btnCheckout = new Button();
             label1 = new Label();
             txtTotal = new TextBox();
-            btnCheckout = new Button();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             panel2.SuspendLayout();
@@ -58,16 +58,18 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1530, 149);
+            panel1.Size = new Size(1713, 149);
             panel1.TabIndex = 1;
+            panel1.Paint += panel1_Paint;
             // 
             // panel4
             // 
             panel4.Controls.Add(btnLogout);
             panel4.Controls.Add(btnInventory);
-            panel4.Location = new Point(1162, 34);
+            panel4.Dock = DockStyle.Right;
+            panel4.Location = new Point(1493, 0);
             panel4.Name = "panel4";
-            panel4.Size = new Size(220, 89);
+            panel4.Size = new Size(220, 149);
             panel4.TabIndex = 11;
             // 
             // btnLogout
@@ -114,9 +116,9 @@
             panel2.Controls.Add(txtSearch);
             panel2.Controls.Add(dgvProducts);
             panel2.Dock = DockStyle.Right;
-            panel2.Location = new Point(505, 149);
+            panel2.Location = new Point(688, 149);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1025, 961);
+            panel2.Size = new Size(1025, 1026);
             panel2.TabIndex = 2;
             // 
             // txtSearch
@@ -137,17 +139,23 @@
             dgvProducts.Location = new Point(17, 83);
             dgvProducts.Name = "dgvProducts";
             dgvProducts.RowHeadersWidth = 51;
-            dgvProducts.Size = new Size(991, 616);
+            dgvProducts.Size = new Size(991, 766);
             dgvProducts.TabIndex = 0;
             // 
             // dgvOrders
             // 
+            dgvOrders.AllowUserToAddRows = false;
+            dgvOrders.AllowUserToDeleteRows = false;
+            dgvOrders.AllowUserToResizeColumns = false;
+            dgvOrders.AllowUserToResizeRows = false;
+            dgvOrders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvOrders.BackgroundColor = Color.LightGray;
             dgvOrders.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvOrders.Location = new Point(0, 149);
             dgvOrders.Name = "dgvOrders";
+            dgvOrders.ReadOnly = true;
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(516, 725);
+            dgvOrders.Size = new Size(688, 789);
             dgvOrders.TabIndex = 3;
             // 
             // panel3
@@ -156,10 +164,23 @@
             panel3.Controls.Add(btnCheckout);
             panel3.Controls.Add(label1);
             panel3.Controls.Add(txtTotal);
-            panel3.Location = new Point(0, 870);
+            panel3.Dock = DockStyle.Bottom;
+            panel3.Location = new Point(0, 935);
             panel3.Name = "panel3";
-            panel3.Size = new Size(516, 240);
+            panel3.Size = new Size(688, 240);
             panel3.TabIndex = 3;
+            // 
+            // btnCheckout
+            // 
+            btnCheckout.BackColor = Color.Red;
+            btnCheckout.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnCheckout.ForeColor = SystemColors.ControlText;
+            btnCheckout.Location = new Point(151, 165);
+            btnCheckout.Name = "btnCheckout";
+            btnCheckout.Size = new Size(202, 44);
+            btnCheckout.TabIndex = 2;
+            btnCheckout.Text = "CHECKOUT";
+            btnCheckout.UseVisualStyleBackColor = false;
             // 
             // label1
             // 
@@ -179,20 +200,11 @@
             txtTotal.Size = new Size(203, 38);
             txtTotal.TabIndex = 0;
             // 
-            // btnCheckout
-            // 
-            btnCheckout.Location = new Point(151, 165);
-            btnCheckout.Name = "btnCheckout";
-            btnCheckout.Size = new Size(202, 44);
-            btnCheckout.TabIndex = 2;
-            btnCheckout.Text = "CHECKOUT";
-            btnCheckout.UseVisualStyleBackColor = true;
-            // 
             // Order
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1530, 1110);
+            ClientSize = new Size(1713, 1175);
             Controls.Add(panel3);
             Controls.Add(dgvOrders);
             Controls.Add(panel2);

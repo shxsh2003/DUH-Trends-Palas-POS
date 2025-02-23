@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
-            btnInventory = new Button();
+            panel4 = new Panel();
             btnLogout = new Button();
+            btnOrder = new Button();
             label9 = new Label();
             pictureBox1 = new PictureBox();
             tabControl1 = new TabControl();
@@ -176,6 +178,7 @@
             label47 = new Label();
             tabPage8 = new TabPage();
             panel1.SuspendLayout();
+            panel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -209,8 +212,7 @@
             // panel1
             // 
             panel1.BackColor = Color.DimGray;
-            panel1.Controls.Add(btnInventory);
-            panel1.Controls.Add(btnLogout);
+            panel1.Controls.Add(panel4);
             panel1.Controls.Add(label9);
             panel1.Controls.Add(pictureBox1);
             panel1.Dock = DockStyle.Top;
@@ -219,29 +221,41 @@
             panel1.Size = new Size(1695, 149);
             panel1.TabIndex = 0;
             // 
-            // btnInventory
+            // panel4
             // 
-            btnInventory.BackgroundImage = (Image)resources.GetObject("btnInventory.BackgroundImage");
-            btnInventory.BackgroundImageLayout = ImageLayout.Zoom;
-            btnInventory.FlatStyle = FlatStyle.Flat;
-            btnInventory.ForeColor = Color.DimGray;
-            btnInventory.Location = new Point(1469, 48);
-            btnInventory.Name = "btnInventory";
-            btnInventory.Size = new Size(72, 64);
-            btnInventory.TabIndex = 9;
-            btnInventory.UseVisualStyleBackColor = true;
+            panel4.Controls.Add(btnLogout);
+            panel4.Controls.Add(btnOrder);
+            panel4.Dock = DockStyle.Right;
+            panel4.Location = new Point(1475, 0);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(220, 149);
+            panel4.TabIndex = 12;
             // 
             // btnLogout
             // 
             btnLogout.BackgroundImage = (Image)resources.GetObject("btnLogout.BackgroundImage");
             btnLogout.BackgroundImageLayout = ImageLayout.Zoom;
             btnLogout.FlatStyle = FlatStyle.Flat;
-            btnLogout.Location = new Point(1564, 48);
+            btnLogout.ForeColor = Color.DimGray;
+            btnLogout.Location = new Point(132, 11);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(82, 64);
-            btnLogout.TabIndex = 6;
+            btnLogout.Size = new Size(73, 64);
+            btnLogout.TabIndex = 10;
             btnLogout.UseVisualStyleBackColor = true;
             btnLogout.Click += btnLogout_Click;
+            // 
+            // btnOrder
+            // 
+            btnOrder.BackgroundImage = Properties.Resources.order;
+            btnOrder.BackgroundImageLayout = ImageLayout.Zoom;
+            btnOrder.FlatStyle = FlatStyle.Flat;
+            btnOrder.ForeColor = Color.DimGray;
+            btnOrder.Location = new Point(38, 10);
+            btnOrder.Name = "btnOrder";
+            btnOrder.Size = new Size(72, 64);
+            btnOrder.TabIndex = 8;
+            btnOrder.UseVisualStyleBackColor = true;
+            btnOrder.Click += btnOrder_Click;
             // 
             // label9
             // 
@@ -491,12 +505,20 @@
             // 
             // dgvProductList
             // 
+            dgvProductList.AllowUserToAddRows = false;
+            dgvProductList.AllowUserToDeleteRows = false;
+            dgvProductList.AllowUserToResizeColumns = false;
+            dgvProductList.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = Color.Black;
+            dgvProductList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             dgvProductList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvProductList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProductList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvProductList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvProductList.Location = new Point(18, 73);
             dgvProductList.Name = "dgvProductList";
+            dgvProductList.ReadOnly = true;
             dgvProductList.RowHeadersWidth = 51;
             dgvProductList.Size = new Size(1617, 525);
             dgvProductList.TabIndex = 3;
@@ -698,12 +720,15 @@
             // 
             // dataGridView3
             // 
+            dataGridView3.AllowUserToAddRows = false;
+            dataGridView3.AllowUserToDeleteRows = false;
             dataGridView3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView3.Location = new Point(18, 73);
             dataGridView3.Name = "dataGridView3";
+            dataGridView3.ReadOnly = true;
             dataGridView3.RowHeadersWidth = 51;
             dataGridView3.Size = new Size(1617, 525);
             dataGridView3.TabIndex = 5;
@@ -905,12 +930,15 @@
             // 
             // dataGridView4
             // 
+            dataGridView4.AllowUserToAddRows = false;
+            dataGridView4.AllowUserToDeleteRows = false;
             dataGridView4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView4.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView4.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView4.Location = new Point(18, 73);
             dataGridView4.Name = "dataGridView4";
+            dataGridView4.ReadOnly = true;
             dataGridView4.RowHeadersWidth = 51;
             dataGridView4.Size = new Size(1617, 525);
             dataGridView4.TabIndex = 7;
@@ -1112,12 +1140,15 @@
             // 
             // dataGridView5
             // 
+            dataGridView5.AllowUserToAddRows = false;
+            dataGridView5.AllowUserToDeleteRows = false;
             dataGridView5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView5.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView5.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView5.Location = new Point(18, 73);
             dataGridView5.Name = "dataGridView5";
+            dataGridView5.ReadOnly = true;
             dataGridView5.RowHeadersWidth = 51;
             dataGridView5.Size = new Size(1617, 525);
             dataGridView5.TabIndex = 11;
@@ -1137,9 +1168,9 @@
             tabPage11.Controls.Add(textBox25);
             tabPage11.Controls.Add(dgvExpiration);
             tabPage11.Controls.Add(label31);
-            tabPage11.Location = new Point(4, 32);
+            tabPage11.Location = new Point(4, 29);
             tabPage11.Name = "tabPage11";
-            tabPage11.Size = new Size(1673, 889);
+            tabPage11.Size = new Size(1673, 892);
             tabPage11.TabIndex = 6;
             tabPage11.Text = "Stocks Expiration";
             tabPage11.UseVisualStyleBackColor = true;
@@ -1154,12 +1185,15 @@
             // 
             // dgvExpiration
             // 
+            dgvExpiration.AllowUserToAddRows = false;
+            dgvExpiration.AllowUserToDeleteRows = false;
             dgvExpiration.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvExpiration.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvExpiration.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvExpiration.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvExpiration.Location = new Point(18, 73);
             dgvExpiration.Name = "dgvExpiration";
+            dgvExpiration.ReadOnly = true;
             dgvExpiration.RowHeadersWidth = 51;
             dgvExpiration.Size = new Size(1617, 525);
             dgvExpiration.TabIndex = 15;
@@ -1364,11 +1398,14 @@
             // 
             // dgvBrandPartnerList
             // 
+            dgvBrandPartnerList.AllowUserToAddRows = false;
+            dgvBrandPartnerList.AllowUserToDeleteRows = false;
             dgvBrandPartnerList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvBrandPartnerList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvBrandPartnerList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvBrandPartnerList.Location = new Point(43, 98);
             dgvBrandPartnerList.Name = "dgvBrandPartnerList";
+            dgvBrandPartnerList.ReadOnly = true;
             dgvBrandPartnerList.RowHeadersWidth = 51;
             dgvBrandPartnerList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvBrandPartnerList.Size = new Size(1616, 525);
@@ -1590,12 +1627,15 @@
             // 
             // dgvSales
             // 
+            dgvSales.AllowUserToAddRows = false;
+            dgvSales.AllowUserToDeleteRows = false;
             dgvSales.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvSales.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvSales.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvSales.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvSales.Location = new Point(35, 97);
             dgvSales.Name = "dgvSales";
+            dgvSales.ReadOnly = true;
             dgvSales.RowHeadersWidth = 51;
             dgvSales.Size = new Size(1616, 525);
             dgvSales.TabIndex = 11;
@@ -1645,11 +1685,14 @@
             // 
             // dgvLoginHistory
             // 
+            dgvLoginHistory.AllowUserToAddRows = false;
+            dgvLoginHistory.AllowUserToDeleteRows = false;
             dgvLoginHistory.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvLoginHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvLoginHistory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvLoginHistory.Location = new Point(30, 95);
             dgvLoginHistory.Name = "dgvLoginHistory";
+            dgvLoginHistory.ReadOnly = true;
             dgvLoginHistory.RowHeadersWidth = 51;
             dgvLoginHistory.Size = new Size(1607, 747);
             dgvLoginHistory.TabIndex = 13;
@@ -1688,6 +1731,7 @@
             WindowState = FormWindowState.Maximized;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            panel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
@@ -1874,12 +1918,13 @@
         private Label label45;
         private DataGridView dgvSales;
         private Label label46;
-        private Button btnLogout;
         private TabControl tabControl3;
         private TabPage tabPage6;
         private TabPage tabPage8;
         private DataGridView dgvLoginHistory;
         private Label label47;
-        private Button btnInventory;
+        private Panel panel4;
+        private Button btnLogout;
+        private Button btnOrder;
     }
 }

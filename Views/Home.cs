@@ -22,6 +22,7 @@ namespace DUH_Trends_Palas_POS.Views
             LoadBrandPartnerList();
             LoadProductList();
             LoadExpirationProductList();
+            LoadSalesData();
 
             this.txtSearchBrandPartner.TextChanged += new EventHandler(this.txtSearchBrandPartner_TextChanged);
             this.txtSearchProduct.TextChanged += new EventHandler(this.txtSearchProduct_TextChanged);
@@ -170,6 +171,44 @@ namespace DUH_Trends_Palas_POS.Views
             dgvBrandPartnerList.DataSource = dataView;
         }
 
+        private void LoadSalesData()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+                    string query = @"
+                SELECT 
+                    o.order_id, 
+                    o.order_date, 
+                    o.employee_id, 
+                    o.total, 
+                    od.order_detail_id, 
+                    od.product_barcode, 
+                    od.quantity, 
+                    od.price
+                FROM 
+                    orders o
+                JOIN 
+                    order_details od ON o.order_id = od.order_id
+                ORDER BY 
+                    o.order_date DESC"; // Orders sorted by most recent
+
+                    MySqlCommand command = new MySqlCommand(query, databaseConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable salesData = new DataTable();
+                    adapter.Fill(salesData);
+
+                    dgvSales.DataSource = salesData;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading sales data: " + ex.Message);
+                }
+            }
+        }
+
         private void txtSearchProduct_TextChanged(object sender, EventArgs e)
         {
             string searchText = txtSearchProduct.Text.Trim().ToLower();
@@ -205,6 +244,13 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
             Application.Exit();
+        }
+
+        private void btnOrder_Click(object sender, EventArgs e)
+        {
+            Order orderForm = new Order(loginHistoryId, userLevel); // Pass the required arguments
+            orderForm.Show();
+            this.Hide();
         }
     }
 }

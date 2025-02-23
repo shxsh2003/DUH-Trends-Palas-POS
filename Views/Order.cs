@@ -277,5 +277,10 @@ namespace DUH_Trends_Palas_POS.Views
             txtTotal.Text = total.ToString("F2");
             return total;
         }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

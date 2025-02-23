@@ -21,6 +21,7 @@ namespace DUH_Trends_Palas_POS.Views
             LoadLoginHistory();
             LoadBrandPartnerList();
             LoadProductList();
+            LoadExpirationProductList();
 
             this.txtSearchBrandPartner.TextChanged += new EventHandler(this.txtSearchBrandPartner_TextChanged);
             this.txtSearchProduct.TextChanged += new EventHandler(this.txtSearchProduct_TextChanged);
@@ -86,6 +87,7 @@ namespace DUH_Trends_Palas_POS.Views
                             p.quantity,
                             p.price,
                             p.delivery_date,
+                            p.expiration_date,
                             CONCAT(b.Firstname, ' ', b.Lastname) AS BrandPartnerName
                         FROM 
                             product p
@@ -107,6 +109,51 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+        private void LoadExpirationProductList()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+                    string query = @"
+                SELECT 
+                    p.product_barcode,
+                    p.product_name,
+                    p.quantity,
+                    p.price,
+                    p.delivery_date,
+                    p.expiration_date,
+                    b.Firstname,
+                    b.Lastname
+                FROM 
+                    product p
+                JOIN 
+                    brandpartner b ON p.brandpartner_id = b.BrandPartner_ID
+                ORDER BY 
+                    CASE 
+                        WHEN p.expiration_date IS NULL THEN 1 
+                        ELSE 0 
+                    END, 
+                    p.expiration_date ASC"; // Sort by nearest expiry date first, null values at the bottom
+
+                    MySqlCommand command = new MySqlCommand(query, databaseConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable expirationProductData = new DataTable();
+                    adapter.Fill(expirationProductData);
+
+                    dgvExpiration.DataSource = expirationProductData;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading expiration product list: " + ex.Message);
+                }
+            }
+        }
+
+
+
 
         private void txtSearchBrandPartner_TextChanged(object sender, EventArgs e)
         {

@@ -123,7 +123,7 @@
             label30 = new Label();
             tabPage11 = new TabPage();
             textBox25 = new TextBox();
-            dataGridView6 = new DataGridView();
+            dgvExpiration = new DataGridView();
             label31 = new Label();
             tabPage2 = new TabPage();
             txtSearchBrandPartner = new TextBox();
@@ -167,7 +167,7 @@
             label43 = new Label();
             label44 = new Label();
             label45 = new Label();
-            dataGridView7 = new DataGridView();
+            dgvSales = new DataGridView();
             label46 = new Label();
             tabPage4 = new TabPage();
             tabControl3 = new TabControl();
@@ -193,13 +193,13 @@
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
             tabPage11.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView6).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvExpiration).BeginInit();
             tabPage2.SuspendLayout();
             groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvBrandPartnerList).BeginInit();
             tabPage3.SuspendLayout();
             groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView7).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSales).BeginInit();
             tabPage4.SuspendLayout();
             tabControl3.SuspendLayout();
             tabPage6.SuspendLayout();
@@ -1135,11 +1135,11 @@
             // tabPage11
             // 
             tabPage11.Controls.Add(textBox25);
-            tabPage11.Controls.Add(dataGridView6);
+            tabPage11.Controls.Add(dgvExpiration);
             tabPage11.Controls.Add(label31);
-            tabPage11.Location = new Point(4, 29);
+            tabPage11.Location = new Point(4, 32);
             tabPage11.Name = "tabPage11";
-            tabPage11.Size = new Size(1673, 892);
+            tabPage11.Size = new Size(1673, 889);
             tabPage11.TabIndex = 6;
             tabPage11.Text = "Stocks Expiration";
             tabPage11.UseVisualStyleBackColor = true;
@@ -1152,17 +1152,17 @@
             textBox25.Size = new Size(352, 32);
             textBox25.TabIndex = 16;
             // 
-            // dataGridView6
+            // dgvExpiration
             // 
-            dataGridView6.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView6.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView6.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView6.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView6.Location = new Point(18, 73);
-            dataGridView6.Name = "dataGridView6";
-            dataGridView6.RowHeadersWidth = 51;
-            dataGridView6.Size = new Size(1617, 525);
-            dataGridView6.TabIndex = 15;
+            dgvExpiration.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvExpiration.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvExpiration.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvExpiration.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvExpiration.Location = new Point(18, 73);
+            dgvExpiration.Name = "dgvExpiration";
+            dgvExpiration.RowHeadersWidth = 51;
+            dgvExpiration.Size = new Size(1617, 525);
+            dgvExpiration.TabIndex = 15;
             // 
             // label31
             // 
@@ -1388,7 +1388,7 @@
             // 
             tabPage3.Controls.Add(textBox33);
             tabPage3.Controls.Add(groupBox6);
-            tabPage3.Controls.Add(dataGridView7);
+            tabPage3.Controls.Add(dgvSales);
             tabPage3.Controls.Add(label46);
             tabPage3.Location = new Point(4, 32);
             tabPage3.Name = "tabPage3";
@@ -1588,17 +1588,17 @@
             label45.TabIndex = 0;
             label45.Text = "First Name:";
             // 
-            // dataGridView7
+            // dgvSales
             // 
-            dataGridView7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView7.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView7.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView7.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView7.Location = new Point(35, 97);
-            dataGridView7.Name = "dataGridView7";
-            dataGridView7.RowHeadersWidth = 51;
-            dataGridView7.Size = new Size(1616, 525);
-            dataGridView7.TabIndex = 11;
+            dgvSales.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvSales.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvSales.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvSales.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvSales.Location = new Point(35, 97);
+            dgvSales.Name = "dgvSales";
+            dgvSales.RowHeadersWidth = 51;
+            dgvSales.Size = new Size(1616, 525);
+            dgvSales.TabIndex = 11;
             // 
             // label46
             // 
@@ -1714,7 +1714,7 @@
             ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
             tabPage11.ResumeLayout(false);
             tabPage11.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView6).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvExpiration).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             groupBox5.ResumeLayout(false);
@@ -1724,7 +1724,7 @@
             tabPage3.PerformLayout();
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView7).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvSales).EndInit();
             tabPage4.ResumeLayout(false);
             tabControl3.ResumeLayout(false);
             tabPage6.ResumeLayout(false);
@@ -1830,7 +1830,7 @@
         private DataGridView dataGridView5;
         private Label label30;
         private TextBox textBox25;
-        private DataGridView dataGridView6;
+        private DataGridView dgvExpiration;
         private Label label31;
         private TextBox txtSearchBrandPartner;
         private GroupBox groupBox5;
@@ -1872,7 +1872,7 @@
         private Label label43;
         private Label label44;
         private Label label45;
-        private DataGridView dataGridView7;
+        private DataGridView dgvSales;
         private Label label46;
         private Button btnLogout;
         private TabControl tabControl3;

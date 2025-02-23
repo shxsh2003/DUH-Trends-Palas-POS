@@ -41,6 +41,7 @@
             panel3 = new Panel();
             label1 = new Label();
             txtTotal = new TextBox();
+            btnCheckout = new Button();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             panel2.SuspendLayout();
@@ -152,6 +153,7 @@
             // panel3
             // 
             panel3.BackColor = Color.LightGray;
+            panel3.Controls.Add(btnCheckout);
             panel3.Controls.Add(label1);
             panel3.Controls.Add(txtTotal);
             panel3.Location = new Point(0, 870);
@@ -176,6 +178,15 @@
             txtTotal.Name = "txtTotal";
             txtTotal.Size = new Size(203, 38);
             txtTotal.TabIndex = 0;
+            // 
+            // btnCheckout
+            // 
+            btnCheckout.Location = new Point(151, 165);
+            btnCheckout.Name = "btnCheckout";
+            btnCheckout.Size = new Size(202, 44);
+            btnCheckout.TabIndex = 2;
+            btnCheckout.Text = "CHECKOUT";
+            btnCheckout.UseVisualStyleBackColor = true;
             // 
             // Order
             // 
@@ -216,5 +227,6 @@
         private Button btnInventory;
         private Button btnLogout;
         private Panel panel4;
+        private Button btnCheckout;
     }
 }

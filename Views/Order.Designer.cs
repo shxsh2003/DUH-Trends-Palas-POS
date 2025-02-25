@@ -139,7 +139,7 @@
             dgvProducts.Location = new Point(17, 83);
             dgvProducts.Name = "dgvProducts";
             dgvProducts.RowHeadersWidth = 51;
-            dgvProducts.Size = new Size(991, 766);
+            dgvProducts.Size = new Size(991, 809);
             dgvProducts.TabIndex = 0;
             // 
             // dgvOrders
@@ -155,7 +155,7 @@
             dgvOrders.Name = "dgvOrders";
             dgvOrders.ReadOnly = true;
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(688, 789);
+            dgvOrders.Size = new Size(722, 789);
             dgvOrders.TabIndex = 3;
             // 
             // panel3
@@ -177,7 +177,7 @@
             btnCheckout.ForeColor = SystemColors.ControlText;
             btnCheckout.Location = new Point(151, 165);
             btnCheckout.Name = "btnCheckout";
-            btnCheckout.Size = new Size(202, 44);
+            btnCheckout.Size = new Size(203, 49);
             btnCheckout.TabIndex = 2;
             btnCheckout.Text = "CHECKOUT";
             btnCheckout.UseVisualStyleBackColor = false;
@@ -197,7 +197,7 @@
             txtTotal.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             txtTotal.Location = new Point(270, 86);
             txtTotal.Name = "txtTotal";
-            txtTotal.Size = new Size(203, 38);
+            txtTotal.Size = new Size(216, 38);
             txtTotal.TabIndex = 0;
             // 
             // Order

@@ -34,11 +34,12 @@ namespace DUH_Trends_Palas_POS.Views
             orderData.Columns.Add("product_barcode", typeof(string));
             orderData.Columns.Add("quantity", typeof(int));
             orderData.Columns.Add("price", typeof(decimal));
-            orderData.Columns.Add("subtotal", typeof(decimal), "quantity * price");
+            orderData.Columns.Add("subtotal", typeof(decimal)); // No computed expression
 
             dgvOrders.DataSource = orderData;
             dgvOrders.Refresh();
         }
+
 
         private void LoadProductList()
         {
@@ -90,7 +91,12 @@ namespace DUH_Trends_Palas_POS.Views
 
                 if (int.TryParse(input, out int quantity) && quantity > 0 && quantity <= stock)
                 {
-                    orderData.Rows.Add(barcode, quantity, price, quantity * price);
+                    DataRow newRow = orderData.NewRow();
+                    newRow["product_barcode"] = barcode;
+                    newRow["quantity"] = quantity;
+                    newRow["price"] = price;
+                    newRow["subtotal"] = quantity * price; // Manually calculate subtotal
+                    orderData.Rows.Add(newRow);
                     UpdateProductStock(barcode, -quantity);
                 }
                 else
@@ -118,8 +124,8 @@ namespace DUH_Trends_Palas_POS.Views
                     {
                         int difference = newQuantity - currentQuantity;
                         row.Cells["quantity"].Value = newQuantity;
-                        row.Cells["subtotal"].Value = newQuantity * Convert.ToDecimal(row.Cells["price"].Value);
-                        UpdateProductStock(barcode, -difference);
+                        row.Cells["subtotal"].Value = newQuantity * Convert.ToDecimal(row.Cells["price"].Value); // Update subtotal
+                        UpdateProductStock(barcode, -difference); // Adjust stock in database accordingly
                     }
                     else
                     {
@@ -129,90 +135,91 @@ namespace DUH_Trends_Palas_POS.Views
                 else if (result == DialogResult.No)
                 {
                     orderData.Rows.RemoveAt(e.RowIndex);
-                    UpdateProductStock(barcode, currentQuantity);
+                    UpdateProductStock(barcode, currentQuantity); // Restore stock when item is removed
                 }
 
                 CalculateTotal();
             }
         }
 
+
         private void BtnCheckout_Click(object sender, EventArgs e)
+{
+    if (orderData.Rows.Count == 0)
+    {
+        MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return;
+    }
+
+    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+    {
+        try
         {
-            if (orderData.Rows.Count == 0)
+            databaseConnection.Open();
+
+            // Fetch the latest logged-in user_id
+            string fetchUserIdQuery = "SELECT user_id FROM login_history ORDER BY login_time DESC LIMIT 1";
+            MySqlCommand fetchUserIdCmd = new MySqlCommand(fetchUserIdQuery, databaseConnection);
+            object userIdResult = fetchUserIdCmd.ExecuteScalar();
+
+            if (userIdResult == null)
             {
-                MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Error: No active user found.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            int userId = Convert.ToInt32(userIdResult);
+
+            // Fetch the corresponding Employee_ID from the employee table
+            string fetchEmployeeQuery = "SELECT Employee_ID FROM employee WHERE Employee_ID = @userId";
+            MySqlCommand fetchEmployeeCmd = new MySqlCommand(fetchEmployeeQuery, databaseConnection);
+            fetchEmployeeCmd.Parameters.AddWithValue("@userId", userId);
+            object employeeResult = fetchEmployeeCmd.ExecuteScalar();
+
+            if (employeeResult == null)
             {
-                try
-                {
-                    databaseConnection.Open();
-
-                    // Fetch the latest logged-in user_id
-                    string fetchUserIdQuery = "SELECT user_id FROM login_history ORDER BY login_time DESC LIMIT 1";
-                    MySqlCommand fetchUserIdCmd = new MySqlCommand(fetchUserIdQuery, databaseConnection);
-                    object userIdResult = fetchUserIdCmd.ExecuteScalar();
-
-                    if (userIdResult == null)
-                    {
-                        MessageBox.Show("Error: No active user found.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    int userId = Convert.ToInt32(userIdResult);
-
-                    // Fetch the corresponding Employee_ID from the employee table
-                    string fetchEmployeeQuery = "SELECT Employee_ID FROM employee WHERE Employee_ID = @userId";
-                    MySqlCommand fetchEmployeeCmd = new MySqlCommand(fetchEmployeeQuery, databaseConnection);
-                    fetchEmployeeCmd.Parameters.AddWithValue("@userId", userId);
-                    object employeeResult = fetchEmployeeCmd.ExecuteScalar();
-
-                    if (employeeResult == null)
-                    {
-                        MessageBox.Show("Error: No employee found for the logged-in user.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    int employeeId = Convert.ToInt32(employeeResult);
-
-                    // Insert order and get the last inserted order ID
-                    string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
-                    MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection);
-                    orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
-                    decimal totalAmount = CalculateTotal();
-                    orderCommand.Parameters.AddWithValue("@total", totalAmount);
-
-                    int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
-
-                    // Insert order details
-                    foreach (DataRow row in orderData.Rows)
-                    {
-                        string barcode = row["product_barcode"].ToString();
-                        int quantityOrdered = Convert.ToInt32(row["quantity"]);
-                        decimal price = Convert.ToDecimal(row["price"]);
-
-                        string insertDetailsQuery = "INSERT INTO order_details (order_id, product_barcode, quantity, price) VALUES (@orderId, @barcode, @quantity, @price)";
-                        MySqlCommand detailsCommand = new MySqlCommand(insertDetailsQuery, databaseConnection);
-                        detailsCommand.Parameters.AddWithValue("@orderId", orderId);
-                        detailsCommand.Parameters.AddWithValue("@barcode", barcode);
-                        detailsCommand.Parameters.AddWithValue("@quantity", quantityOrdered);
-                        detailsCommand.Parameters.AddWithValue("@price", price);
-                        detailsCommand.ExecuteNonQuery();
-                    }
-
-                    MessageBox.Show("Order successfully checked out!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    orderData.Clear();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error during checkout: " + ex.Message);
-                }
+                MessageBox.Show("Error: No employee found for the logged-in user.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            int employeeId = Convert.ToInt32(employeeResult);
+
+            // Insert order and get the last inserted order ID
+            string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
+            MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection);
+            orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
+            decimal totalAmount = CalculateTotal();
+            orderCommand.Parameters.AddWithValue("@total", totalAmount);
+
+            int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
+
+            // Insert order details including subtotal
+            foreach (DataRow row in orderData.Rows)
+            {
+                string barcode = row["product_barcode"].ToString();
+                int quantityOrdered = Convert.ToInt32(row["quantity"]);
+                decimal price = Convert.ToDecimal(row["price"]);
+                decimal subtotal = Convert.ToDecimal(row["subtotal"]); // Get subtotal from datagridview
+
+                string insertDetailsQuery = "INSERT INTO order_details (order_id, product_barcode, quantity, price, subtotal) VALUES (@orderId, @barcode, @quantity, @price, @subtotal)";
+                MySqlCommand detailsCommand = new MySqlCommand(insertDetailsQuery, databaseConnection);
+                detailsCommand.Parameters.AddWithValue("@orderId", orderId);
+                detailsCommand.Parameters.AddWithValue("@barcode", barcode);
+                detailsCommand.Parameters.AddWithValue("@quantity", quantityOrdered);
+                detailsCommand.Parameters.AddWithValue("@price", price);
+                detailsCommand.Parameters.AddWithValue("@subtotal", subtotal); // Save subtotal in the database
+                detailsCommand.ExecuteNonQuery();
+            }
+
+            MessageBox.Show("Order successfully checked out!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            orderData.Clear();
         }
-
-
+        catch (Exception ex)
+        {
+            MessageBox.Show("Error during checkout: " + ex.Message);
+        }
+    }
+}
 
 
 

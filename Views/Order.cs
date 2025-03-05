@@ -2,6 +2,7 @@
 using System.Data;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Configuration;
 
 namespace DUH_Trends_Palas_POS.Views
 {
@@ -9,15 +10,19 @@ namespace DUH_Trends_Palas_POS.Views
     {
         private int loginHistoryId;
         private string userLevel;
-        private string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=duhtrendspalas;";
+        string connectionString = ConfigurationManager.ConnectionStrings["MySqlConnectionString"]?.ConnectionString;
         private DataTable productData;
         private DataTable orderData;
+        private int employeeId;
 
-        public Order(int loginHistoryId, string userLevel)
+
+        public Order(int loginHistoryId, string userLevel, int employeeId)
         {
             InitializeComponent();
             this.loginHistoryId = loginHistoryId;
             this.userLevel = userLevel;
+            this.employeeId = employeeId;
+
 
             InitializeOrderTable();
             LoadProductList();
@@ -25,7 +30,9 @@ namespace DUH_Trends_Palas_POS.Views
             txtSearch.TextChanged += TxtSearch_TextChanged;
             dgvProducts.CellClick += DgvProducts_CellClick;
             dgvOrders.CellClick += DgvOrders_CellClick;
-            btnCheckout.Click += BtnCheckout_Click;
+            btnCheckout.Click += btnCheckout_Click;
+            btnLogout.Click += btnLogout_Click; // Ensure logout event is assigned here
+
         }
 
         private void InitializeOrderTable()
@@ -41,6 +48,7 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
+
         private void LoadProductList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -54,10 +62,22 @@ namespace DUH_Trends_Palas_POS.Views
                     productData = new DataTable();
                     adapter.Fill(productData);
 
-                    // Convert expiration_date column to string for display purposes
-                    productData.Columns["expiration_date"].ColumnName = "Expiration Date";
-
                     dgvProducts.DataSource = productData;
+
+                    // Change row colors based on expiration date
+                    foreach (DataGridViewRow row in dgvProducts.Rows)
+                    {
+                        if (row.Cells["expiration_date"].Value != DBNull.Value)
+                        {
+                            DateTime expirationDate = Convert.ToDateTime(row.Cells["expiration_date"].Value);
+                            if (expirationDate < DateTime.Today) // If expired
+                            {
+                                row.DefaultCellStyle.BackColor = System.Drawing.Color.Red; // Highlight in red
+                                row.DefaultCellStyle.ForeColor = System.Drawing.Color.White; // Optional: Change text color
+                                row.Cells["quantity"].ReadOnly = true; // Disable editing quantity
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -65,6 +85,7 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
 
 
         private void TxtSearch_TextChanged(object sender, EventArgs e)
@@ -105,8 +126,12 @@ namespace DUH_Trends_Palas_POS.Views
                 }
 
                 CalculateTotal();
+
+                // Enable checkout button if there are items in the order
+                btnCheckout.Enabled = orderData.Rows.Count > 0;
             }
         }
+
 
         private void DgvOrders_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -144,83 +169,55 @@ namespace DUH_Trends_Palas_POS.Views
 
 
         private void BtnCheckout_Click(object sender, EventArgs e)
-{
-    if (orderData.Rows.Count == 0)
-    {
-        MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        return;
-    }
-
-    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
-    {
-        try
         {
-            databaseConnection.Open();
-
-            // Fetch the latest logged-in user_id
-            string fetchUserIdQuery = "SELECT user_id FROM login_history ORDER BY login_time DESC LIMIT 1";
-            MySqlCommand fetchUserIdCmd = new MySqlCommand(fetchUserIdQuery, databaseConnection);
-            object userIdResult = fetchUserIdCmd.ExecuteScalar();
-
-            if (userIdResult == null)
+            if (orderData.Rows.Count == 0)
             {
-                MessageBox.Show("Error: No active user found.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int userId = Convert.ToInt32(userIdResult);
-
-            // Fetch the corresponding Employee_ID from the employee table
-            string fetchEmployeeQuery = "SELECT Employee_ID FROM employee WHERE Employee_ID = @userId";
-            MySqlCommand fetchEmployeeCmd = new MySqlCommand(fetchEmployeeQuery, databaseConnection);
-            fetchEmployeeCmd.Parameters.AddWithValue("@userId", userId);
-            object employeeResult = fetchEmployeeCmd.ExecuteScalar();
-
-            if (employeeResult == null)
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
-                MessageBox.Show("Error: No employee found for the logged-in user.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                databaseConnection.Open();
+                MySqlTransaction transaction = databaseConnection.BeginTransaction();
+
+                try
+                {
+                    string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
+                    MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection, transaction);
+                    orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
+                    decimal totalAmount = CalculateTotal();
+                    orderCommand.Parameters.AddWithValue("@total", totalAmount);
+                    int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
+
+                    foreach (DataRow row in orderData.Rows)
+                    {
+                        string barcode = row["product_barcode"].ToString();
+                        int quantityOrdered = Convert.ToInt32(row["quantity"]);
+                        decimal price = Convert.ToDecimal(row["price"]);
+                        decimal subtotal = Convert.ToDecimal(row["subtotal"]);
+
+                        string insertDetailsQuery = "INSERT INTO order_details (order_id, product_barcode, quantity, price, subtotal) VALUES (@orderId, @barcode, @quantity, @price, @subtotal)";
+                        MySqlCommand detailsCommand = new MySqlCommand(insertDetailsQuery, databaseConnection, transaction);
+                        detailsCommand.Parameters.AddWithValue("@orderId", orderId);
+                        detailsCommand.Parameters.AddWithValue("@barcode", barcode);
+                        detailsCommand.Parameters.AddWithValue("@quantity", quantityOrdered);
+                        detailsCommand.Parameters.AddWithValue("@price", price);
+                        detailsCommand.Parameters.AddWithValue("@subtotal", subtotal);
+                        detailsCommand.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show("Order successfully checked out!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    orderData.Clear();
+                }
+                catch (MySqlException ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Database error during checkout: " + ex.Message, "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-
-            int employeeId = Convert.ToInt32(employeeResult);
-
-            // Insert order and get the last inserted order ID
-            string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
-            MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection);
-            orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
-            decimal totalAmount = CalculateTotal();
-            orderCommand.Parameters.AddWithValue("@total", totalAmount);
-
-            int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
-
-            // Insert order details including subtotal
-            foreach (DataRow row in orderData.Rows)
-            {
-                string barcode = row["product_barcode"].ToString();
-                int quantityOrdered = Convert.ToInt32(row["quantity"]);
-                decimal price = Convert.ToDecimal(row["price"]);
-                decimal subtotal = Convert.ToDecimal(row["subtotal"]); // Get subtotal from datagridview
-
-                string insertDetailsQuery = "INSERT INTO order_details (order_id, product_barcode, quantity, price, subtotal) VALUES (@orderId, @barcode, @quantity, @price, @subtotal)";
-                MySqlCommand detailsCommand = new MySqlCommand(insertDetailsQuery, databaseConnection);
-                detailsCommand.Parameters.AddWithValue("@orderId", orderId);
-                detailsCommand.Parameters.AddWithValue("@barcode", barcode);
-                detailsCommand.Parameters.AddWithValue("@quantity", quantityOrdered);
-                detailsCommand.Parameters.AddWithValue("@price", price);
-                detailsCommand.Parameters.AddWithValue("@subtotal", subtotal); // Save subtotal in the database
-                detailsCommand.ExecuteNonQuery();
-            }
-
-            MessageBox.Show("Order successfully checked out!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            orderData.Clear();
         }
-        catch (Exception ex)
-        {
-            MessageBox.Show("Error during checkout: " + ex.Message);
-        }
-    }
-}
-
 
 
         private void UpdateProductStock(string barcode, int quantityChange)
@@ -230,16 +227,31 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string updateQuery = "UPDATE product SET quantity = quantity + @quantityChange WHERE product_barcode = @barcode";
-                    MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection);
-                    updateCommand.Parameters.AddWithValue("@quantityChange", quantityChange);
-                    updateCommand.Parameters.AddWithValue("@barcode", barcode);
-                    updateCommand.ExecuteNonQuery();
-                    LoadProductList();
+                    MySqlTransaction transaction = databaseConnection.BeginTransaction();
+
+                    string selectQuery = "SELECT quantity FROM product WHERE product_barcode = @barcode FOR UPDATE";
+                    MySqlCommand selectCommand = new MySqlCommand(selectQuery, databaseConnection, transaction);
+                    selectCommand.Parameters.AddWithValue("@barcode", barcode);
+                    object result = selectCommand.ExecuteScalar();
+
+                    if (result != null && Convert.ToInt32(result) + quantityChange >= 0)
+                    {
+                        string updateQuery = "UPDATE product SET quantity = quantity + @quantityChange WHERE product_barcode = @barcode";
+                        MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection, transaction);
+                        updateCommand.Parameters.AddWithValue("@quantityChange", quantityChange);
+                        updateCommand.Parameters.AddWithValue("@barcode", barcode);
+                        updateCommand.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        transaction.Rollback();
+                        MessageBox.Show("Insufficient stock or invalid operation.", "Stock Update Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
                 }
-                catch (Exception ex)
+                catch (MySqlException ex)
                 {
-                    MessageBox.Show("Error updating stock: " + ex.Message);
+                    MessageBox.Show("Database error updating stock: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -247,24 +259,36 @@ namespace DUH_Trends_Palas_POS.Views
         // Logout and update login history
         private void btnLogout_Click(object sender, EventArgs e)
         {
+            if (loginHistoryId == 0)
+            {
+                MessageBox.Show("Error: Login session not found. Logging out anyway.", "Logout Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Application.Exit();
+                return;
+            }
+
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
                 try
                 {
                     databaseConnection.Open();
                     string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId";
-                    MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection);
-                    updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
-                    updateCommand.ExecuteNonQuery();
+                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
+                        updateCommand.ExecuteNonQuery();
+                    }
                 }
-                catch (Exception ex)
+                catch (MySqlException ex)
                 {
-                    MessageBox.Show("Error updating logout time: " + ex.Message);
+                    MessageBox.Show("Database error updating logout time: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+
             MessageBox.Show("Logged out successfully");
             Application.Exit();
         }
+
+
 
 
         // Navigate to Inventory (Home Form)
@@ -272,6 +296,7 @@ namespace DUH_Trends_Palas_POS.Views
         {
             Home homeForm = new Home(loginHistoryId, userLevel);
             homeForm.Show();
+            this.Hide();
         }
 
         private decimal CalculateTotal()
@@ -289,5 +314,65 @@ namespace DUH_Trends_Palas_POS.Views
         {
 
         }
+
+        private void btnCheckout_Click(object sender, EventArgs e)
+        {
+            if (orderData.Rows.Count == 0)
+            {
+                MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                databaseConnection.Open();
+                MySqlTransaction transaction = databaseConnection.BeginTransaction();
+
+                try
+                {
+                    string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
+                    MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection, transaction);
+                    orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
+                    decimal totalAmount = CalculateTotal();
+                    orderCommand.Parameters.AddWithValue("@total", totalAmount);
+                    int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
+
+                    foreach (DataRow row in orderData.Rows)
+                    {
+                        string barcode = row["product_barcode"].ToString();
+                        int quantityOrdered = Convert.ToInt32(row["quantity"]);
+                        decimal price = Convert.ToDecimal(row["price"]);
+                        decimal subtotal = Convert.ToDecimal(row["subtotal"]);
+
+                        string insertDetailsQuery = "INSERT INTO order_details (order_id, product_barcode, quantity, price, subtotal) VALUES (@orderId, @barcode, @quantity, @price, @subtotal)";
+                        MySqlCommand detailsCommand = new MySqlCommand(insertDetailsQuery, databaseConnection, transaction);
+                        detailsCommand.Parameters.AddWithValue("@orderId", orderId);
+                        detailsCommand.Parameters.AddWithValue("@barcode", barcode);
+                        detailsCommand.Parameters.AddWithValue("@quantity", quantityOrdered);
+                        detailsCommand.Parameters.AddWithValue("@price", price);
+                        detailsCommand.Parameters.AddWithValue("@subtotal", subtotal);
+                        detailsCommand.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show("Order successfully checked out!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    orderData.Clear();
+                }
+                catch (MySqlException ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Database error during checkout: " + ex.Message, "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void dgvOrders_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+
+        //
+
     }
 }

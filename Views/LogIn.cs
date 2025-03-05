@@ -3,29 +3,32 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Configuration;
 
 namespace DUH_Trends_Palas_POS.Views
 {
     public partial class LogIn : Form
     {
         private int loginHistoryId;
-        private string connectionString = "server=127.0.0.1;port=3306;username=root;password=;database=duhtrendspalas;";
+        string connectionString = ConfigurationManager.ConnectionStrings["MySqlConnectionString"]?.ConnectionString;
+        int employeeId;
 
-        public LogIn()
-        {
-            InitializeComponent();
-            txtPassword.PasswordChar = '•';
-            cmbUserLevel.SelectedIndex = 0;
-        }
+            public LogIn()
+    {
+        InitializeComponent();
+        txtPassword.PasswordChar = '•';
+        cmbUserLevel.SelectedIndex = 0;
+    }
 
-        private string HashPassword(string password)
+    private string HashPassword(string password)
+    {
+        using (SHA256 sha256 = SHA256.Create())
         {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
         }
+    }
+
 
         private void login()
         {
@@ -45,52 +48,47 @@ namespace DUH_Trends_Palas_POS.Views
                 {
                     databaseConnection.Open();
                     string query = @"
-                SELECT u.id, u.username, u.password, u.user_level, e.Employee_ID
-                FROM user u
-                JOIN employee e ON u.employee_id = e.Employee_ID
-                WHERE u.username = @username
-                AND u.user_level = BINARY @userLevel";
+                        SELECT e.Employee_ID, u.username, u.password, e.user_level, e.is_active
+                        FROM user u
+                        JOIN employee e ON u.employee_id = e.Employee_ID
+                        WHERE u.username = @username
+                        AND e.is_active = 1";
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         command.Parameters.AddWithValue("@username", username);
-                        command.Parameters.AddWithValue("@userLevel", selectedUserLevel);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.Read())
                             {
-                                string dbUsername = reader.GetString("username");
-                                string dbPassword = reader.GetString("password"); // Stored password
-                                string userLevel = reader.GetString("user_level");
-                                int userId = reader.GetInt32("id");
-                                int employeeId = reader.GetInt32("Employee_ID");
+                                string dbPassword = reader.GetString("password");
+                                string dbUserLevel = reader.GetString("user_level");
+                                this.employeeId = reader.GetInt32("Employee_ID");
 
-                                // Ensure that the DataReader is closed before executing any further queries
-                                reader.Close();  // Close the DataReader here
+                                reader.Close();
 
-                                // Check if the password matches
-                                if (password == dbPassword)  // Plain text password comparison
+                                if (password == dbPassword)
                                 {
-                                    Console.WriteLine($"User found: {dbUsername}, Level: {userLevel}");
+                                    if (dbUserLevel != selectedUserLevel)
+                                    {
+                                        MessageBox.Show("User level does not match!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        return;
+                                    }
 
-                                    // Now, execute the insert query to log the login history
                                     string insertQuery = @"
-                                INSERT INTO login_history (user_id, username, login_time, logout_time) 
-                                VALUES (@userId, @username, CURRENT_TIMESTAMP, NULL); 
-                                SELECT LAST_INSERT_ID();";
+                                        INSERT INTO login_history (employee_id, login_time, logout_time) 
+                                        VALUES (@employeeId, CURRENT_TIMESTAMP, NULL); 
+                                        SELECT LAST_INSERT_ID();";
 
                                     using (MySqlCommand insertCommand = new MySqlCommand(insertQuery, databaseConnection))
                                     {
-                                        insertCommand.Parameters.AddWithValue("@userId", userId);
-                                        insertCommand.Parameters.AddWithValue("@username", dbUsername);
-                                        loginHistoryId = Convert.ToInt32(insertCommand.ExecuteScalar());
+                                        insertCommand.Parameters.AddWithValue("@employeeId", this.employeeId);
+                                        this.loginHistoryId = Convert.ToInt32(insertCommand.ExecuteScalar());
                                     }
 
                                     MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                                    // Pass loginHistoryId and userLevel to the next form
-                                    Order orderForm = new Order(loginHistoryId, userLevel);
+                                    Order orderForm = new Order(this.loginHistoryId, selectedUserLevel, this.employeeId);
                                     orderForm.FormClosed += Order_FormClosed;
                                     orderForm.Show();
                                     this.Hide();
@@ -102,7 +100,7 @@ namespace DUH_Trends_Palas_POS.Views
                             }
                             else
                             {
-                                MessageBox.Show("Invalid username or user level!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show("Invalid username!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
@@ -114,44 +112,52 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-
-
         private void Order_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
         {
-            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            try
             {
-                try
+                databaseConnection.Open();
+                string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId;";
+                using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
                 {
-                    databaseConnection.Open();
-                    string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId";
-                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
-                    {
-                        updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
-                        updateCommand.ExecuteNonQuery();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error updating logout time: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
+                    updateCommand.ExecuteNonQuery();
                 }
             }
-            this.Show();
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating logout time: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+        this.Show();
 
-        private void btnShowPassword_Click(object sender, EventArgs e)
-        {
-            txtPassword.PasswordChar = txtPassword.PasswordChar == '•' ? '\0' : '•';
-            btnShowPassword.Text = txtPassword.PasswordChar == '•' ? "Show" : "Hide";
-        }
+    }
 
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+    private void btnShowPassword_Click(object sender, EventArgs e)
+    {
+        txtPassword.PasswordChar = txtPassword.PasswordChar == '•' ? '\0' : '•';
+        btnShowPassword.Text = txtPassword.PasswordChar == '•' ? "Show" : "Hide";
+    }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+    private void btnExit_Click(object sender, EventArgs e)
+    {
+        Application.Exit();
+    }
+
+    private void btnLogin_Click(object sender, EventArgs e)
+    {
+        btnLogin.Enabled = false;
+        try
         {
             login();
         }
+        finally
+        {
+            btnLogin.Enabled = true;
+        }
     }
+
+}
 }

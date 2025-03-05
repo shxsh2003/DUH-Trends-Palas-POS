@@ -40,44 +40,21 @@
             tabPage1 = new TabPage();
             tabControl2 = new TabControl();
             tabPage5 = new TabPage();
-            txtSearchProduct = new TextBox();
+            txtProductSearch = new TextBox();
             dgvProductList = new DataGridView();
             label2 = new Label();
-            tabPage7 = new TabPage();
-            textBox12 = new TextBox();
-            groupBox2 = new GroupBox();
-            button5 = new Button();
-            button6 = new Button();
-            button7 = new Button();
-            button8 = new Button();
-            dateTimePicker2 = new DateTimePicker();
-            textBox7 = new TextBox();
-            textBox8 = new TextBox();
-            textBox9 = new TextBox();
-            textBox10 = new TextBox();
-            textBox11 = new TextBox();
-            label11 = new Label();
-            label12 = new Label();
-            label13 = new Label();
-            label14 = new Label();
-            label15 = new Label();
-            label16 = new Label();
-            dataGridView3 = new DataGridView();
-            label10 = new Label();
             tabPage9 = new TabPage();
-            textBox13 = new TextBox();
+            txtStockInSearch = new TextBox();
             groupBox3 = new GroupBox();
-            txtSIBPLastname = new TextBox();
-            label3 = new Label();
-            txtSIBPFirstname = new TextBox();
+            cmbSIReceived = new ComboBox();
+            cmbSIBPName = new ComboBox();
             dtpSIDelivery = new DateTimePicker();
             label51 = new Label();
-            txtSIReceived = new TextBox();
-            label50 = new Label();
-            button9 = new Button();
-            button10 = new Button();
-            button11 = new Button();
-            button12 = new Button();
+            cmbSIReceiveBy = new Label();
+            btnSIAdd = new Button();
+            btnSIDelete = new Button();
+            btnSIUpdate = new Button();
+            btnSIClear = new Button();
             dtpSIExpiration = new DateTimePicker();
             txtSIQty = new TextBox();
             txtSIBarcode = new TextBox();
@@ -89,7 +66,7 @@
             label20 = new Label();
             label21 = new Label();
             label22 = new Label();
-            dgvStockIn = new DataGridView();
+            dgvStockInProducts = new DataGridView();
             label23 = new Label();
             tabPage10 = new TabPage();
             textBox19 = new TextBox();
@@ -164,6 +141,27 @@
             label45 = new Label();
             dgvSales = new DataGridView();
             label46 = new Label();
+            tabPage7 = new TabPage();
+            txtSearchEmployee = new TextBox();
+            groupBox1 = new GroupBox();
+            txtEmployeeAddress = new TextBox();
+            label3 = new Label();
+            cmbUserLevel = new ComboBox();
+            label4 = new Label();
+            txtEmployeeEmail = new TextBox();
+            label5 = new Label();
+            btnEmployeeAdd = new Button();
+            btnEmployeeDelete = new Button();
+            btnEmployeeUpdate = new Button();
+            btnEmployeeClear = new Button();
+            txtEmployeeFirstname = new TextBox();
+            txtEmployeeLastname = new TextBox();
+            txtEmployeeContactNumber = new TextBox();
+            label7 = new Label();
+            label8 = new Label();
+            label10 = new Label();
+            dgvEmployees = new DataGridView();
+            label12 = new Label();
             tabPage4 = new TabPage();
             tabControl3 = new TabControl();
             tabPage6 = new TabPage();
@@ -177,12 +175,9 @@
             tabControl2.SuspendLayout();
             tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductList).BeginInit();
-            tabPage7.SuspendLayout();
-            groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
             tabPage9.SuspendLayout();
             groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvStockIn).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvStockInProducts).BeginInit();
             tabPage10.SuspendLayout();
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
@@ -194,6 +189,9 @@
             tabPage3.SuspendLayout();
             groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSales).BeginInit();
+            tabPage7.SuspendLayout();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvEmployees).BeginInit();
             tabPage4.SuspendLayout();
             tabControl3.SuspendLayout();
             tabPage6.SuspendLayout();
@@ -273,6 +271,7 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
+            tabControl1.Controls.Add(tabPage7);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Dock = DockStyle.Bottom;
             tabControl1.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -296,7 +295,6 @@
             // tabControl2
             // 
             tabControl2.Controls.Add(tabPage5);
-            tabControl2.Controls.Add(tabPage7);
             tabControl2.Controls.Add(tabPage9);
             tabControl2.Controls.Add(tabPage10);
             tabControl2.Controls.Add(tabPage11);
@@ -310,7 +308,7 @@
             // 
             // tabPage5
             // 
-            tabPage5.Controls.Add(txtSearchProduct);
+            tabPage5.Controls.Add(txtProductSearch);
             tabPage5.Controls.Add(dgvProductList);
             tabPage5.Controls.Add(label2);
             tabPage5.Location = new Point(4, 32);
@@ -321,13 +319,13 @@
             tabPage5.Text = "Products";
             tabPage5.UseVisualStyleBackColor = true;
             // 
-            // txtSearchProduct
+            // txtProductSearch
             // 
-            txtSearchProduct.Location = new Point(1281, 26);
-            txtSearchProduct.Name = "txtSearchProduct";
-            txtSearchProduct.PlaceholderText = "Search Product";
-            txtSearchProduct.Size = new Size(352, 32);
-            txtSearchProduct.TabIndex = 5;
+            txtProductSearch.Location = new Point(1281, 26);
+            txtProductSearch.Name = "txtProductSearch";
+            txtProductSearch.PlaceholderText = "Search Product";
+            txtProductSearch.Size = new Size(352, 32);
+            txtProductSearch.TabIndex = 5;
             // 
             // dgvProductList
             // 
@@ -346,8 +344,10 @@
             dgvProductList.Name = "dgvProductList";
             dgvProductList.ReadOnly = true;
             dgvProductList.RowHeadersWidth = 51;
+            dgvProductList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvProductList.Size = new Size(1617, 778);
             dgvProductList.TabIndex = 3;
+            dgvProductList.CellContentClick += dgvProductList_CellContentClick;
             // 
             // label2
             // 
@@ -359,221 +359,11 @@
             label2.TabIndex = 2;
             label2.Text = "Product List";
             // 
-            // tabPage7
-            // 
-            tabPage7.Controls.Add(textBox12);
-            tabPage7.Controls.Add(groupBox2);
-            tabPage7.Controls.Add(dataGridView3);
-            tabPage7.Controls.Add(label10);
-            tabPage7.Location = new Point(4, 29);
-            tabPage7.Name = "tabPage7";
-            tabPage7.Size = new Size(1673, 892);
-            tabPage7.TabIndex = 2;
-            tabPage7.Text = "Add Defective Items";
-            tabPage7.UseVisualStyleBackColor = true;
-            // 
-            // textBox12
-            // 
-            textBox12.Location = new Point(1281, 26);
-            textBox12.Name = "textBox12";
-            textBox12.PlaceholderText = "Search Product";
-            textBox12.Size = new Size(352, 32);
-            textBox12.TabIndex = 7;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox2.Controls.Add(button5);
-            groupBox2.Controls.Add(button6);
-            groupBox2.Controls.Add(button7);
-            groupBox2.Controls.Add(button8);
-            groupBox2.Controls.Add(dateTimePicker2);
-            groupBox2.Controls.Add(textBox7);
-            groupBox2.Controls.Add(textBox8);
-            groupBox2.Controls.Add(textBox9);
-            groupBox2.Controls.Add(textBox10);
-            groupBox2.Controls.Add(textBox11);
-            groupBox2.Controls.Add(label11);
-            groupBox2.Controls.Add(label12);
-            groupBox2.Controls.Add(label13);
-            groupBox2.Controls.Add(label14);
-            groupBox2.Controls.Add(label15);
-            groupBox2.Controls.Add(label16);
-            groupBox2.Location = new Point(18, 620);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1617, 244);
-            groupBox2.TabIndex = 6;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Product Details:";
-            // 
-            // button5
-            // 
-            button5.Location = new Point(1347, 79);
-            button5.Name = "button5";
-            button5.Size = new Size(126, 41);
-            button5.TabIndex = 15;
-            button5.Text = "Add";
-            button5.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            button6.Location = new Point(1203, 79);
-            button6.Name = "button6";
-            button6.Size = new Size(126, 41);
-            button6.TabIndex = 14;
-            button6.Text = "Delete";
-            button6.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            button7.Location = new Point(1347, 32);
-            button7.Name = "button7";
-            button7.Size = new Size(126, 41);
-            button7.TabIndex = 13;
-            button7.Text = "Update";
-            button7.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            button8.Location = new Point(1203, 32);
-            button8.Name = "button8";
-            button8.Size = new Size(126, 41);
-            button8.TabIndex = 12;
-            button8.Text = "Clear";
-            button8.UseVisualStyleBackColor = true;
-            // 
-            // dateTimePicker2
-            // 
-            dateTimePicker2.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker2.Location = new Point(804, 67);
-            dateTimePicker2.Name = "dateTimePicker2";
-            dateTimePicker2.Size = new Size(355, 31);
-            dateTimePicker2.TabIndex = 11;
-            // 
-            // textBox7
-            // 
-            textBox7.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox7.Location = new Point(804, 29);
-            textBox7.Name = "textBox7";
-            textBox7.Size = new Size(355, 31);
-            textBox7.TabIndex = 10;
-            // 
-            // textBox8
-            // 
-            textBox8.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox8.Location = new Point(267, 29);
-            textBox8.Name = "textBox8";
-            textBox8.Size = new Size(355, 31);
-            textBox8.TabIndex = 9;
-            // 
-            // textBox9
-            // 
-            textBox9.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox9.Location = new Point(267, 63);
-            textBox9.Name = "textBox9";
-            textBox9.Size = new Size(355, 31);
-            textBox9.TabIndex = 8;
-            // 
-            // textBox10
-            // 
-            textBox10.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox10.Location = new Point(267, 103);
-            textBox10.Name = "textBox10";
-            textBox10.Size = new Size(355, 31);
-            textBox10.TabIndex = 7;
-            // 
-            // textBox11
-            // 
-            textBox11.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox11.Location = new Point(267, 136);
-            textBox11.Name = "textBox11";
-            textBox11.Size = new Size(355, 31);
-            textBox11.TabIndex = 6;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(648, 29);
-            label11.Name = "label11";
-            label11.Size = new Size(50, 23);
-            label11.TabIndex = 5;
-            label11.Text = "Qty:";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(648, 71);
-            label12.Name = "label12";
-            label12.Size = new Size(166, 23);
-            label12.TabIndex = 4;
-            label12.Text = "Defective Date:";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new Point(7, 143);
-            label13.Name = "label13";
-            label13.Size = new Size(240, 23);
-            label13.TabIndex = 3;
-            label13.Text = "Name of Brand Partner:";
-            // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new Point(7, 103);
-            label14.Name = "label14";
-            label14.Size = new Size(97, 23);
-            label14.TabIndex = 2;
-            label14.Text = "Remarks:";
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new Point(7, 67);
-            label15.Name = "label15";
-            label15.Size = new Size(159, 23);
-            label15.TabIndex = 1;
-            label15.Text = "Product Name:";
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new Point(7, 29);
-            label16.Name = "label16";
-            label16.Size = new Size(182, 23);
-            label16.TabIndex = 0;
-            label16.Text = "Product Barcode:";
-            // 
-            // dataGridView3
-            // 
-            dataGridView3.AllowUserToAddRows = false;
-            dataGridView3.AllowUserToDeleteRows = false;
-            dataGridView3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView3.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Location = new Point(18, 73);
-            dataGridView3.Name = "dataGridView3";
-            dataGridView3.ReadOnly = true;
-            dataGridView3.RowHeadersWidth = 51;
-            dataGridView3.Size = new Size(1617, 525);
-            dataGridView3.TabIndex = 5;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(3, 24);
-            label10.Name = "label10";
-            label10.Size = new Size(166, 34);
-            label10.TabIndex = 4;
-            label10.Text = "Product List";
-            // 
             // tabPage9
             // 
-            tabPage9.Controls.Add(textBox13);
+            tabPage9.Controls.Add(txtStockInSearch);
             tabPage9.Controls.Add(groupBox3);
-            tabPage9.Controls.Add(dgvStockIn);
+            tabPage9.Controls.Add(dgvStockInProducts);
             tabPage9.Controls.Add(label23);
             tabPage9.Location = new Point(4, 29);
             tabPage9.Name = "tabPage9";
@@ -582,28 +372,27 @@
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
             // 
-            // textBox13
+            // txtStockInSearch
             // 
-            textBox13.Location = new Point(1281, 26);
-            textBox13.Name = "textBox13";
-            textBox13.PlaceholderText = "Search Product";
-            textBox13.Size = new Size(352, 32);
-            textBox13.TabIndex = 9;
+            txtStockInSearch.Location = new Point(1281, 26);
+            txtStockInSearch.Name = "txtStockInSearch";
+            txtStockInSearch.PlaceholderText = "Search Product";
+            txtStockInSearch.Size = new Size(352, 32);
+            txtStockInSearch.TabIndex = 9;
+            txtStockInSearch.TextChanged += txtStockInSearch_TextChanged;
             // 
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox3.Controls.Add(txtSIBPLastname);
-            groupBox3.Controls.Add(label3);
-            groupBox3.Controls.Add(txtSIBPFirstname);
+            groupBox3.Controls.Add(cmbSIReceived);
+            groupBox3.Controls.Add(cmbSIBPName);
             groupBox3.Controls.Add(dtpSIDelivery);
             groupBox3.Controls.Add(label51);
-            groupBox3.Controls.Add(txtSIReceived);
-            groupBox3.Controls.Add(label50);
-            groupBox3.Controls.Add(button9);
-            groupBox3.Controls.Add(button10);
-            groupBox3.Controls.Add(button11);
-            groupBox3.Controls.Add(button12);
+            groupBox3.Controls.Add(cmbSIReceiveBy);
+            groupBox3.Controls.Add(btnSIAdd);
+            groupBox3.Controls.Add(btnSIDelete);
+            groupBox3.Controls.Add(btnSIUpdate);
+            groupBox3.Controls.Add(btnSIClear);
             groupBox3.Controls.Add(dtpSIExpiration);
             groupBox3.Controls.Add(txtSIQty);
             groupBox3.Controls.Add(txtSIBarcode);
@@ -622,35 +411,26 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
             // 
-            // txtSIBPLastname
+            // cmbSIReceived
             // 
-            txtSIBPLastname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSIBPLastname.Location = new Point(267, 146);
-            txtSIBPLastname.Name = "txtSIBPLastname";
-            txtSIBPLastname.Size = new Size(355, 31);
-            txtSIBPLastname.TabIndex = 22;
+            cmbSIReceived.FormattingEnabled = true;
+            cmbSIReceived.Location = new Point(267, 147);
+            cmbSIReceived.Name = "cmbSIReceived";
+            cmbSIReceived.Size = new Size(358, 31);
+            cmbSIReceived.TabIndex = 24;
             // 
-            // label3
+            // cmbSIBPName
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(7, 149);
-            label3.Name = "label3";
-            label3.Size = new Size(250, 23);
-            label3.TabIndex = 21;
-            label3.Text = "Brand Partner Lastname:";
-            // 
-            // txtSIBPFirstname
-            // 
-            txtSIBPFirstname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSIBPFirstname.Location = new Point(267, 104);
-            txtSIBPFirstname.Name = "txtSIBPFirstname";
-            txtSIBPFirstname.Size = new Size(355, 31);
-            txtSIBPFirstname.TabIndex = 20;
+            cmbSIBPName.FormattingEnabled = true;
+            cmbSIBPName.Location = new Point(267, 104);
+            cmbSIBPName.Name = "cmbSIBPName";
+            cmbSIBPName.Size = new Size(358, 31);
+            cmbSIBPName.TabIndex = 23;
             // 
             // dtpSIDelivery
             // 
             dtpSIDelivery.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dtpSIDelivery.Location = new Point(804, 141);
+            dtpSIDelivery.Location = new Point(804, 107);
             dtpSIDelivery.Name = "dtpSIDelivery";
             dtpSIDelivery.Size = new Size(355, 31);
             dtpSIDelivery.TabIndex = 19;
@@ -658,64 +438,60 @@
             // label51
             // 
             label51.AutoSize = true;
-            label51.Location = new Point(648, 141);
+            label51.Location = new Point(648, 107);
             label51.Name = "label51";
             label51.Size = new Size(149, 23);
             label51.TabIndex = 18;
             label51.Text = "Delivery Date:";
             // 
-            // txtSIReceived
+            // cmbSIReceiveBy
             // 
-            txtSIReceived.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSIReceived.Location = new Point(804, 104);
-            txtSIReceived.Name = "txtSIReceived";
-            txtSIReceived.Size = new Size(355, 31);
-            txtSIReceived.TabIndex = 17;
+            cmbSIReceiveBy.AutoSize = true;
+            cmbSIReceiveBy.Location = new Point(10, 147);
+            cmbSIReceiveBy.Name = "cmbSIReceiveBy";
+            cmbSIReceiveBy.Size = new Size(146, 23);
+            cmbSIReceiveBy.TabIndex = 16;
+            cmbSIReceiveBy.Text = "Received by: ";
             // 
-            // label50
+            // btnSIAdd
             // 
-            label50.AutoSize = true;
-            label50.Location = new Point(648, 104);
-            label50.Name = "label50";
-            label50.Size = new Size(146, 23);
-            label50.TabIndex = 16;
-            label50.Text = "Received by: ";
+            btnSIAdd.Location = new Point(1347, 79);
+            btnSIAdd.Name = "btnSIAdd";
+            btnSIAdd.Size = new Size(126, 41);
+            btnSIAdd.TabIndex = 15;
+            btnSIAdd.Text = "Add";
+            btnSIAdd.UseVisualStyleBackColor = true;
+            btnSIAdd.Click += btnSIAdd_Click;
             // 
-            // button9
+            // btnSIDelete
             // 
-            button9.Location = new Point(1347, 79);
-            button9.Name = "button9";
-            button9.Size = new Size(126, 41);
-            button9.TabIndex = 15;
-            button9.Text = "Add";
-            button9.UseVisualStyleBackColor = true;
+            btnSIDelete.Location = new Point(1203, 79);
+            btnSIDelete.Name = "btnSIDelete";
+            btnSIDelete.Size = new Size(126, 41);
+            btnSIDelete.TabIndex = 14;
+            btnSIDelete.Text = "Delete";
+            btnSIDelete.UseVisualStyleBackColor = true;
+            btnSIDelete.Click += btnSIDelete_Click;
             // 
-            // button10
+            // btnSIUpdate
             // 
-            button10.Location = new Point(1203, 79);
-            button10.Name = "button10";
-            button10.Size = new Size(126, 41);
-            button10.TabIndex = 14;
-            button10.Text = "Delete";
-            button10.UseVisualStyleBackColor = true;
+            btnSIUpdate.Location = new Point(1347, 32);
+            btnSIUpdate.Name = "btnSIUpdate";
+            btnSIUpdate.Size = new Size(126, 41);
+            btnSIUpdate.TabIndex = 13;
+            btnSIUpdate.Text = "Update";
+            btnSIUpdate.UseVisualStyleBackColor = true;
+            btnSIUpdate.Click += btnSIUpdate_Click;
             // 
-            // button11
+            // btnSIClear
             // 
-            button11.Location = new Point(1347, 32);
-            button11.Name = "button11";
-            button11.Size = new Size(126, 41);
-            button11.TabIndex = 13;
-            button11.Text = "Update";
-            button11.UseVisualStyleBackColor = true;
-            // 
-            // button12
-            // 
-            button12.Location = new Point(1203, 32);
-            button12.Name = "button12";
-            button12.Size = new Size(126, 41);
-            button12.TabIndex = 12;
-            button12.Text = "Clear";
-            button12.UseVisualStyleBackColor = true;
+            btnSIClear.Location = new Point(1203, 32);
+            btnSIClear.Name = "btnSIClear";
+            btnSIClear.Size = new Size(126, 41);
+            btnSIClear.TabIndex = 12;
+            btnSIClear.Text = "Clear";
+            btnSIClear.UseVisualStyleBackColor = true;
+            btnSIClear.Click += btnSIClear_Click;
             // 
             // dtpSIExpiration
             // 
@@ -780,9 +556,9 @@
             label19.AutoSize = true;
             label19.Location = new Point(7, 107);
             label19.Name = "label19";
-            label19.Size = new Size(246, 23);
+            label19.Size = new Size(215, 23);
             label19.TabIndex = 3;
-            label19.Text = "Brand Partner Firstname:";
+            label19.Text = "Brand Partner Name:";
             // 
             // label20
             // 
@@ -811,20 +587,20 @@
             label22.TabIndex = 0;
             label22.Text = "Product Barcode:";
             // 
-            // dgvStockIn
+            // dgvStockInProducts
             // 
-            dgvStockIn.AllowUserToAddRows = false;
-            dgvStockIn.AllowUserToDeleteRows = false;
-            dgvStockIn.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dgvStockIn.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvStockIn.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dgvStockIn.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvStockIn.Location = new Point(18, 73);
-            dgvStockIn.Name = "dgvStockIn";
-            dgvStockIn.ReadOnly = true;
-            dgvStockIn.RowHeadersWidth = 51;
-            dgvStockIn.Size = new Size(1617, 525);
-            dgvStockIn.TabIndex = 7;
+            dgvStockInProducts.AllowUserToAddRows = false;
+            dgvStockInProducts.AllowUserToDeleteRows = false;
+            dgvStockInProducts.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvStockInProducts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvStockInProducts.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvStockInProducts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvStockInProducts.Location = new Point(18, 73);
+            dgvStockInProducts.Name = "dgvStockInProducts";
+            dgvStockInProducts.ReadOnly = true;
+            dgvStockInProducts.RowHeadersWidth = 51;
+            dgvStockInProducts.Size = new Size(1617, 525);
+            dgvStockInProducts.TabIndex = 7;
             // 
             // label23
             // 
@@ -1576,6 +1352,223 @@
             label46.TabIndex = 10;
             label46.Text = "SALES";
             // 
+            // tabPage7
+            // 
+            tabPage7.Controls.Add(txtSearchEmployee);
+            tabPage7.Controls.Add(groupBox1);
+            tabPage7.Controls.Add(dgvEmployees);
+            tabPage7.Controls.Add(label12);
+            tabPage7.Location = new Point(4, 32);
+            tabPage7.Name = "tabPage7";
+            tabPage7.Size = new Size(1687, 931);
+            tabPage7.TabIndex = 4;
+            tabPage7.Text = "Employees";
+            tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // txtSearchEmployee
+            // 
+            txtSearchEmployee.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSearchEmployee.Location = new Point(1457, 50);
+            txtSearchEmployee.Name = "txtSearchEmployee";
+            txtSearchEmployee.PlaceholderText = "Search Employee";
+            txtSearchEmployee.Size = new Size(193, 32);
+            txtSearchEmployee.TabIndex = 13;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(txtEmployeeAddress);
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(cmbUserLevel);
+            groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(txtEmployeeEmail);
+            groupBox1.Controls.Add(label5);
+            groupBox1.Controls.Add(btnEmployeeAdd);
+            groupBox1.Controls.Add(btnEmployeeDelete);
+            groupBox1.Controls.Add(btnEmployeeUpdate);
+            groupBox1.Controls.Add(btnEmployeeClear);
+            groupBox1.Controls.Add(txtEmployeeFirstname);
+            groupBox1.Controls.Add(txtEmployeeLastname);
+            groupBox1.Controls.Add(txtEmployeeContactNumber);
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(label10);
+            groupBox1.Location = new Point(35, 644);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(1616, 237);
+            groupBox1.TabIndex = 12;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Employee Details:";
+            // 
+            // txtEmployeeAddress
+            // 
+            txtEmployeeAddress.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtEmployeeAddress.Location = new Point(268, 151);
+            txtEmployeeAddress.Name = "txtEmployeeAddress";
+            txtEmployeeAddress.Size = new Size(355, 31);
+            txtEmployeeAddress.TabIndex = 26;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(8, 151);
+            label3.Name = "label3";
+            label3.Size = new Size(93, 23);
+            label3.TabIndex = 25;
+            label3.Text = "Address:";
+            // 
+            // cmbUserLevel
+            // 
+            cmbUserLevel.FormattingEnabled = true;
+            cmbUserLevel.Items.AddRange(new object[] { "Owner", "Cashier", "Admin" });
+            cmbUserLevel.Location = new Point(804, 63);
+            cmbUserLevel.Name = "cmbUserLevel";
+            cmbUserLevel.Size = new Size(355, 31);
+            cmbUserLevel.TabIndex = 24;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(647, 65);
+            label4.Name = "label4";
+            label4.Size = new Size(86, 23);
+            label4.TabIndex = 18;
+            label4.Text = "Position:";
+            // 
+            // txtEmployeeEmail
+            // 
+            txtEmployeeEmail.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtEmployeeEmail.Location = new Point(804, 26);
+            txtEmployeeEmail.Name = "txtEmployeeEmail";
+            txtEmployeeEmail.Size = new Size(355, 31);
+            txtEmployeeEmail.TabIndex = 17;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(647, 30);
+            label5.Name = "label5";
+            label5.Size = new Size(67, 23);
+            label5.TabIndex = 16;
+            label5.Text = "Email:";
+            // 
+            // btnEmployeeAdd
+            // 
+            btnEmployeeAdd.Location = new Point(1347, 79);
+            btnEmployeeAdd.Name = "btnEmployeeAdd";
+            btnEmployeeAdd.Size = new Size(126, 41);
+            btnEmployeeAdd.TabIndex = 15;
+            btnEmployeeAdd.Text = "Add";
+            btnEmployeeAdd.UseVisualStyleBackColor = true;
+            btnEmployeeAdd.Click += btnEmployeeAdd_Click;
+            // 
+            // btnEmployeeDelete
+            // 
+            btnEmployeeDelete.Location = new Point(1203, 79);
+            btnEmployeeDelete.Name = "btnEmployeeDelete";
+            btnEmployeeDelete.Size = new Size(126, 41);
+            btnEmployeeDelete.TabIndex = 14;
+            btnEmployeeDelete.Text = "Delete";
+            btnEmployeeDelete.UseVisualStyleBackColor = true;
+            btnEmployeeDelete.Click += btnEmployeeDelete_Click;
+            // 
+            // btnEmployeeUpdate
+            // 
+            btnEmployeeUpdate.Location = new Point(1347, 32);
+            btnEmployeeUpdate.Name = "btnEmployeeUpdate";
+            btnEmployeeUpdate.Size = new Size(126, 41);
+            btnEmployeeUpdate.TabIndex = 13;
+            btnEmployeeUpdate.Text = "Update";
+            btnEmployeeUpdate.UseVisualStyleBackColor = true;
+            btnEmployeeUpdate.Click += btnEmployeeUpdate_Click;
+            // 
+            // btnEmployeeClear
+            // 
+            btnEmployeeClear.Location = new Point(1203, 32);
+            btnEmployeeClear.Name = "btnEmployeeClear";
+            btnEmployeeClear.Size = new Size(126, 41);
+            btnEmployeeClear.TabIndex = 12;
+            btnEmployeeClear.Text = "Clear";
+            btnEmployeeClear.UseVisualStyleBackColor = true;
+            btnEmployeeClear.Click += btnEmployeeClear_Click;
+            // 
+            // txtEmployeeFirstname
+            // 
+            txtEmployeeFirstname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtEmployeeFirstname.Location = new Point(269, 30);
+            txtEmployeeFirstname.Name = "txtEmployeeFirstname";
+            txtEmployeeFirstname.Size = new Size(355, 31);
+            txtEmployeeFirstname.TabIndex = 8;
+            // 
+            // txtEmployeeLastname
+            // 
+            txtEmployeeLastname.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtEmployeeLastname.Location = new Point(269, 70);
+            txtEmployeeLastname.Name = "txtEmployeeLastname";
+            txtEmployeeLastname.Size = new Size(355, 31);
+            txtEmployeeLastname.TabIndex = 7;
+            // 
+            // txtEmployeeContactNumber
+            // 
+            txtEmployeeContactNumber.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtEmployeeContactNumber.Location = new Point(269, 110);
+            txtEmployeeContactNumber.Name = "txtEmployeeContactNumber";
+            txtEmployeeContactNumber.Size = new Size(355, 31);
+            txtEmployeeContactNumber.TabIndex = 6;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(9, 110);
+            label7.Name = "label7";
+            label7.Size = new Size(182, 23);
+            label7.TabIndex = 3;
+            label7.Text = "Contact Number:";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(9, 70);
+            label8.Name = "label8";
+            label8.Size = new Size(111, 23);
+            label8.TabIndex = 2;
+            label8.Text = "Lastname:";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(9, 33);
+            label10.Name = "label10";
+            label10.Size = new Size(107, 23);
+            label10.TabIndex = 1;
+            label10.Text = "Firstname:";
+            // 
+            // dgvEmployees
+            // 
+            dgvEmployees.AllowUserToAddRows = false;
+            dgvEmployees.AllowUserToDeleteRows = false;
+            dgvEmployees.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvEmployees.Location = new Point(35, 97);
+            dgvEmployees.Name = "dgvEmployees";
+            dgvEmployees.ReadOnly = true;
+            dgvEmployees.RowHeadersWidth = 51;
+            dgvEmployees.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvEmployees.Size = new Size(1616, 525);
+            dgvEmployees.TabIndex = 11;
+            dgvEmployees.CellContentClick += dgvEmployees_CellContentClick;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label12.Location = new Point(35, 50);
+            label12.Name = "label12";
+            label12.Size = new Size(198, 34);
+            label12.TabIndex = 10;
+            label12.Text = "Employee List";
+            // 
             // tabPage4
             // 
             tabPage4.Controls.Add(tabControl3);
@@ -1654,16 +1647,11 @@
             tabPage5.ResumeLayout(false);
             tabPage5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvProductList).EndInit();
-            tabPage7.ResumeLayout(false);
-            tabPage7.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
             tabPage9.ResumeLayout(false);
             tabPage9.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvStockIn).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvStockInProducts).EndInit();
             tabPage10.ResumeLayout(false);
             tabPage10.PerformLayout();
             groupBox4.ResumeLayout(false);
@@ -1682,6 +1670,11 @@
             groupBox6.ResumeLayout(false);
             groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSales).EndInit();
+            tabPage7.ResumeLayout(false);
+            tabPage7.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvEmployees).EndInit();
             tabPage4.ResumeLayout(false);
             tabControl3.ResumeLayout(false);
             tabPage6.ResumeLayout(false);
@@ -1700,7 +1693,6 @@
         private TabPage tabPage4;
         private TabControl tabControl2;
         private TabPage tabPage5;
-        private TabPage tabPage7;
         private TabPage tabPage9;
         private TabPage tabPage10;
         private TabPage tabPage11;
@@ -1708,33 +1700,13 @@
         private DataGridView dgvProductList;
         private PictureBox pictureBox1;
         private Label label9;
-        private TextBox txtSearchProduct;
-        private GroupBox groupBox2;
-        private Button button5;
-        private Button button6;
-        private Button button7;
-        private Button button8;
-        private DateTimePicker dateTimePicker2;
-        private TextBox textBox7;
-        private TextBox textBox8;
-        private TextBox textBox9;
-        private TextBox textBox10;
-        private TextBox textBox11;
-        private Label label11;
-        private Label label12;
-        private Label label13;
-        private Label label14;
-        private Label label15;
-        private Label label16;
-        private DataGridView dataGridView3;
-        private Label label10;
-        private TextBox textBox12;
-        private TextBox textBox13;
+        private TextBox txtProductSearch;
+        private TextBox txtStockInSearch;
         private GroupBox groupBox3;
-        private Button button9;
-        private Button button10;
-        private Button button11;
-        private Button button12;
+        private Button btnSIAdd;
+        private Button btnSIDelete;
+        private Button btnSIUpdate;
+        private Button btnSIClear;
         private DateTimePicker dtpSIExpiration;
         private TextBox txtSIQty;
         private TextBox txtSIBarcode;
@@ -1746,7 +1718,7 @@
         private Label label20;
         private Label label21;
         private Label label22;
-        private DataGridView dgvStockIn;
+        private DataGridView dgvStockInProducts;
         private Label label23;
         private TextBox textBox19;
         private GroupBox groupBox4;
@@ -1824,12 +1796,31 @@
         private Label label48;
         private Label label1;
         private ComboBox cmbStoragePrice;
-        private TextBox txtSIReceived;
-        private Label label50;
+        private Label cmbSIReceiveBy;
         private DateTimePicker dtpSIDelivery;
         private Label label51;
-        private TextBox txtSIBPFirstname;
-        private TextBox txtSIBPLastname;
+        private ComboBox cmbSIBPName;
+        private ComboBox cmbSIReceived;
+        private TabPage tabPage7;
+        private TextBox txtSearchEmployee;
+        private GroupBox groupBox1;
+        private TextBox txtEmployeeEmail;
+        private Label label5;
+        private Button btnEmployeeAdd;
+        private Button btnEmployeeDelete;
+        private Button btnEmployeeUpdate;
+        private Button btnEmployeeClear;
+        private TextBox txtEmployeeFirstname;
+        private TextBox txtEmployeeLastname;
+        private TextBox txtEmployeeContactNumber;
+        private Label label7;
+        private Label label8;
+        private Label label10;
+        private DataGridView dgvEmployees;
+        private Label label12;
+        private ComboBox cmbUserLevel;
+        private Label label4;
+        private TextBox txtEmployeeAddress;
         private Label label3;
     }
 }

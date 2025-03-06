@@ -365,9 +365,9 @@
             tabPage9.Controls.Add(groupBox3);
             tabPage9.Controls.Add(dgvStockInProducts);
             tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 29);
+            tabPage9.Location = new Point(4, 32);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 892);
+            tabPage9.Size = new Size(1673, 889);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -406,7 +406,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 244);
+            groupBox3.Size = new Size(1617, 241);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";

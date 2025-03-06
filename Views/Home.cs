@@ -75,24 +75,25 @@ namespace DUH_Trends_Palas_POS.Views
                 {
                     databaseConnection.Open();
                     string query = @"
-                SELECT 
-                    bp.BrandPartner_ID, 
-                    bp.Firstname, 
-                    bp.Lastname, 
-                    bp.BrandPartner_ContactNum, 
-                    bp.BrandPartner_Email, 
-                    bp.BrandPartner_Address, 
-                    c.Contract_startdate, 
-                    c.Contract_enddate,  
-                    s.Storage_price
-                FROM 
-                    BrandPartner bp
-                LEFT JOIN 
-                    contract c ON bp.BrandPartner_ID = c.BrandPartner_ID
-                LEFT JOIN 
-                    storagetype s ON c.Contract_ID = s.ContractID
-                ORDER BY 
-                    bp.Firstname, bp.Lastname";
+            SELECT 
+                bp.BrandPartner_ID, 
+                bp.Firstname, 
+                bp.Lastname, 
+                bp.BrandPartner_ContactNum, 
+                bp.BrandPartner_Email, 
+                bp.BrandPartner_Address, 
+                s.Storage_ID, -- Now included
+                s.Contract_startdate,  
+                s.Contract_enddate,    
+                s.Storage_price
+            FROM 
+                BrandPartner bp
+            LEFT JOIN 
+                contract c ON bp.BrandPartner_ID = c.BrandPartner_ID
+            LEFT JOIN 
+                storagetype s ON c.Contract_ID = s.ContractID
+            ORDER BY 
+                bp.Firstname, bp.Lastname";
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
@@ -109,7 +110,8 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        // Event handler for DataGridView row selection
+
+
         private void dgvBrandPartnerList_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure a valid row is clicked
@@ -123,7 +125,11 @@ namespace DUH_Trends_Palas_POS.Views
                 txtBPEmail.Text = row.Cells["BrandPartner_Email"].Value?.ToString() ?? "";
                 txtBPAddress.Text = row.Cells["BrandPartner_Address"].Value?.ToString() ?? "";
 
-                // Handle DateTimePicker values (parse only if valid)
+                // Fetch and store Storage_ID
+                object storageIdObj = row.Cells["Storage_ID"].Value;
+                int? storageId = (storageIdObj != DBNull.Value && storageIdObj != null) ? Convert.ToInt32(storageIdObj) : (int?)null;
+
+                // Fetch Contract Start and End Dates from StorageType table
                 if (DateTime.TryParse(row.Cells["Contract_startdate"].Value?.ToString(), out DateTime startDate))
                 {
                     dtpStartDate.Value = startDate;
@@ -154,6 +160,8 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+
         //Stock-in
         private void LoadStockInList()
         {
@@ -576,68 +584,30 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnBPUpdate_Click(object sender, EventArgs e)
         {
-            if (dgvBrandPartnerList.SelectedRows.Count > 0)
+            if (dgvBrandPartnerList.SelectedCells.Count > 0)
             {
-                int brandPartnerId = Convert.ToInt32(dgvBrandPartnerList.SelectedRows[0].Cells["BrandPartner_ID"].Value);
+                int selectedRowIndex = dgvBrandPartnerList.SelectedCells[0].RowIndex;
+                DataGridViewRow selectedRow = dgvBrandPartnerList.Rows[selectedRowIndex];
+
+                int brandPartnerId = Convert.ToInt32(selectedRow.Cells["BrandPartner_ID"].Value);
+                object storageIdObj = selectedRow.Cells["Storage_ID"].Value;
+                int? storageId = storageIdObj != DBNull.Value ? Convert.ToInt32(storageIdObj) : (int?)null;
+
                 using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
                 {
                     try
                     {
                         databaseConnection.Open();
 
-                        // Step 1: Retrieve the Contract_ID associated with the BrandPartner_ID
-                        int contractId;
-                        string getContractIdQuery = "SELECT Contract_ID FROM Contract WHERE BrandPartner_ID=@BrandPartnerId";
-                        using (MySqlCommand getContractIdCommand = new MySqlCommand(getContractIdQuery, databaseConnection))
-                        {
-                            getContractIdCommand.Parameters.AddWithValue("@BrandPartnerId", brandPartnerId);
-                            object result = getContractIdCommand.ExecuteScalar();
-                            contractId = result != null ? Convert.ToInt32(result) : 0;
-                        }
+                        // Update BrandPartner details (only if fields are changed)
+                        string updateBrandPartnerQuery = @"
+                UPDATE BrandPartner 
+                SET Firstname=@Firstname, Lastname=@Lastname, 
+                    BrandPartner_ContactNum=@ContactNum, 
+                    BrandPartner_Email=@Email, 
+                    BrandPartner_Address=@Address 
+                WHERE BrandPartner_ID=@BrandPartnerId";
 
-                        if (contractId == 0)
-                        {
-                            MessageBox.Show("No contract found for the selected brand partner.");
-                            return;
-                        }
-
-                        // Step 2: Retrieve the specific StorageType_ID associated with this Contract (Modify as needed)
-                        int storageTypeId;
-                        string getStorageIdQuery = "SELECT Storage_ID FROM StorageType WHERE ContractID=@ContractID LIMIT 1"; // Ensures updating only one
-                        using (MySqlCommand getStorageIdCommand = new MySqlCommand(getStorageIdQuery, databaseConnection))
-                        {
-                            getStorageIdCommand.Parameters.AddWithValue("@ContractID", contractId);
-                            object storageResult = getStorageIdCommand.ExecuteScalar();
-                            storageTypeId = storageResult != null ? Convert.ToInt32(storageResult) : 0;
-                        }
-
-                        if (storageTypeId == 0)
-                        {
-                            MessageBox.Show("No storage found for the selected contract.");
-                            return;
-                        }
-
-                        // Step 3: Update the Contract table
-                        string updateContractQuery = "UPDATE Contract SET Contract_startdate=@StartDate, Contract_enddate=@EndDate WHERE Contract_ID=@ContractID";
-                        using (MySqlCommand updateContractCommand = new MySqlCommand(updateContractQuery, databaseConnection))
-                        {
-                            updateContractCommand.Parameters.AddWithValue("@StartDate", dtpStartDate.Value.Date);
-                            updateContractCommand.Parameters.AddWithValue("@EndDate", dtpEndDate.Value.Date);
-                            updateContractCommand.Parameters.AddWithValue("@ContractID", contractId);
-                            updateContractCommand.ExecuteNonQuery();
-                        }
-
-                        // Step 4: Update only ONE specific StorageType entry for the contract
-                        string updateStorageQuery = "UPDATE StorageType SET Storage_price=@StoragePrice WHERE Storage_ID=@StorageTypeID";
-                        using (MySqlCommand updateStorageCommand = new MySqlCommand(updateStorageQuery, databaseConnection))
-                        {
-                            updateStorageCommand.Parameters.AddWithValue("@StoragePrice", Convert.ToDecimal(cmbStoragePrice.SelectedItem));
-                            updateStorageCommand.Parameters.AddWithValue("@StorageTypeID", storageTypeId); // Target only one storage
-                            updateStorageCommand.ExecuteNonQuery();
-                        }
-
-                        // Step 5: Update the BrandPartner table
-                        string updateBrandPartnerQuery = "UPDATE BrandPartner SET Firstname=@Firstname, Lastname=@Lastname, BrandPartner_ContactNum=@ContactNum, BrandPartner_Email=@Email, BrandPartner_Address=@Address WHERE BrandPartner_ID=@BrandPartnerId";
                         using (MySqlCommand updateBrandPartnerCommand = new MySqlCommand(updateBrandPartnerQuery, databaseConnection))
                         {
                             updateBrandPartnerCommand.Parameters.AddWithValue("@Firstname", txtBPFirstname.Text);
@@ -649,20 +619,50 @@ namespace DUH_Trends_Palas_POS.Views
                             updateBrandPartnerCommand.ExecuteNonQuery();
                         }
 
-                        MessageBox.Show("Brand Partner updated successfully.");
-                        LoadBrandPartnerList();
+                        // Update ONLY the selected StorageType record
+                        if (storageId.HasValue)
+                        {
+                            decimal newStoragePrice = Convert.ToDecimal(cmbStoragePrice.SelectedItem);
+                            DateTime newStartDate = dtpStartDate.Value;
+                            DateTime newEndDate = dtpEndDate.Value;
+
+                            string updateStorageQuery = @"
+                    UPDATE StorageType 
+                    SET Storage_price=@StoragePrice, 
+                        Contract_startdate=@StartDate, 
+                        Contract_enddate=@EndDate 
+                    WHERE Storage_ID=@StorageID";
+
+                            using (MySqlCommand updateStorageCommand = new MySqlCommand(updateStorageQuery, databaseConnection))
+                            {
+                                updateStorageCommand.Parameters.AddWithValue("@StoragePrice", newStoragePrice);
+                                updateStorageCommand.Parameters.AddWithValue("@StartDate", newStartDate);
+                                updateStorageCommand.Parameters.AddWithValue("@EndDate", newEndDate);
+                                updateStorageCommand.Parameters.AddWithValue("@StorageID", storageId);
+                                updateStorageCommand.ExecuteNonQuery();
+                            }
+                        }
+
+                        MessageBox.Show("Update successful.");
+                        LoadBrandPartnerList(); // Refresh the brand partner list
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error updating brand partner: " + ex.Message);
+                        MessageBox.Show("Error updating: " + ex.Message);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Please select a brand partner to update.");
+                MessageBox.Show("Please select a brand partner or storage type to update.");
             }
         }
+
+
+
+
+
+
 
         private void btnBPDelete_Click(object sender, EventArgs e)
         {
@@ -783,6 +783,7 @@ namespace DUH_Trends_Palas_POS.Views
 
                     // Step 1: Check if the Brand Partner already exists
                     int brandPartnerId;
+                    bool isNewBrandPartner = false;
                     string checkBrandPartnerQuery = "SELECT BrandPartner_ID FROM BrandPartner WHERE BrandPartner_ContactNum=@ContactNum OR BrandPartner_Email=@Email";
                     using (MySqlCommand checkBrandPartnerCommand = new MySqlCommand(checkBrandPartnerQuery, databaseConnection))
                     {
@@ -793,7 +794,7 @@ namespace DUH_Trends_Palas_POS.Views
                         brandPartnerId = result != null ? Convert.ToInt32(result) : 0;
                     }
 
-                    // Step 2: If the brand partner doesn't exist, insert them
+                    // Step 2: If brand partner doesn't exist, insert them
                     if (brandPartnerId == 0)
                     {
                         string insertBrandPartnerQuery = "INSERT INTO BrandPartner (Firstname, Lastname, BrandPartner_ContactNum, BrandPartner_Email, BrandPartner_Address) " +
@@ -808,7 +809,14 @@ namespace DUH_Trends_Palas_POS.Views
                             insertBrandPartnerCommand.Parameters.AddWithValue("@Address", txtBPAddress.Text);
 
                             brandPartnerId = Convert.ToInt32(insertBrandPartnerCommand.ExecuteScalar());
+                            isNewBrandPartner = true;
                         }
+
+                        MessageBox.Show("New brand partner added.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Brand partner already exists.");
                     }
 
                     // Step 3: Check if a Contract exists for this Brand Partner
@@ -824,43 +832,50 @@ namespace DUH_Trends_Palas_POS.Views
                     // Step 4: If no contract exists, create a new contract
                     if (contractId == 0)
                     {
-                        // Step 4: If no contract exists, create a new contract
-                        if (contractId == 0)
+                        int ownerId = GetOwnerId();
+                        if (ownerId == 0)
                         {
-                            int ownerId = GetOwnerId();  // Ensure there's a valid Owner_ID
-                            if (ownerId == 0)
-                            {
-                                MessageBox.Show("Error: No valid Owner_ID found.");
-                                return;
-                            }
-
-                            string insertContractQuery = "INSERT INTO Contract (BrandPartner_ID, Owner_ID, Contract_startdate, Contract_enddate) " +
-                                                         "VALUES (@BrandPartnerID, @OwnerID, @StartDate, @EndDate); SELECT LAST_INSERT_ID();";
-                            using (MySqlCommand insertContractCommand = new MySqlCommand(insertContractQuery, databaseConnection))
-                            {
-                                insertContractCommand.Parameters.AddWithValue("@BrandPartnerID", brandPartnerId);
-                                insertContractCommand.Parameters.AddWithValue("@OwnerID", ownerId);
-                                insertContractCommand.Parameters.AddWithValue("@StartDate", dtpStartDate.Value.Date);
-                                insertContractCommand.Parameters.AddWithValue("@EndDate", dtpEndDate.Value.Date);
-
-                                contractId = Convert.ToInt32(insertContractCommand.ExecuteScalar());
-                            }
+                            MessageBox.Show("Error: No valid Owner_ID found.");
+                            return;
                         }
 
-                        // Step 5: Insert a new StorageType for the existing Contract
-                        string insertStorageQuery = "INSERT INTO StorageType (Storage_price, ContractID) VALUES (@StoragePrice, @ContractID)";
-                        using (MySqlCommand insertStorageCommand = new MySqlCommand(insertStorageQuery, databaseConnection))
+                        string insertContractQuery = "INSERT INTO Contract (BrandPartner_ID, Owner_ID) " +
+                                                     "VALUES (@BrandPartnerID, @OwnerID); SELECT LAST_INSERT_ID();";
+                        using (MySqlCommand insertContractCommand = new MySqlCommand(insertContractQuery, databaseConnection))
                         {
-                            insertStorageCommand.Parameters.AddWithValue("@StoragePrice", Convert.ToDecimal(cmbStoragePrice.SelectedItem));
-                            insertStorageCommand.Parameters.AddWithValue("@ContractID", contractId);
-
-                            insertStorageCommand.ExecuteNonQuery();
+                            insertContractCommand.Parameters.AddWithValue("@BrandPartnerID", brandPartnerId);
+                            insertContractCommand.Parameters.AddWithValue("@OwnerID", ownerId);
+                            contractId = Convert.ToInt32(insertContractCommand.ExecuteScalar());
                         }
-
-                        MessageBox.Show("Storage added successfully for the existing Brand Partner.");
-                        LoadBrandPartnerList(); // Refresh the brand partner list
-                        LoadBrandPartners(); // Refresh the ComboBox with brand partners
                     }
+
+                    // Step 5: Insert a new StorageType entry with different start and end dates
+                    if (cmbStoragePrice.SelectedItem == null)
+                    {
+                        MessageBox.Show("Please select a storage price.");
+                        return;
+                    }
+
+                    decimal selectedStoragePrice = Convert.ToDecimal(cmbStoragePrice.SelectedItem);
+                    DateTime startDate = dtpStartDate.Value.Date;
+                    DateTime endDate = dtpEndDate.Value.Date;
+
+                    string insertStorageQuery = "INSERT INTO StorageType (Storage_price, ContractID, Contract_startdate, Contract_enddate) " +
+                                                "VALUES (@StoragePrice, @ContractID, @StartDate, @EndDate)";
+                    using (MySqlCommand insertStorageCommand = new MySqlCommand(insertStorageQuery, databaseConnection))
+                    {
+                        insertStorageCommand.Parameters.AddWithValue("@StoragePrice", selectedStoragePrice);
+                        insertStorageCommand.Parameters.AddWithValue("@ContractID", contractId);
+                        insertStorageCommand.Parameters.AddWithValue("@StartDate", startDate);
+                        insertStorageCommand.Parameters.AddWithValue("@EndDate", endDate);
+
+                        insertStorageCommand.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show(isNewBrandPartner ? "Storage type recorded for new brand partner." : "Another storage added for existing brand partner.");
+
+                    LoadBrandPartnerList(); // Refresh the brand partner list
+                    LoadBrandPartners(); // Refresh the ComboBox with brand partners
                 }
                 catch (Exception ex)
                 {
@@ -868,6 +883,9 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+
+
 
 
         private void dgvProductList_CellContentClick(object sender, DataGridViewCellEventArgs e)

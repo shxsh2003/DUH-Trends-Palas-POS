@@ -13,21 +13,21 @@ namespace DUH_Trends_Palas_POS.Views
         string connectionString = ConfigurationManager.ConnectionStrings["MySqlConnectionString"]?.ConnectionString;
         int employeeId;
 
-            public LogIn()
-    {
-        InitializeComponent();
-        txtPassword.PasswordChar = '•';
-        cmbUserLevel.SelectedIndex = 0;
-    }
-
-    private string HashPassword(string password)
-    {
-        using (SHA256 sha256 = SHA256.Create())
+        public LogIn()
         {
-            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
+            InitializeComponent();
+            txtPassword.PasswordChar = '•';
+            cmbUserLevel.SelectedIndex = 0;
         }
-    }
+
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(bytes);
+            }
+        }
 
 
         private void login()
@@ -113,51 +113,51 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
         private void Order_FormClosed(object sender, FormClosedEventArgs e)
-    {
-        using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
         {
-            try
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
-                databaseConnection.Open();
-                string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId;";
-                using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
+                try
                 {
-                    updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
-                    updateCommand.ExecuteNonQuery();
+                    databaseConnection.Open();
+                    string updateQuery = "UPDATE login_history SET logout_time = NOW() WHERE id = @loginHistoryId;";
+                    using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
+                    {
+                        updateCommand.Parameters.AddWithValue("@loginHistoryId", loginHistoryId);
+                        updateCommand.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating logout time: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex)
+            this.Show();
+
+        }
+
+        private void btnShowPassword_Click(object sender, EventArgs e)
+        {
+            txtPassword.PasswordChar = txtPassword.PasswordChar == '•' ? '\0' : '•';
+            btnShowPassword.Text = txtPassword.PasswordChar == '•' ? "Show" : "Hide";
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            btnLogin.Enabled = false;
+            try
             {
-                MessageBox.Show("Error updating logout time: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                login();
+            }
+            finally
+            {
+                btnLogin.Enabled = true;
             }
         }
-        this.Show();
 
     }
-
-    private void btnShowPassword_Click(object sender, EventArgs e)
-    {
-        txtPassword.PasswordChar = txtPassword.PasswordChar == '•' ? '\0' : '•';
-        btnShowPassword.Text = txtPassword.PasswordChar == '•' ? "Show" : "Hide";
-    }
-
-    private void btnExit_Click(object sender, EventArgs e)
-    {
-        Application.Exit();
-    }
-
-    private void btnLogin_Click(object sender, EventArgs e)
-    {
-        btnLogin.Enabled = false;
-        try
-        {
-            login();
-        }
-        finally
-        {
-            btnLogin.Enabled = true;
-        }
-    }
-
-}
 }

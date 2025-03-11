@@ -208,7 +208,7 @@
             dgvOrders.Name = "dgvOrders";
             dgvOrders.ReadOnly = true;
             dgvOrders.RowHeadersWidth = 51;
-            dgvOrders.Size = new Size(920, 714);
+            dgvOrders.Size = new Size(899, 714);
             dgvOrders.TabIndex = 3;
             dgvOrders.CellContentClick += dgvOrders_CellContentClick;
             // 

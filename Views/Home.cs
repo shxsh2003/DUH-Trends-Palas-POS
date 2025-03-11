@@ -4,6 +4,9 @@ using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Configuration;
 using static Mysqlx.Notice.Warning.Types;
+using Mysqlx.Crud;
+using Mysqlx.Expr;
+using System.Transactions;
 
 namespace DUH_Trends_Palas_POS.Views
 {
@@ -17,6 +20,8 @@ namespace DUH_Trends_Palas_POS.Views
         private int employeeId;
         private DataTable stockInData; // Store stock-in data globally for search functionality
         private DataTable employeeData; // Store employee data globally for search functionality
+        private DataTable salesData; // Store sales data globally for search functionality
+
 
 
         public Home(int loginHistoryId, string userLevel)
@@ -30,17 +35,28 @@ namespace DUH_Trends_Palas_POS.Views
             LoadExpirationProductList();
             LoadSalesData();
             LoadStockInList(); // Load stock-in data
-            LoadBrandPartners(); // Load brand partners into the ComboBox
+            LoadBrandPartners(); // Load brand partners into the ComboBox in StockIn
             LoadEmployeeList(); // Load employee data into the DataGridView
             LoadUserLevels(); // Load user levels into the ComboBox
+            LoadEmployees(); // Load active employees into the ComboBox
+            LoadBPInProducts(); // Load brand partners into the ComboBox in Products
+
 
 
 
             this.txtSearchBrandPartner.TextChanged += new EventHandler(this.txtSearchBrandPartner_TextChanged);
             this.dgvBrandPartnerList.CellClick += new DataGridViewCellEventHandler(this.dgvBrandPartnerList_CellClick);
             this.txtProductSearch.TextChanged += new EventHandler(this.txtSearchProduct_TextChanged);
-            this.dgvStockInProducts.CellClick += new DataGridViewCellEventHandler(this.dgvStockIn_CellClick);
+            this.dgvStockInProducts.CellClick += new DataGridViewCellEventHandler(this.dgvStockInProducts_CellClick);
             this.txtSearchEmployee.TextChanged += new EventHandler(this.txtSearchEmployee_TextChanged);
+            this.txtSalesSearch.TextChanged += new EventHandler(this.txtSalesSearch_TextChanged);
+            this.txtExpiredProduct.TextChanged += new EventHandler(this.txtExpiredProduct_TextChanged);
+            this.dgvExpiration.CellFormatting += new DataGridViewCellFormattingEventHandler(this.dgvExpiration_CellFormatting);
+            this.dgvProductList.CellFormatting += new DataGridViewCellFormattingEventHandler(this.dgvProductList_CellFormatting); // Attach cell formatting event
+            this.dgvStockInProducts.CellFormatting += new DataGridViewCellFormattingEventHandler(this.dgvStockInProducts_CellFormatting);
+            this.dgvBrandPartnerList.CellFormatting += new DataGridViewCellFormattingEventHandler(this.dgvBrandPartnerList_CellFormatting);
+            this.dgvProductList.CellClick += new DataGridViewCellEventHandler(this.dgvProductList_CellClick);
+
 
         }
 
@@ -67,6 +83,7 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        // Brand Partner - TAB
         private void LoadBrandPartnerList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -161,8 +178,32 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        private void dgvBrandPartnerList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure a valid row
+            {
+                // Get the value of the Contract_enddate column
+                object contractEndDateObj = dgvBrandPartnerList.Rows[e.RowIndex].Cells["Contract_enddate"].Value;
 
-        //Stock-in
+                if (contractEndDateObj != null && contractEndDateObj != DBNull.Value &&
+                    DateTime.TryParse(contractEndDateObj.ToString(), out DateTime contractEndDate))
+                {
+                    // Check if the contract has ended (date is in the past)
+                    if (contractEndDate < DateTime.Now.Date)
+                    {
+                        // Highlight the entire row in red
+                        dgvBrandPartnerList.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Red;
+                        dgvBrandPartnerList.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.White; // Optional: Adjust text color for visibility
+                    }
+                }
+            }
+        }
+
+
+
+        /// 
+        /// Stock-in - TAB
+        /// 
         private void LoadStockInList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -171,24 +212,26 @@ namespace DUH_Trends_Palas_POS.Views
                 {
                     databaseConnection.Open();
                     string query = @"
-                SELECT 
-                    p.product_barcode, 
-                    p.product_name, 
-                    b.Firstname, 
-                    b.Lastname, 
-                    p.expiration_date, 
-                    p.quantity, 
-                    p.price, 
-                    s.supply_receivedby, 
-                    p.delivery_date
-                FROM 
-                    product p
-                JOIN 
-                    brandpartner b ON p.brandpartner_id = b.BrandPartner_ID
-                LEFT JOIN 
-                    supply_details s ON p.product_barcode = s.product_barcode
-                ORDER BY 
-                    p.delivery_date DESC";
+            SELECT 
+                s.supply_id, 
+                CONCAT(bp.Firstname, ' ', bp.Lastname) AS BrandPartnerName, 
+                sd.product_barcode, 
+                sd.product_name, 
+                sd.quantity, 
+                sd.price, 
+                sd.expiration_date, 
+                sd.supply_receivedby,
+                s.supply_date
+            FROM 
+                supply s
+            INNER JOIN 
+                supply_details sd ON s.supply_id = sd.supply_id
+            INNER JOIN 
+                brandpartner bp ON s.BrandPartner_ID = bp.BrandPartner_ID
+            WHERE 
+                sd.is_active = 1  -- Only load active products
+            ORDER BY 
+                sd.expiration_date ASC";
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
@@ -206,44 +249,82 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
-        private void dgvStockIn_CellClick(object sender, DataGridViewCellEventArgs e)
+
+
+        private void dgvStockInProducts_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Ensure the row index is valid
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                // Check if the column is "expiration_date"
+                if (dgvStockInProducts.Columns[e.ColumnIndex].Name == "expiration_date")
+                {
+                    if (e.Value != null && DateTime.TryParse(e.Value.ToString(), out DateTime expirationDate))
+                    {
+                        // Highlight expired products in red
+                        if (expirationDate < DateTime.Now)
+                        {
+                            dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Red;
+                            dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.White; // Ensure visibility
+                        }
+                        else
+                        {
+                            // Reset style for non-expired products
+                            dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+                            dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Black;
+                        }
+                    }
+                    else
+                    {
+                        // Reset styles if expiration_date is null or invalid
+                        dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+                        dgvStockInProducts.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Black;
+                    }
+                }
+            }
+        }
+
+
+        private void dgvStockInProducts_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0) // Ensure a valid row is clicked
             {
                 DataGridViewRow row = dgvStockInProducts.Rows[e.RowIndex];
 
+                // Assign values from the selected row to the corresponding controls
                 txtSIBarcode.Text = row.Cells["product_barcode"].Value?.ToString() ?? "";
                 txtSIProdName.Text = row.Cells["product_name"].Value?.ToString() ?? "";
-
-                // Combine Firstname and Lastname for the ComboBox
-                string firstname = row.Cells["Firstname"].Value?.ToString() ?? "";
-                string lastname = row.Cells["Lastname"].Value?.ToString() ?? "";
-                cmbSIBPName.Text = $"{firstname} {lastname}".Trim(); // Combine and trim any extra spaces
-
                 txtSIQty.Text = row.Cells["quantity"].Value?.ToString() ?? "";
                 txtSIPrice.Text = row.Cells["price"].Value?.ToString() ?? "";
+
+                // Set Brand Partner Name in ComboBox
+                cmbSIBPName.Text = row.Cells["BrandPartnerName"].Value?.ToString() ?? "";
+
+                // Set Employee Name (Receiver) in ComboBox
                 cmbSIReceived.Text = row.Cells["supply_receivedby"].Value?.ToString() ?? "";
 
-                // Handle DateTimePicker values
+                // Handle DateTimePicker for Expiration Date
                 if (DateTime.TryParse(row.Cells["expiration_date"].Value?.ToString(), out DateTime expirationDate))
                 {
                     dtpSIExpiration.Value = expirationDate;
                 }
                 else
                 {
-                    dtpSIExpiration.Value = DateTime.Now; // Default value
+                    dtpSIExpiration.Value = DateTime.Now; // Default to current date
                 }
 
-                if (DateTime.TryParse(row.Cells["delivery_date"].Value?.ToString(), out DateTime deliveryDate))
+                // Handle DateTimePicker for Delivery Date
+                if (DateTime.TryParse(row.Cells["supply_date"].Value?.ToString(), out DateTime deliveryDate))
                 {
                     dtpSIDelivery.Value = deliveryDate;
                 }
                 else
                 {
-                    dtpSIDelivery.Value = DateTime.Now;
+                    dtpSIDelivery.Value = DateTime.Now; // Default to current date
                 }
             }
         }
+
 
         // To combobox Firstname + Lastname
         private void LoadBrandPartners()
@@ -289,7 +370,8 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS FullName, Employee_ID FROM employees"; // Adjust the table name and fields as necessary
+                    // Modify the query to only select active employees
+                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS FullName, Employee_ID FROM employee WHERE is_active = 1"; // Only active employees
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
@@ -317,6 +399,42 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        private void SearchStockInProducts()
+        {
+            if (stockInData == null)
+            {
+                LoadStockInList(); // Ensure data is loaded
+            }
+
+            string stockInSearchText = txtStockInSearch.Text.Trim().ToLower();
+            DataView stockInView = new DataView(stockInData);
+
+            if (!string.IsNullOrEmpty(stockInSearchText))
+            {
+                stockInView.RowFilter = string.Format(
+                    "CONVERT(product_barcode, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(product_name, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(BrandPartnerName, 'System.String') LIKE '%{0}%' OR " + // Use concatenated name
+                    "CONVERT(expiration_date, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(quantity, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(price, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(supply_receivedby, 'System.String') LIKE '%{0}%' OR " +
+                    "CONVERT(supply_date, 'System.String') LIKE '%{0}%'", // Use supply_date
+                    stockInSearchText);
+            }
+            else
+            {
+                stockInView.RowFilter = string.Empty;
+            }
+
+            dgvStockInProducts.DataSource = stockInView;
+        }
+
+        private void txtStockInSearch_TextChanged(object sender, EventArgs e)
+        {
+            SearchStockInProducts();
+        }
+
         // Class to hold employee data
         public class Employee
         {
@@ -338,7 +456,303 @@ namespace DUH_Trends_Palas_POS.Views
             LoadEmployees(); // Load employees into the ComboBox
         }
 
-        //
+        // In Stock-in CRUD
+        private void btnSIClear_Click(object sender, EventArgs e)
+        {
+            // Clear all textboxes and reset date pickers
+            txtSIBarcode.Clear();
+            txtSIProdName.Clear();
+            txtSIQty.Clear();
+            txtSIPrice.Clear();
+            dtpSIExpiration.Value = DateTime.Now; // Reset to current date
+            dtpSIDelivery.Value = DateTime.Now; // Reset to current date
+            cmbSIReceived.SelectedIndex = -1; // Deselect any selected employee
+            cmbSIBPName.SelectedIndex = -1; // Deselect any selected employee
+
+
+            if (dgvStockInProducts.SelectedCells.Count > 0)
+            {
+                dgvStockInProducts.ClearSelection(); // Clear the selection
+            }
+        }
+        private void btnSIAdd_Click(object sender, EventArgs e)
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                MySqlTransaction transaction = null; // Declare transaction outside try
+
+                try
+                {
+                    databaseConnection.Open();
+                    transaction = databaseConnection.BeginTransaction(); // Ensure atomicity
+
+                    // Get input values
+                    string barcode = txtSIBarcode.Text;
+                    string productName = txtSIProdName.Text;
+                    int quantity = Convert.ToInt32(txtSIQty.Text);
+                    decimal price = Convert.ToDecimal(txtSIPrice.Text);
+                    DateTime expirationDate = dtpSIExpiration.Value;
+                    DateTime deliveryDate = dtpSIDelivery.Value;
+                    int brandPartnerID = Convert.ToInt32(cmbSIBPName.SelectedValue);
+                    int employeeID = Convert.ToInt32(cmbSIReceived.SelectedValue);
+
+                    // **Retrieve Employee Firstname + Lastname**
+                    string employeeFullName = "";
+                    string getEmployeeNameQuery = "SELECT CONCAT(firstname, ' ', lastname) FROM employee WHERE employee_id = @EmployeeID";
+
+                    using (MySqlCommand getEmpCmd = new MySqlCommand(getEmployeeNameQuery, databaseConnection, transaction))
+                    {
+                        getEmpCmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                        object result = getEmpCmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            employeeFullName = result.ToString();
+                        }
+                    }
+
+                    // 1️⃣ **Check if the product already exists in `product` table**
+                    string checkProductQuery = "SELECT COUNT(*) FROM product WHERE product_barcode = @Barcode";
+                    using (MySqlCommand checkCmd = new MySqlCommand(checkProductQuery, databaseConnection, transaction))
+                    {
+                        checkCmd.Parameters.AddWithValue("@Barcode", barcode);
+                        int productExists = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                        if (productExists > 0)
+                        {
+                            MessageBox.Show("This product already exists in the product table.", "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            transaction.Rollback();
+                            return;
+                        }
+                    }
+
+                    // 2️⃣ **Insert into `product` table (using only employee_id)**
+                    string insertProductQuery = @"
+                INSERT INTO product (product_barcode, product_name, brandpartner_id, quantity, price, employee_id, delivery_date, expiration_date, is_active) 
+                VALUES (@Barcode, @ProductName, @BrandPartnerID, @Quantity, @Price, @EmployeeID, @DeliveryDate, @ExpirationDate, 1)";
+
+                    using (MySqlCommand insertProductCmd = new MySqlCommand(insertProductQuery, databaseConnection, transaction))
+                    {
+                        insertProductCmd.Parameters.AddWithValue("@Barcode", barcode);
+                        insertProductCmd.Parameters.AddWithValue("@ProductName", productName);
+                        insertProductCmd.Parameters.AddWithValue("@BrandPartnerID", brandPartnerID);
+                        insertProductCmd.Parameters.AddWithValue("@Quantity", quantity);
+                        insertProductCmd.Parameters.AddWithValue("@Price", price);
+                        insertProductCmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                        insertProductCmd.Parameters.AddWithValue("@DeliveryDate", deliveryDate);
+                        insertProductCmd.Parameters.AddWithValue("@ExpirationDate", expirationDate);
+                        insertProductCmd.ExecuteNonQuery();
+                    }
+
+                    // 3️⃣ **Insert into `supply` table first to get `supply_id`**
+                    string insertSupplyQuery = @"
+                INSERT INTO supply (BrandPartner_ID, employee_id, supply_date) 
+                VALUES (@BrandPartnerID, @EmployeeID, @SupplyDate);
+                SELECT LAST_INSERT_ID();";
+
+                    int supplyID;
+                    using (MySqlCommand cmd = new MySqlCommand(insertSupplyQuery, databaseConnection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@BrandPartnerID", brandPartnerID);
+                        cmd.Parameters.AddWithValue("@EmployeeID", employeeID);
+                        cmd.Parameters.AddWithValue("@SupplyDate", deliveryDate);
+
+                        supplyID = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    // 4️⃣ **Insert into `supply_details` table (using Firstname + Lastname)**
+                    string insertSupplyDetailsQuery = @"
+                INSERT INTO supply_details (supply_id, product_barcode, product_name, quantity, price, expiration_date, supply_receivedby, is_active) 
+                VALUES (@SupplyID, @Barcode, @ProductName, @Quantity, @Price, @ExpirationDate, @ReceivedBy, 1)";
+
+                    using (MySqlCommand insertSupplyDetailsCmd = new MySqlCommand(insertSupplyDetailsQuery, databaseConnection, transaction))
+                    {
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@SupplyID", supplyID);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@Barcode", barcode);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@ProductName", productName);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@Quantity", quantity);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@Price", price);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@ExpirationDate", expirationDate);
+                        insertSupplyDetailsCmd.Parameters.AddWithValue("@ReceivedBy", employeeFullName); // Insert Full Name
+                        insertSupplyDetailsCmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show("Product successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadStockInList(); // Refresh data
+                }
+                catch (Exception ex)
+                {
+                    if (transaction != null) transaction.Rollback(); // Ensure transaction is not null
+                    MessageBox.Show("Error adding product: " + ex.Message);
+                }
+            }
+        }
+
+        private void btnSIUpdate_Click(object sender, EventArgs e)
+        {
+            if (dgvStockInProducts.SelectedRows.Count > 0)
+            {
+                string oldProductBarcode = dgvStockInProducts.SelectedRows[0].Cells["product_barcode"].Value.ToString();
+                string newProductBarcode = txtSIBarcode.Text.Trim(); // Ensure no extra spaces
+
+                using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                {
+                    MySqlTransaction transaction = null;
+
+                    try
+                    {
+                        databaseConnection.Open();
+                        transaction = databaseConnection.BeginTransaction();
+
+                        // Get new values from input fields
+                        string updatedProductName = txtSIProdName.Text.Trim();
+                        int updatedQuantity = int.Parse(txtSIQty.Text);
+                        decimal updatedPrice = decimal.Parse(txtSIPrice.Text);
+                        DateTime updatedExpirationDate = dtpSIExpiration.Value;
+                        DateTime updatedDeliveryDate = dtpSIDelivery.Value;
+
+                        // Get Brand Partner ID
+                        int brandPartnerID = GetBrandPartnerID(cmbSIBPName.Text, databaseConnection, transaction);
+                        if (brandPartnerID == 0) throw new Exception("Invalid Brand Partner selected.");
+
+                        // Get selected Employee Name (Receiver)
+                        string updatedEmployee = cmbSIReceived.Text.Trim();
+
+                        // ✅ **Update `supply_details` table**
+                        string updateSupplyDetailsQuery = @"
+                UPDATE supply_details 
+                SET 
+                    product_barcode = @NewBarcode,
+                    product_name = @ProductName,
+                    quantity = @Quantity,
+                    price = @Price,
+                    expiration_date = @ExpirationDate,
+                    supply_receivedby = @ReceivedBy
+                WHERE 
+                    product_barcode = @OldBarcode";
+
+                        using (MySqlCommand cmd = new MySqlCommand(updateSupplyDetailsQuery, databaseConnection, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@NewBarcode", newProductBarcode);
+                            cmd.Parameters.AddWithValue("@ProductName", updatedProductName);
+                            cmd.Parameters.AddWithValue("@Quantity", updatedQuantity);
+                            cmd.Parameters.AddWithValue("@Price", updatedPrice);
+                            cmd.Parameters.AddWithValue("@ExpirationDate", updatedExpirationDate);
+                            cmd.Parameters.AddWithValue("@ReceivedBy", updatedEmployee);
+                            cmd.Parameters.AddWithValue("@OldBarcode", oldProductBarcode);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // ✅ **Update `supply` table** (for supply_date)
+                        string updateSupplyQuery = @"
+                UPDATE supply 
+                SET 
+                    supply_date = @SupplyDate
+                WHERE 
+                    supply_ID = (SELECT supply_ID FROM supply_details WHERE product_barcode = @NewBarcode LIMIT 1)";
+
+                        using (MySqlCommand cmd = new MySqlCommand(updateSupplyQuery, databaseConnection, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@SupplyDate", updatedDeliveryDate);
+                            cmd.Parameters.AddWithValue("@NewBarcode", newProductBarcode);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                        MessageBox.Show("Stock-in details updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadStockInList(); // Refresh DataGridView
+                    }
+                    catch (Exception ex)
+                    {
+                        if (transaction != null) transaction.Rollback();
+                        MessageBox.Show("Error updating stock-in details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a product to update.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+
+        private int GetBrandPartnerID(string fullName, MySqlConnection conn, MySqlTransaction transaction)
+        {
+            string query = "SELECT brandpartner_ID FROM brandpartner WHERE CONCAT(firstname, ' ', lastname) = @FullName";
+
+            using (MySqlCommand cmd = new MySqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.AddWithValue("@FullName", fullName);
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : 0; // Return 0 if not found
+            }
+        }
+
+
+        private void btnSIDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvStockInProducts.SelectedRows.Count > 0)
+            {
+                DataGridViewRow selectedRow = dgvStockInProducts.SelectedRows[0];
+                string barcode = selectedRow.Cells["product_barcode"].Value.ToString();
+
+                DialogResult dialogResult = MessageBox.Show("Are you sure you want to archive this product?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                    {
+                        try
+                        {
+                            databaseConnection.Open();
+                            MySqlTransaction transaction = databaseConnection.BeginTransaction(); // Ensure atomicity
+
+                            // 1️⃣ **Update `supply_details` table to set `is_active = 0`**
+                            string updateSupplyDetailsQuery = "UPDATE supply_details SET is_active = 0 WHERE product_barcode = @Barcode";
+
+                            using (MySqlCommand cmd = new MySqlCommand(updateSupplyDetailsQuery, databaseConnection, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@Barcode", barcode);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            // 2️⃣ **Update `product` table to set `is_active = 0`**
+                            string updateProductQuery = "UPDATE product SET is_active = 0 WHERE product_barcode = @Barcode";
+
+                            using (MySqlCommand cmd = new MySqlCommand(updateProductQuery, databaseConnection, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@Barcode", barcode);
+                                cmd.ExecuteNonQuery();
+                            }
+
+                            transaction.Commit();
+                            MessageBox.Show("Product successfully archived!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadStockInList(); // Refresh data
+                            LoadProductList(); // Refresh product list to reflect changes
+
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error archiving product: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a product to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void dgvStockInProducts_RowValidated(object sender, DataGridViewCellEventArgs e)
+        {
+            LoadProductList(); // Refresh dgvProductList when stock-in changes
+        }
+
+
+
+        /// This will load the data in the product table, with a CRUD process
+        /// Product List - TAB
+        /// 
         private void LoadProductList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -347,21 +761,30 @@ namespace DUH_Trends_Palas_POS.Views
                 {
                     databaseConnection.Open();
                     string query = @"
-                        SELECT 
-                            p.product_barcode, p.product_name, p.quantity, p.price, p.delivery_date, p.expiration_date,
-                            CONCAT(b.Firstname, ' ', b.Lastname) AS BrandPartnerName
-                        FROM 
-                            product p
-                        JOIN 
-                            brandpartner b ON p.brandpartner_id = b.BrandPartner_ID
-                        ORDER BY 
-                            p.product_name";
+            SELECT 
+                p.product_barcode, p.product_name, p.quantity, p.price, p.delivery_date, p.expiration_date,
+                CONCAT(b.Firstname, ' ', b.Lastname) AS BrandPartnerName
+            FROM 
+                product p
+            JOIN 
+                brandpartner b ON p.brandpartner_id = b.BrandPartner_ID
+            WHERE 
+                p.is_active = 1
+            ORDER BY 
+                p.product_name";
+
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                         productData = new DataTable();
                         adapter.Fill(productData);
                         dgvProductList.DataSource = productData;
+
+                        // Remove is_active column if it exists
+                        if (dgvProductList.Columns.Contains("is_active"))
+                        {
+                            dgvProductList.Columns["is_active"].Visible = false;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -371,6 +794,249 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+
+
+
+        private void dgvProductList_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Check if the current row is valid
+            if (e.RowIndex >= 0)
+            {
+                // Get the value of the expiration date from the "expiration_date" column
+                if (dgvProductList.Columns[e.ColumnIndex].Name == "expiration_date")
+                {
+                    if (e.Value != null && DateTime.TryParse(e.Value.ToString(), out DateTime expirationDate))
+                    {
+                        // Check if the expiration date has passed
+                        if (expirationDate < DateTime.Now)
+                        {
+                            // Set the entire row's background color to red
+                            for (int i = 0; i < dgvProductList.Columns.Count; i++)
+                            {
+                                dgvProductList.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.Red;
+                                dgvProductList.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.White; // Optional: Change text color for better visibility
+                            }
+                        }
+                    }
+                }
+
+                // Highlight inactive products
+                if (dgvProductList.Columns.Contains("is_active") && dgvProductList.Rows[e.RowIndex].Cells["is_active"].Value != null)
+                {
+                    if (dgvProductList.Rows[e.RowIndex].Cells["is_active"].Value.ToString() == "0")
+                    {
+                        for (int i = 0; i < dgvProductList.Columns.Count; i++)
+                        {
+                            dgvProductList.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.Gray;
+                            dgvProductList.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.White; // Optional: Change text color for better visibility
+                        }
+                    }
+                }
+            }
+        }
+
+        // 
+        private void LoadBPInProducts()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS BrandPartnerName FROM brandpartner ORDER BY Firstname";
+                    using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            cmbProductBrandPartner.Items.Clear();
+                            while (reader.Read())
+                            {
+                                cmbProductBrandPartner.Items.Add(reader["BrandPartnerName"].ToString());
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading brand partners: " + ex.Message);
+                }
+            }
+        }
+
+        private void dgvProductList_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure the row index is valid
+            {
+                DataGridViewRow row = dgvProductList.Rows[e.RowIndex];
+                txtProductBarcode.Text = row.Cells["product_barcode"].Value.ToString();
+                txtProductName.Text = row.Cells["product_name"].Value.ToString();
+                txtProductQuantity.Text = row.Cells["quantity"].Value.ToString();
+                txtProductPrice.Text = row.Cells["price"].Value.ToString();
+                dtpProductDeliveryTime.Value = Convert.ToDateTime(row.Cells["delivery_date"].Value);
+                cmbProductBrandPartner.SelectedItem = row.Cells["BrandPartnerName"].Value.ToString();
+
+                // Handle expiration date properly
+                if (row.Cells["expiration_date"].Value != null && row.Cells["expiration_date"].Value != DBNull.Value)
+                {
+                    if (DateTime.TryParse(row.Cells["expiration_date"].Value.ToString(), out DateTime expDate))
+                    {
+                        dtpProductExpirationDate.CustomFormat = "yyyy-MM-dd"; // Ensure proper format
+                        dtpProductExpirationDate.Format = DateTimePickerFormat.Custom;
+                        dtpProductExpirationDate.Value = expDate;
+                    }
+                }
+                else
+                {
+                    dtpProductExpirationDate.CustomFormat = " "; // Hide the date if null
+                    dtpProductExpirationDate.Format = DateTimePickerFormat.Custom;
+                }
+
+            }
+        }
+
+        private void btnClearProduct_Click(object sender, EventArgs e)
+        {
+            txtProductBarcode.Clear();
+            txtProductName.Clear();
+            txtProductQuantity.Clear();
+            txtProductPrice.Clear();
+            dtpProductDeliveryTime.Value = DateTime.Now;
+            dtpProductExpirationDate.CustomFormat = " "; // Hide expiration date
+            dtpProductExpirationDate.Format = DateTimePickerFormat.Custom;
+            cmbProductBrandPartner.SelectedIndex = -1; // Clear combo box selection
+
+            if (dgvProductList.SelectedCells.Count > 0)
+            {
+                dgvProductList.ClearSelection(); // Clear the selection
+            }
+        }
+
+        private void btnUpdateProduct_Click(object sender, EventArgs e)
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+
+                    // Get the brandpartner_id based on the selected BrandPartnerName
+                    string getBrandPartnerQuery = "SELECT BrandPartner_ID FROM brandpartner WHERE CONCAT(Firstname, ' ', Lastname) = @BrandPartnerName";
+                    int brandPartnerId = -1;
+
+                    using (MySqlCommand brandCommand = new MySqlCommand(getBrandPartnerQuery, databaseConnection))
+                    {
+                        brandCommand.Parameters.AddWithValue("@BrandPartnerName", cmbProductBrandPartner.SelectedItem.ToString());
+                        object result = brandCommand.ExecuteScalar();
+                        if (result != null)
+                        {
+                            brandPartnerId = Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Selected Brand Partner not found.");
+                            return;
+                        }
+                    }
+
+                    // Update product details including brandpartner_id
+                    string query = @"UPDATE product 
+                            SET product_name = @product_name, 
+                                quantity = @quantity, 
+                                price = @price, 
+                                delivery_date = @delivery_date, 
+                                expiration_date = @expiration_date, 
+                                brandpartner_id = @brandpartner_id
+                            WHERE product_barcode = @product_barcode";
+
+                    using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
+                    {
+                        command.Parameters.AddWithValue("@product_name", txtProductName.Text);
+                        command.Parameters.AddWithValue("@quantity", txtProductQuantity.Text);
+                        command.Parameters.AddWithValue("@price", txtProductPrice.Text);
+                        command.Parameters.AddWithValue("@delivery_date", dtpProductDeliveryTime.Value);
+                        command.Parameters.AddWithValue("@product_barcode", txtProductBarcode.Text);
+                        command.Parameters.AddWithValue("@brandpartner_id", brandPartnerId);
+
+                        // Handle expiration date
+                        if (dtpProductExpirationDate.CustomFormat == " ")
+                        {
+                            command.Parameters.AddWithValue("@expiration_date", DBNull.Value);
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@expiration_date", dtpProductExpirationDate.Value);
+                        }
+
+                        command.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show("Product updated successfully.");
+                    LoadProductList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating product: " + ex.Message);
+                }
+            }
+        }
+
+
+        private void btnClearExpirationDate_Click(object sender, EventArgs e)
+        {
+            dtpProductExpirationDate.CustomFormat = " "; // Hide the date
+            dtpProductExpirationDate.Format = DateTimePickerFormat.Custom;
+        }
+
+        private void btnDeleteProduct_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtProductBarcode.Text))
+            {
+                MessageBox.Show("Please select a product to archive.");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show("Are you sure you want to archive this product?", "Confirm Archive", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                {
+                    try
+                    {
+                        databaseConnection.Open();
+                        string query = "UPDATE product SET is_active = 0 WHERE product_barcode = @product_barcode";
+                        using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
+                        {
+                            command.Parameters.AddWithValue("@product_barcode", txtProductBarcode.Text);
+                            command.ExecuteNonQuery();
+                        }
+
+                        MessageBox.Show("Product archived successfully.");
+
+                        // Remove the archived product from the DataGridView
+                        foreach (DataGridViewRow row in dgvProductList.Rows)
+                        {
+                            if (row.Cells["product_barcode"].Value.ToString() == txtProductBarcode.Text)
+                            {
+                                dgvProductList.Rows.Remove(row);
+                                break;
+                            }
+                        }
+
+                        btnClearProduct_Click(sender, e);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error archiving product: " + ex.Message);
+                    }
+                }
+            }
+        }
+
+
+
+        /// This will load the products, and put the latest or nearest expiration date first
+        /// Expiration Product List - TAB
+        /// 
         private void LoadExpirationProductList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -398,6 +1064,7 @@ namespace DUH_Trends_Palas_POS.Views
                     adapter.Fill(expirationProductData);
 
                     dgvExpiration.DataSource = expirationProductData;
+
                 }
                 catch (Exception ex)
                 {
@@ -405,6 +1072,83 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+        private void dgvExpiration_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Ensure the row index is valid
+            if (e.RowIndex >= 0)
+            {
+                // Get the value of the expiration date from the "expiration_date" column
+                if (dgvExpiration.Columns[e.ColumnIndex].Name == "expiration_date")
+                {
+                    // Check if the value is not null and is a valid DateTime
+                    if (e.Value != null && DateTime.TryParse(e.Value.ToString(), out DateTime expirationDate))
+                    {
+                        // Check if the expiration date has passed
+                        if (expirationDate < DateTime.Now)
+                        {
+                            // Highlight the entire row in red
+                            for (int i = 0; i < dgvExpiration.Columns.Count; i++)
+                            {
+                                dgvExpiration.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.Red;
+                                dgvExpiration.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.White; // Optional: change text color for better visibility
+                            }
+                        }
+                        else
+                        {
+                            // Reset the style for non-expired products
+                            for (int i = 0; i < dgvExpiration.Columns.Count; i++)
+                            {
+                                dgvExpiration.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.White; // Reset to default
+                                dgvExpiration.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.Black; // Reset to default
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // If the expiration date is null, reset the style
+                        for (int i = 0; i < dgvExpiration.Columns.Count; i++)
+                        {
+                            dgvExpiration.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.White; // Reset to default
+                            dgvExpiration.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.Black; // Reset to default
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SearchExpiredProducts()
+        {
+            // Ensure dgvExpiration has a valid data source
+            if (dgvExpiration.DataSource is DataTable expirationTable)
+            {
+                string searchText = txtExpiredProduct.Text.Trim().ToLower();
+                DataView expirationView = expirationTable.DefaultView;
+
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    // Filter only specific columns: product_name, product_barcode, Firstname, Lastname
+                    string filter = string.Format(
+                        "CONVERT(product_name, 'System.String') LIKE '%{0}%' OR " +
+                        "CONVERT(product_barcode, 'System.String') LIKE '%{0}%' OR " +
+                        "CONVERT(Firstname, 'System.String') LIKE '%{0}%' OR " +
+                        "CONVERT(Lastname, 'System.String') LIKE '%{0}%'", searchText);
+
+                    expirationView.RowFilter = filter;
+                }
+                else
+                {
+                    expirationView.RowFilter = string.Empty; // Clear filter if search box is empty
+                }
+            }
+        }
+
+        private void txtExpiredProduct_TextChanged(object sender, EventArgs e)
+        {
+            SearchExpiredProducts(); // Trigger search on text change
+        }
+
+
 
         private void LoadFilteredBrandPartnerList(string searchText)
         {
@@ -444,7 +1188,7 @@ namespace DUH_Trends_Palas_POS.Views
                     databaseConnection.Open();
                     string query = @"
                 SELECT 
-                    o.order_id, o.order_date, o.employee_id, o.total, od.order_detail_id, od.product_barcode, od.quantity, od.price
+                    o.order_id, od.order_detail_id, o.employee_id, o.order_date, od.product_barcode, od.price, od.quantity, od.subtotal, o.total
                 FROM 
                     orders o
                 JOIN 
@@ -456,7 +1200,6 @@ namespace DUH_Trends_Palas_POS.Views
                     MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                     DataTable salesData = new DataTable();
                     adapter.Fill(salesData);
-
                     dgvSales.DataSource = salesData;
                 }
                 catch (Exception ex)
@@ -465,6 +1208,37 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+        private void SearchSales()
+        {
+            // Ensure dgvSales has a valid data source
+            if (dgvSales.DataSource is DataTable salesTable)
+            {
+                string searchText = txtSalesSearch.Text.Trim().ToLower();
+                DataView salesView = salesTable.DefaultView;
+
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    // Filter across all text-based columns
+                    string filter = string.Join(" OR ", salesTable.Columns
+                        .Cast<DataColumn>()
+                        .Where(c => c.DataType == typeof(string)) // Apply filter only on text columns
+                        .Select(c => string.Format("CONVERT({0}, 'System.String') LIKE '%{1}%'", c.ColumnName, searchText)));
+
+                    salesView.RowFilter = filter;
+                }
+                else
+                {
+                    salesView.RowFilter = string.Empty; // Clear filter if search box is empty
+                }
+            }
+        }
+
+        private void txtSalesSearch_TextChanged(object sender, EventArgs e)
+        {
+            SearchSales(); // Call the search method whenever the text changes
+        }
+
 
         private void SearchProducts()
         {
@@ -489,44 +1263,6 @@ namespace DUH_Trends_Palas_POS.Views
         private void txtSearchProduct_TextChanged(object sender, EventArgs e)
         {
             SearchProducts();
-        }
-
-        private void SearchStockInProducts()
-        {
-            // Ensure stockInData is initialized
-            if (stockInData == null)
-            {
-                LoadStockInList(); // Load the data if not available
-            }
-
-            string stockInSearchText = txtStockInSearch.Text.Trim().ToLower();
-            DataView stockInView = new DataView(stockInData);
-
-            if (!string.IsNullOrEmpty(stockInSearchText))
-            {
-                stockInView.RowFilter = string.Format(
-                    "CONVERT(product_barcode, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(product_name, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(Firstname, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(Lastname, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(expiration_date, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(quantity, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(price, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(supply_receivedby, 'System.String') LIKE '%{0}%' OR " +
-                    "CONVERT(delivery_date, 'System.String') LIKE '%{0}%'",
-                    stockInSearchText);
-            }
-            else
-            {
-                stockInView.RowFilter = string.Empty;
-            }
-
-            dgvStockInProducts.DataSource = stockInView;
-        }
-
-        private void txtStockInSearch_TextChanged(object sender, EventArgs e)
-        {
-            SearchStockInProducts();
         }
 
         // Logout and update login history
@@ -565,6 +1301,7 @@ namespace DUH_Trends_Palas_POS.Views
         private void btnOrder_Click(object sender, EventArgs e)
         {
             Order orderForm = new Order(loginHistoryId, userLevel, employeeId); // Pass the required arguments
+            orderForm.CheckoutCompleted += LoadSalesData; // Subscribe to the event
             orderForm.Show();
             this.Hide();
         }
@@ -580,6 +1317,12 @@ namespace DUH_Trends_Palas_POS.Views
             dtpStartDate.Value = DateTime.Now;
             dtpEndDate.Value = DateTime.Now;
             cmbStoragePrice.SelectedIndex = -1;
+
+            // Unselect the currently selected cell in the DataGridView
+            if (dgvBrandPartnerList.SelectedCells.Count > 0)
+            {
+                dgvBrandPartnerList.ClearSelection(); // Clear the selection
+            }
         }
 
         private void btnBPUpdate_Click(object sender, EventArgs e)
@@ -659,59 +1402,49 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
-
-
-
-
-
         private void btnBPDelete_Click(object sender, EventArgs e)
         {
             if (dgvBrandPartnerList.SelectedRows.Count > 0)
             {
-                int brandPartnerId = Convert.ToInt32(dgvBrandPartnerList.SelectedRows[0].Cells["BrandPartner_ID"].Value);
-                DialogResult result = MessageBox.Show("Are you sure you want to delete this storage type for the selected brand partner?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                // Get the selected row
+                DataGridViewRow selectedRow = dgvBrandPartnerList.SelectedRows[0];
 
-                if (result == DialogResult.Yes)
+                // Get the BrandPartner_ID and Storage_ID from the selected row
+                int brandPartnerId = Convert.ToInt32(selectedRow.Cells["BrandPartner_ID"].Value);
+                int storageId = Convert.ToInt32(selectedRow.Cells["Storage_ID"].Value); // Assuming Storage_ID is in the DataGridView
+
+                using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
                 {
-                    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                    try
                     {
-                        try
+                        databaseConnection.Open();
+
+                        // Step 1: Check how many storage types exist for this brand partner
+                        string countStorageQuery = "SELECT COUNT(*) FROM StorageType WHERE ContractID IN (SELECT Contract_ID FROM Contract WHERE BrandPartner_ID=@BrandPartnerId)";
+                        int storageCount;
+
+                        using (MySqlCommand countStorageCommand = new MySqlCommand(countStorageQuery, databaseConnection))
                         {
-                            databaseConnection.Open();
+                            countStorageCommand.Parameters.AddWithValue("@BrandPartnerId", brandPartnerId);
+                            storageCount = Convert.ToInt32(countStorageCommand.ExecuteScalar());
+                        }
 
-                            // Step 1: Get Contract_ID
-                            int contractId = 0;
-                            string getContractIdQuery = "SELECT Contract_ID FROM Contract WHERE BrandPartner_ID=@BrandPartnerId";
-                            using (MySqlCommand getContractIdCommand = new MySqlCommand(getContractIdQuery, databaseConnection))
+                        // Step 2: If there's only one storage type, show a warning
+                        if (storageCount == 1)
+                        {
+                            DialogResult warningResult = MessageBox.Show("This brand partner has only one storage type. Deleting it will remove all associated data. Do you want to proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (warningResult == DialogResult.No)
                             {
-                                getContractIdCommand.Parameters.AddWithValue("@BrandPartnerId", brandPartnerId);
-                                object contractResult = getContractIdCommand.ExecuteScalar();
-                                contractId = contractResult != null ? Convert.ToInt32(contractResult) : 0;
+                                return; // Cancel the deletion
                             }
+                        }
 
-                            if (contractId == 0)
-                            {
-                                MessageBox.Show("No contract found for this brand partner.");
-                                return;
-                            }
+                        // Step 3: Confirm deletion
+                        DialogResult result = MessageBox.Show("Are you sure you want to delete this storage type for the selected brand partner?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                            // Step 2: Get Storage_ID directly from the database (instead of DataGridView)
-                            int storageId = 0;
-                            string getStorageIdQuery = "SELECT Storage_ID FROM StorageType WHERE ContractID=@ContractID LIMIT 1";
-                            using (MySqlCommand getStorageIdCommand = new MySqlCommand(getStorageIdQuery, databaseConnection))
-                            {
-                                getStorageIdCommand.Parameters.AddWithValue("@ContractID", contractId);
-                                object storageResult = getStorageIdCommand.ExecuteScalar();
-                                storageId = storageResult != null ? Convert.ToInt32(storageResult) : 0;
-                            }
-
-                            if (storageId == 0)
-                            {
-                                MessageBox.Show("No storage type found for this contract.");
-                                return;
-                            }
-
-                            // Step 3: Delete the specific StorageType
+                        if (result == DialogResult.Yes)
+                        {
+                            // Step 4: Delete the specific StorageType
                             string deleteStorageQuery = "DELETE FROM StorageType WHERE Storage_ID=@StorageID";
                             using (MySqlCommand deleteStorageCommand = new MySqlCommand(deleteStorageQuery, databaseConnection))
                             {
@@ -719,39 +1452,19 @@ namespace DUH_Trends_Palas_POS.Views
                                 deleteStorageCommand.ExecuteNonQuery();
                             }
 
-                            // Step 4: Check if other StorageTypes exist for this Contract
-                            string countStorageQuery = "SELECT COUNT(*) FROM StorageType WHERE ContractID=@ContractID";
-                            int remainingStorageCount;
-                            using (MySqlCommand countStorageCommand = new MySqlCommand(countStorageQuery, databaseConnection))
-                            {
-                                countStorageCommand.Parameters.AddWithValue("@ContractID", contractId);
-                                remainingStorageCount = Convert.ToInt32(countStorageCommand.ExecuteScalar());
-                            }
-
-                            // Step 5: If no storage types remain, delete the contract
-                            if (remainingStorageCount == 0)
-                            {
-                                string deleteContractQuery = "DELETE FROM Contract WHERE Contract_ID=@ContractID";
-                                using (MySqlCommand deleteContractCommand = new MySqlCommand(deleteContractQuery, databaseConnection))
-                                {
-                                    deleteContractCommand.Parameters.AddWithValue("@ContractID", contractId);
-                                    deleteContractCommand.ExecuteNonQuery();
-                                }
-                            }
-
                             MessageBox.Show("Storage type deleted successfully.");
                             LoadBrandPartnerList(); // Refresh data
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error deleting storage type: " + ex.Message);
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error deleting storage type: " + ex.Message);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Please select a brand partner to delete.");
+                MessageBox.Show("Please select a storage type to delete.");
             }
         }
 
@@ -885,158 +1598,6 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
-
-
-
-        private void dgvProductList_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Ensure the user clicks a valid cell and not the header
-            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
-            {
-                DialogResult result = MessageBox.Show(
-                    "Do you want to add this to your pull-out items?",
-                    "Confirm Pull-Out",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question
-                );
-
-                if (result == DialogResult.Yes)
-                {
-                    // Add logic for handling the pull-out item
-                    MessageBox.Show("Item added to pull-out list.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-        }
-
-
-        // In Stock-in CRUD
-        private void btnSIClear_Click(object sender, EventArgs e)
-        {
-            // Clear all textboxes and reset date pickers
-            txtSIBarcode.Clear();
-            txtSIProdName.Clear();
-            txtSIQty.Clear();
-            txtSIPrice.Clear();
-            dtpSIExpiration.Value = DateTime.Now; // Reset to current date
-            dtpSIDelivery.Value = DateTime.Now; // Reset to current date
-
-        }
-
-        private void btnSIUpdate_Click(object sender, EventArgs e)
-        {
-            if (dgvStockInProducts.SelectedRows.Count > 0)
-            {
-                string productBarcode = dgvStockInProducts.SelectedRows[0].Cells["product_barcode"].Value.ToString();
-                using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
-                {
-                    try
-                    {
-                        databaseConnection.Open();
-                        string updateQuery = @"
-                    UPDATE product 
-                    SET 
-                        product_name = @ProductName,
-                        quantity = @Quantity,
-                        price = @Price,
-                        expiration_date = @ExpirationDate,
-                        delivery_date = @DeliveryDate
-                    WHERE 
-                        product_barcode = @ProductBarcode";
-
-                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
-                        {
-                            updateCommand.Parameters.AddWithValue("@ProductName", txtSIProdName.Text);
-                            updateCommand.Parameters.AddWithValue("@Quantity", Convert.ToInt32(txtSIQty.Text));
-                            updateCommand.Parameters.AddWithValue("@Price", Convert.ToDecimal(txtSIPrice.Text));
-                            updateCommand.Parameters.AddWithValue("@ExpirationDate", dtpSIExpiration.Value);
-                            updateCommand.Parameters.AddWithValue("@DeliveryDate", dtpSIDelivery.Value);
-                            updateCommand.Parameters.AddWithValue("@ProductBarcode", productBarcode);
-                            updateCommand.ExecuteNonQuery();
-                        }
-
-                        MessageBox.Show("Product updated successfully.");
-                        LoadStockInList(); // Refresh the stock-in list
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error updating product: " + ex.Message);
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a product to update.");
-            }
-        }
-
-        private void btnSIDelete_Click(object sender, EventArgs e)
-        {
-            if (dgvStockInProducts.SelectedRows.Count > 0)
-            {
-                string productBarcode = dgvStockInProducts.SelectedRows[0].Cells["product_barcode"].Value.ToString();
-                DialogResult result = MessageBox.Show("Are you sure you want to delete this product?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                {
-                    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
-                    {
-                        try
-                        {
-                            databaseConnection.Open();
-                            string deleteQuery = "DELETE FROM product WHERE product_barcode = @ProductBarcode";
-                            using (MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, databaseConnection))
-                            {
-                                deleteCommand.Parameters.AddWithValue("@ProductBarcode", productBarcode);
-                                deleteCommand.ExecuteNonQuery();
-                            }
-
-                            MessageBox.Show("Product deleted successfully.");
-                            LoadStockInList(); // Refresh the stock-in list
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error deleting product: " + ex.Message);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a product to delete.");
-            }
-        }
-
-        private void btnSIAdd_Click(object sender, EventArgs e)
-        {
-            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    databaseConnection.Open();
-                    string insertQuery = @"
-                INSERT INTO product (product_barcode, product_name, brandpartner_id, expiration_date, quantity, price, delivery_date)
-                VALUES (@ProductBarcode, @ProductName, (SELECT BrandPartner_ID FROM BrandPartner WHERE Firstname = @Firstname AND Lastname = @Lastname LIMIT 1), @ExpirationDate, @Quantity, @Price, @DeliveryDate)";
-
-                    using (MySqlCommand insertCommand = new MySqlCommand(insertQuery, databaseConnection))
-                    {
-                        insertCommand.Parameters.AddWithValue("@ProductBarcode", txtSIBarcode.Text);
-                        insertCommand.Parameters.AddWithValue("@ProductName", txtSIProdName.Text);
-                        insertCommand.Parameters.AddWithValue("@ExpirationDate", dtpSIExpiration.Value);
-                        insertCommand.Parameters.AddWithValue("@Quantity", Convert.ToInt32(txtSIQty.Text));
-                        insertCommand.Parameters.AddWithValue("@Price", Convert.ToDecimal(txtSIPrice.Text));
-                        insertCommand.Parameters.AddWithValue("@DeliveryDate", dtpSIDelivery.Value);
-                        insertCommand.ExecuteNonQuery();
-                    }
-
-                    MessageBox.Show("Product added successfully.");
-                    LoadStockInList(); // Refresh the stock-in list
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error adding product: " + ex.Message);
-                }
-            }
-        }
         // Load Employees in datagridview
         private void LoadEmployeeList()
         {
@@ -1197,6 +1758,11 @@ namespace DUH_Trends_Palas_POS.Views
             txtEmployeeAddress.Clear();
             txtEmployeeEmail.Clear();
             cmbUserLevel.SelectedIndex = -1; // Deselect any selected user level
+
+            if (dgvEmployees.SelectedCells.Count > 0)
+            {
+                dgvEmployees.ClearSelection(); // Clear the selection
+            }
         }
 
         private void btnEmployeeDelete_Click(object sender, EventArgs e)
@@ -1205,7 +1771,7 @@ namespace DUH_Trends_Palas_POS.Views
             {
                 // Get the Employee_ID from the selected row
                 int employeeId = Convert.ToInt32(dgvEmployees.SelectedRows[0].Cells["Employee_ID"].Value);
-                DialogResult result = MessageBox.Show("Are you sure you want to delete this employee?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult result = MessageBox.Show("Are you sure you want to deactivate this employee?", "Confirm Deactivation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
@@ -1215,35 +1781,68 @@ namespace DUH_Trends_Palas_POS.Views
                         {
                             databaseConnection.Open();
 
-                            // First, delete from the orders table if necessary
-                            string deleteOrdersQuery = "DELETE FROM orders WHERE employee_id = @EmployeeID";
-                            using (MySqlCommand deleteOrdersCommand = new MySqlCommand(deleteOrdersQuery, databaseConnection))
+                            // Update the is_active field to false (0)
+                            string deactivateEmployeeQuery = "UPDATE employee SET is_active = 0 WHERE Employee_ID = @EmployeeID";
+                            using (MySqlCommand deactivateEmployeeCommand = new MySqlCommand(deactivateEmployeeQuery, databaseConnection))
                             {
-                                deleteOrdersCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
-                                deleteOrdersCommand.ExecuteNonQuery();
+                                deactivateEmployeeCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
+                                deactivateEmployeeCommand.ExecuteNonQuery();
                             }
 
-                            // Then, delete from the employee table
-                            string deleteEmployeeQuery = "DELETE FROM employee WHERE Employee_ID = @EmployeeID";
-                            using (MySqlCommand deleteEmployeeCommand = new MySqlCommand(deleteEmployeeQuery, databaseConnection))
-                            {
-                                deleteEmployeeCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
-                                deleteEmployeeCommand.ExecuteNonQuery();
-                            }
-
-                            MessageBox.Show("Employee deleted successfully.");
+                            MessageBox.Show("Employee deactivated successfully.");
                             LoadEmployeeList(); // Refresh the employee list
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Error deleting employee: " + ex.Message);
+                            MessageBox.Show("Error deactivating employee: " + ex.Message);
                         }
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Please select an employee to delete.");
+                MessageBox.Show("Please select an employee to deactivate.");
+            }
+        }
+
+        private void btnEmployeeReactivate_Click(object sender, EventArgs e)
+        {
+            if (dgvEmployees.SelectedRows.Count > 0)
+            {
+                // Get the Employee_ID from the selected row
+                int employeeId = Convert.ToInt32(dgvEmployees.SelectedRows[0].Cells["Employee_ID"].Value);
+
+                DialogResult result = MessageBox.Show("Are you sure you want to reactivate this employee?", "Confirm Reactivation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                    {
+                        try
+                        {
+                            databaseConnection.Open();
+
+                            // Update the is_active field to true (1)
+                            string reactivateEmployeeQuery = "UPDATE employee SET is_active = 1 WHERE Employee_ID = @EmployeeID";
+                            using (MySqlCommand reactivateEmployeeCommand = new MySqlCommand(reactivateEmployeeQuery, databaseConnection))
+                            {
+                                reactivateEmployeeCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
+                                reactivateEmployeeCommand.ExecuteNonQuery();
+                            }
+
+                            MessageBox.Show("Employee reactivated successfully.");
+                            LoadEmployeeList(); // Refresh the employee list
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error reactivating employee: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select an inactive employee to reactivate.");
             }
         }
 
@@ -1308,9 +1907,8 @@ namespace DUH_Trends_Palas_POS.Views
 
                     // Insert new employee
                     string insertEmployeeQuery = @"
-                INSERT INTO employee (Firstname, Lastname, ContactNumber, Address, email, is_active, user_level) 
-                VALUES (@Firstname, @Lastname, @ContactNumber, @Address, @Email, @IsActive, @UserLevel);";
-
+            INSERT INTO employee (Firstname, Lastname, ContactNumber, Address, email, is_active, user_level) 
+            VALUES (@Firstname, @Lastname, @ContactNumber, @Address, @Email, @IsActive, @UserLevel);";
                     using (MySqlCommand insertEmployeeCommand = new MySqlCommand(insertEmployeeQuery, databaseConnection))
                     {
                         insertEmployeeCommand.Parameters.AddWithValue("@Firstname", txtEmployeeFirstname.Text);
@@ -1325,6 +1923,7 @@ namespace DUH_Trends_Palas_POS.Views
 
                     MessageBox.Show("Employee added successfully.");
                     LoadEmployeeList(); // Refresh the employee list
+                    LoadEmployees(); // Refresh the ComboBox with active employees
                 }
                 catch (Exception ex)
                 {
@@ -1332,6 +1931,13 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+        private void btnAddProduct_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
 
 
 

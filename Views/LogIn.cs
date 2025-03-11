@@ -159,5 +159,11 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        private void lblSignUp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            SignUp signup = new SignUp();
+            signup.Show();
+            this.Hide();
+        }
     }
 }

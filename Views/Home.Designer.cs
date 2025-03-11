@@ -41,6 +41,8 @@
             tabControl2 = new TabControl();
             tabPage5 = new TabPage();
             groupBox2 = new GroupBox();
+            cmbPulloutReason = new ComboBox();
+            btnPulloutProduct = new Button();
             btnClearExpirationDate = new Button();
             dtpProductDeliveryTime = new DateTimePicker();
             dtpProductExpirationDate = new DateTimePicker();
@@ -66,6 +68,7 @@
             tabPage9 = new TabPage();
             txtStockInSearch = new TextBox();
             groupBox3 = new GroupBox();
+            btnSIClearExpiration = new Button();
             cmbSIReceived = new ComboBox();
             cmbSIBPName = new ComboBox();
             dtpSIDelivery = new DateTimePicker();
@@ -90,24 +93,7 @@
             label23 = new Label();
             tabPage10 = new TabPage();
             textBox19 = new TextBox();
-            groupBox4 = new GroupBox();
-            button13 = new Button();
-            button14 = new Button();
-            button15 = new Button();
-            button16 = new Button();
-            dateTimePicker4 = new DateTimePicker();
-            textBox20 = new TextBox();
-            textBox21 = new TextBox();
-            textBox22 = new TextBox();
-            textBox23 = new TextBox();
-            textBox24 = new TextBox();
-            label24 = new Label();
-            label25 = new Label();
-            label26 = new Label();
-            label27 = new Label();
-            label28 = new Label();
-            label29 = new Label();
-            dataGridView5 = new DataGridView();
+            dgvPulloutItems = new DataGridView();
             label30 = new Label();
             tabPage11 = new TabPage();
             txtExpiredProduct = new TextBox();
@@ -185,8 +171,7 @@
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvStockInProducts).BeginInit();
             tabPage10.SuspendLayout();
-            groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPulloutItems).BeginInit();
             tabPage11.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvExpiration).BeginInit();
             tabPage2.SuspendLayout();
@@ -207,7 +192,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.DimGray;
+            panel1.BackColor = Color.Black;
             panel1.Controls.Add(panel4);
             panel1.Controls.Add(label9);
             panel1.Controls.Add(pictureBox1);
@@ -242,6 +227,7 @@
             // 
             // btnOrder
             // 
+            btnOrder.BackColor = Color.Tan;
             btnOrder.BackgroundImage = Properties.Resources.order;
             btnOrder.BackgroundImageLayout = ImageLayout.Zoom;
             btnOrder.FlatStyle = FlatStyle.Flat;
@@ -250,13 +236,14 @@
             btnOrder.Name = "btnOrder";
             btnOrder.Size = new Size(72, 64);
             btnOrder.TabIndex = 8;
-            btnOrder.UseVisualStyleBackColor = true;
+            btnOrder.UseVisualStyleBackColor = false;
             btnOrder.Click += btnOrder_Click;
             // 
             // label9
             // 
             label9.AutoSize = true;
             label9.Font = new Font("Century Gothic", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label9.ForeColor = SystemColors.ButtonHighlight;
             label9.Location = new Point(209, 52);
             label9.Name = "label9";
             label9.Size = new Size(293, 40);
@@ -269,7 +256,7 @@
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
             pictureBox1.Location = new Point(-2, 1);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(183, 148);
+            pictureBox1.Size = new Size(157, 148);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -330,6 +317,8 @@
             // groupBox2
             // 
             groupBox2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(cmbPulloutReason);
+            groupBox2.Controls.Add(btnPulloutProduct);
             groupBox2.Controls.Add(btnClearExpirationDate);
             groupBox2.Controls.Add(dtpProductDeliveryTime);
             groupBox2.Controls.Add(dtpProductExpirationDate);
@@ -356,6 +345,24 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Product Details:";
             // 
+            // cmbPulloutReason
+            // 
+            cmbPulloutReason.FormattingEnabled = true;
+            cmbPulloutReason.Location = new Point(818, 182);
+            cmbPulloutReason.Name = "cmbPulloutReason";
+            cmbPulloutReason.Size = new Size(355, 31);
+            cmbPulloutReason.TabIndex = 29;
+            // 
+            // btnPulloutProduct
+            // 
+            btnPulloutProduct.Location = new Point(1203, 176);
+            btnPulloutProduct.Name = "btnPulloutProduct";
+            btnPulloutProduct.Size = new Size(193, 41);
+            btnPulloutProduct.TabIndex = 28;
+            btnPulloutProduct.Text = "Pull Out";
+            btnPulloutProduct.UseVisualStyleBackColor = true;
+            btnPulloutProduct.Click += btnPulloutProduct_Click;
+            // 
             // btnClearExpirationDate
             // 
             btnClearExpirationDate.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -370,7 +377,7 @@
             // dtpProductDeliveryTime
             // 
             dtpProductDeliveryTime.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dtpProductDeliveryTime.Location = new Point(818, 141);
+            dtpProductDeliveryTime.Location = new Point(818, 107);
             dtpProductDeliveryTime.Name = "dtpProductDeliveryTime";
             dtpProductDeliveryTime.Size = new Size(355, 31);
             dtpProductDeliveryTime.TabIndex = 26;
@@ -382,6 +389,7 @@
             dtpProductExpirationDate.Name = "dtpProductExpirationDate";
             dtpProductExpirationDate.Size = new Size(355, 31);
             dtpProductExpirationDate.TabIndex = 25;
+            dtpProductExpirationDate.MouseDown += dtpProductExpirationDate_MouseDown;
             // 
             // txtProductQuantity
             // 
@@ -402,7 +410,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(650, 145);
+            label11.Location = new Point(650, 111);
             label11.Name = "label11";
             label11.Size = new Size(149, 23);
             label11.TabIndex = 18;
@@ -567,13 +575,14 @@
             // 
             // tabPage9
             // 
+            tabPage9.AccessibleName = "StockinDetails";
             tabPage9.Controls.Add(txtStockInSearch);
             tabPage9.Controls.Add(groupBox3);
             tabPage9.Controls.Add(dgvStockInProducts);
             tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 32);
+            tabPage9.Location = new Point(4, 29);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 889);
+            tabPage9.Size = new Size(1673, 892);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -590,6 +599,7 @@
             // groupBox3
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox3.Controls.Add(btnSIClearExpiration);
             groupBox3.Controls.Add(cmbSIReceived);
             groupBox3.Controls.Add(cmbSIBPName);
             groupBox3.Controls.Add(dtpSIDelivery);
@@ -612,10 +622,21 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 241);
+            groupBox3.Size = new Size(1617, 244);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
+            // 
+            // btnSIClearExpiration
+            // 
+            btnSIClearExpiration.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSIClearExpiration.Location = new Point(648, 196);
+            btnSIClearExpiration.Name = "btnSIClearExpiration";
+            btnSIClearExpiration.Size = new Size(231, 30);
+            btnSIClearExpiration.TabIndex = 28;
+            btnSIClearExpiration.Text = "Click to empty the exp. date";
+            btnSIClearExpiration.UseVisualStyleBackColor = true;
+            btnSIClearExpiration.Click += btnSIClearExpiration_Click;
             // 
             // cmbSIReceived
             // 
@@ -706,6 +727,7 @@
             dtpSIExpiration.Name = "dtpSIExpiration";
             dtpSIExpiration.Size = new Size(355, 31);
             dtpSIExpiration.TabIndex = 11;
+            dtpSIExpiration.MouseDown += dtpSIExpiration_MouseDown;
             // 
             // txtSIQty
             // 
@@ -821,8 +843,7 @@
             // tabPage10
             // 
             tabPage10.Controls.Add(textBox19);
-            tabPage10.Controls.Add(groupBox4);
-            tabPage10.Controls.Add(dataGridView5);
+            tabPage10.Controls.Add(dgvPulloutItems);
             tabPage10.Controls.Add(label30);
             tabPage10.Location = new Point(4, 29);
             tabPage10.Name = "tabPage10";
@@ -839,184 +860,20 @@
             textBox19.Size = new Size(352, 32);
             textBox19.TabIndex = 13;
             // 
-            // groupBox4
+            // dgvPulloutItems
             // 
-            groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBox4.Controls.Add(button13);
-            groupBox4.Controls.Add(button14);
-            groupBox4.Controls.Add(button15);
-            groupBox4.Controls.Add(button16);
-            groupBox4.Controls.Add(dateTimePicker4);
-            groupBox4.Controls.Add(textBox20);
-            groupBox4.Controls.Add(textBox21);
-            groupBox4.Controls.Add(textBox22);
-            groupBox4.Controls.Add(textBox23);
-            groupBox4.Controls.Add(textBox24);
-            groupBox4.Controls.Add(label24);
-            groupBox4.Controls.Add(label25);
-            groupBox4.Controls.Add(label26);
-            groupBox4.Controls.Add(label27);
-            groupBox4.Controls.Add(label28);
-            groupBox4.Controls.Add(label29);
-            groupBox4.Location = new Point(18, 620);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1617, 244);
-            groupBox4.TabIndex = 12;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Product Details:";
-            // 
-            // button13
-            // 
-            button13.Location = new Point(1347, 79);
-            button13.Name = "button13";
-            button13.Size = new Size(126, 41);
-            button13.TabIndex = 15;
-            button13.Text = "Add";
-            button13.UseVisualStyleBackColor = true;
-            // 
-            // button14
-            // 
-            button14.Location = new Point(1203, 79);
-            button14.Name = "button14";
-            button14.Size = new Size(126, 41);
-            button14.TabIndex = 14;
-            button14.Text = "Delete";
-            button14.UseVisualStyleBackColor = true;
-            // 
-            // button15
-            // 
-            button15.Location = new Point(1347, 32);
-            button15.Name = "button15";
-            button15.Size = new Size(126, 41);
-            button15.TabIndex = 13;
-            button15.Text = "Update";
-            button15.UseVisualStyleBackColor = true;
-            // 
-            // button16
-            // 
-            button16.Location = new Point(1203, 32);
-            button16.Name = "button16";
-            button16.Size = new Size(126, 41);
-            button16.TabIndex = 12;
-            button16.Text = "Clear";
-            button16.UseVisualStyleBackColor = true;
-            // 
-            // dateTimePicker4
-            // 
-            dateTimePicker4.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker4.Location = new Point(267, 139);
-            dateTimePicker4.Name = "dateTimePicker4";
-            dateTimePicker4.Size = new Size(355, 31);
-            dateTimePicker4.TabIndex = 11;
-            // 
-            // textBox20
-            // 
-            textBox20.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox20.Location = new Point(804, 29);
-            textBox20.Name = "textBox20";
-            textBox20.Size = new Size(355, 31);
-            textBox20.TabIndex = 10;
-            // 
-            // textBox21
-            // 
-            textBox21.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox21.Location = new Point(267, 29);
-            textBox21.Name = "textBox21";
-            textBox21.Size = new Size(355, 31);
-            textBox21.TabIndex = 9;
-            // 
-            // textBox22
-            // 
-            textBox22.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox22.Location = new Point(267, 63);
-            textBox22.Name = "textBox22";
-            textBox22.Size = new Size(355, 31);
-            textBox22.TabIndex = 8;
-            // 
-            // textBox23
-            // 
-            textBox23.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox23.Location = new Point(804, 67);
-            textBox23.Name = "textBox23";
-            textBox23.Size = new Size(355, 31);
-            textBox23.TabIndex = 7;
-            // 
-            // textBox24
-            // 
-            textBox24.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox24.Location = new Point(267, 100);
-            textBox24.Name = "textBox24";
-            textBox24.Size = new Size(355, 31);
-            textBox24.TabIndex = 6;
-            // 
-            // label24
-            // 
-            label24.AutoSize = true;
-            label24.Location = new Point(648, 29);
-            label24.Name = "label24";
-            label24.Size = new Size(50, 23);
-            label24.TabIndex = 5;
-            label24.Text = "Qty:";
-            // 
-            // label25
-            // 
-            label25.AutoSize = true;
-            label25.Location = new Point(7, 139);
-            label25.Name = "label25";
-            label25.Size = new Size(136, 23);
-            label25.TabIndex = 4;
-            label25.Text = "Pullout Date:";
-            // 
-            // label26
-            // 
-            label26.AutoSize = true;
-            label26.Location = new Point(7, 100);
-            label26.Name = "label26";
-            label26.Size = new Size(240, 23);
-            label26.TabIndex = 3;
-            label26.Text = "Name of Brand Partner:";
-            // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Location = new Point(648, 67);
-            label27.Name = "label27";
-            label27.Size = new Size(62, 23);
-            label27.TabIndex = 2;
-            label27.Text = "Price:";
-            // 
-            // label28
-            // 
-            label28.AutoSize = true;
-            label28.Location = new Point(7, 67);
-            label28.Name = "label28";
-            label28.Size = new Size(159, 23);
-            label28.TabIndex = 1;
-            label28.Text = "Product Name:";
-            // 
-            // label29
-            // 
-            label29.AutoSize = true;
-            label29.Location = new Point(7, 29);
-            label29.Name = "label29";
-            label29.Size = new Size(182, 23);
-            label29.TabIndex = 0;
-            label29.Text = "Product Barcode:";
-            // 
-            // dataGridView5
-            // 
-            dataGridView5.AllowUserToAddRows = false;
-            dataGridView5.AllowUserToDeleteRows = false;
-            dataGridView5.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView5.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView5.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView5.Location = new Point(18, 73);
-            dataGridView5.Name = "dataGridView5";
-            dataGridView5.ReadOnly = true;
-            dataGridView5.RowHeadersWidth = 51;
-            dataGridView5.Size = new Size(1617, 525);
-            dataGridView5.TabIndex = 11;
+            dgvPulloutItems.AllowUserToAddRows = false;
+            dgvPulloutItems.AllowUserToDeleteRows = false;
+            dgvPulloutItems.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dgvPulloutItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvPulloutItems.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvPulloutItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPulloutItems.Location = new Point(18, 73);
+            dgvPulloutItems.Name = "dgvPulloutItems";
+            dgvPulloutItems.ReadOnly = true;
+            dgvPulloutItems.RowHeadersWidth = 51;
+            dgvPulloutItems.Size = new Size(1617, 761);
+            dgvPulloutItems.TabIndex = 11;
             // 
             // label30
             // 
@@ -1024,9 +881,9 @@
             label30.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label30.Location = new Point(3, 24);
             label30.Name = "label30";
-            label30.Size = new Size(166, 34);
+            label30.Size = new Size(220, 34);
             label30.TabIndex = 10;
-            label30.Text = "Product List";
+            label30.Text = "Pullout Item List";
             // 
             // tabPage11
             // 
@@ -1667,9 +1524,9 @@
             // 
             tabPage8.Controls.Add(dgvStockInHistory);
             tabPage8.Controls.Add(label6);
-            tabPage8.Location = new Point(4, 29);
+            tabPage8.Location = new Point(4, 32);
             tabPage8.Name = "tabPage8";
-            tabPage8.Size = new Size(1679, 898);
+            tabPage8.Size = new Size(1679, 895);
             tabPage8.TabIndex = 1;
             tabPage8.Text = "Stock In History";
             tabPage8.UseVisualStyleBackColor = true;
@@ -1685,7 +1542,7 @@
             dgvStockInHistory.Name = "dgvStockInHistory";
             dgvStockInHistory.ReadOnly = true;
             dgvStockInHistory.RowHeadersWidth = 51;
-            dgvStockInHistory.Size = new Size(1607, 750);
+            dgvStockInHistory.Size = new Size(1607, 747);
             dgvStockInHistory.TabIndex = 15;
             // 
             // label6
@@ -1729,9 +1586,7 @@
             ((System.ComponentModel.ISupportInitialize)dgvStockInProducts).EndInit();
             tabPage10.ResumeLayout(false);
             tabPage10.PerformLayout();
-            groupBox4.ResumeLayout(false);
-            groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvPulloutItems).EndInit();
             tabPage11.ResumeLayout(false);
             tabPage11.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dgvExpiration).EndInit();
@@ -1814,7 +1669,7 @@
         private Label label27;
         private Label label28;
         private Label label29;
-        private DataGridView dataGridView5;
+        private DataGridView dgvPulloutItems;
         private Label label30;
         private TextBox txtExpiredProduct;
         private DataGridView dgvExpiration;
@@ -1908,5 +1763,8 @@
         private TextBox txtProductQuantity;
         private Button btnClearExpirationDate;
         private Button btnEmployeeReactivate;
+        private Button btnSIClearExpiration;
+        private Button btnPulloutProduct;
+        private ComboBox cmbPulloutReason;
     }
 }

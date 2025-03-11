@@ -69,15 +69,17 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string query = "SELECT product_barcode, product_name, quantity, price, expiration_date FROM product ORDER BY product_name";
+                    // Modify the query to include the is_active condition
+                    string query = "SELECT product_barcode, product_name, quantity, price, expiration_date " +
+                                   "FROM product WHERE quantity > 0 AND is_active = 1 ORDER BY product_name"; // Only active products
                     MySqlCommand command = new MySqlCommand(query, databaseConnection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(command);
                     productData = new DataTable();
                     adapter.Fill(productData);
 
                     dgvProducts.DataSource = productData;
+                    dgvProducts.Refresh(); // Ensure DataGridView updates immediately
 
-                    // Ensure HighlightExpiredProducts runs after the data is fully loaded
                     dgvProducts.DataBindingComplete += (s, e) => HighlightExpiredProducts();
                 }
                 catch (Exception ex)
@@ -86,6 +88,8 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+
 
         private void HighlightExpiredProducts()
         {
@@ -297,37 +301,53 @@ namespace DUH_Trends_Palas_POS.Views
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
-                try
+                databaseConnection.Open();
+
+                using (MySqlTransaction transaction = databaseConnection.BeginTransaction())
                 {
-                    databaseConnection.Open();
-                    MySqlTransaction transaction = databaseConnection.BeginTransaction();
-
-                    string selectQuery = "SELECT quantity FROM product WHERE product_barcode = @barcode FOR UPDATE";
-                    MySqlCommand selectCommand = new MySqlCommand(selectQuery, databaseConnection, transaction);
-                    selectCommand.Parameters.AddWithValue("@barcode", barcode);
-                    object result = selectCommand.ExecuteScalar();
-
-                    if (result != null && Convert.ToInt32(result) + quantityChange >= 0)
+                    try
                     {
-                        string updateQuery = "UPDATE product SET quantity = quantity + @quantityChange WHERE product_barcode = @barcode";
-                        MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection, transaction);
-                        updateCommand.Parameters.AddWithValue("@quantityChange", quantityChange);
-                        updateCommand.Parameters.AddWithValue("@barcode", barcode);
-                        updateCommand.ExecuteNonQuery();
-                        transaction.Commit();
+                        string selectQuery = "SELECT quantity FROM product WHERE product_barcode = @barcode FOR UPDATE";
+                        MySqlCommand selectCommand = new MySqlCommand(selectQuery, databaseConnection, transaction);
+                        selectCommand.Parameters.AddWithValue("@barcode", barcode);
+                        object result = selectCommand.ExecuteScalar();
+
+                        if (result != null)
+                        {
+                            int currentQuantity = Convert.ToInt32(result);
+
+                            if (currentQuantity + quantityChange >= 0) // Ensure stock doesn't go negative
+                            {
+                                string updateQuery = "UPDATE product SET quantity = quantity + @quantityChange WHERE product_barcode = @barcode";
+                                MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection, transaction);
+                                updateCommand.Parameters.AddWithValue("@quantityChange", quantityChange);
+                                updateCommand.Parameters.AddWithValue("@barcode", barcode);
+                                updateCommand.ExecuteNonQuery();
+
+                                transaction.Commit();
+                                LoadProductList(); // Refresh dgvProducts after stock update
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                                MessageBox.Show("Insufficient stock.", "Stock Update Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            MessageBox.Show("Product not found.", "Stock Update Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
-                    else
+                    catch (Exception ex) // Catch all exceptions
                     {
                         transaction.Rollback();
-                        MessageBox.Show("Insufficient stock or invalid operation.", "Stock Update Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Error updating stock: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                }
-                catch (MySqlException ex)
-                {
-                    MessageBox.Show("Database error updating stock: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
 
         // Logout and update login history
         private void btnLogout_Click(object sender, EventArgs e)

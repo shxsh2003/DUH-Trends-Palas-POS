@@ -40,7 +40,13 @@ namespace DUH_Trends_Palas_POS.Views
             LoadUserLevels(); // Load user levels into the ComboBox
             LoadEmployees(); // Load active employees into the ComboBox
             LoadBPInProducts(); // Load brand partners into the ComboBox in Products
+            LoadPulloutItems(); // Load pullout reasons into the ComboBox
+            LoadStockInHistory(); // Load stock-in history data
 
+            cmbPulloutReason.Items.Add("Pullout");
+            cmbPulloutReason.Items.Add("Defective");
+            cmbPulloutReason.Items.Add("Lost");
+            cmbPulloutReason.Items.Add("Others");
 
 
 
@@ -83,7 +89,9 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        // Brand Partner - TAB
+        /// 
+        /// Brand Partner - TAB
+        /// 
         private void LoadBrandPartnerList()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -340,19 +348,27 @@ namespace DUH_Trends_Palas_POS.Views
                     {
                         MySqlDataReader reader = command.ExecuteReader();
                         List<BrandPartner> brandPartners = new List<BrandPartner>();
+                        AutoCompleteStringCollection autoCompleteCollection = new AutoCompleteStringCollection();
 
                         while (reader.Read())
                         {
+                            string fullName = reader["FullName"].ToString();
                             brandPartners.Add(new BrandPartner
                             {
                                 FullName = reader["FullName"].ToString(),
                                 Id = reader["BrandPartner_ID"].ToString()
                             });
+                            autoCompleteCollection.Add(fullName); // Add to AutoComplete suggestions
                         }
 
                         cmbSIBPName.DataSource = brandPartners;
                         cmbSIBPName.DisplayMember = "FullName"; // Display the full name
                         cmbSIBPName.ValueMember = "Id"; // Use the ID as the value
+
+                        // Enable AutoComplete functionality
+                        cmbSIBPName.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                        cmbSIBPName.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                        cmbSIBPName.AutoCompleteCustomSource = autoCompleteCollection;
                     }
                 }
                 catch (Exception ex)
@@ -464,6 +480,7 @@ namespace DUH_Trends_Palas_POS.Views
             txtSIProdName.Clear();
             txtSIQty.Clear();
             txtSIPrice.Clear();
+            dtpSIExpiration.Format = DateTimePickerFormat.Custom; // Set to custom format
             dtpSIExpiration.Value = DateTime.Now; // Reset to current date
             dtpSIDelivery.Value = DateTime.Now; // Reset to current date
             cmbSIReceived.SelectedIndex = -1; // Deselect any selected employee
@@ -475,6 +492,21 @@ namespace DUH_Trends_Palas_POS.Views
                 dgvStockInProducts.ClearSelection(); // Clear the selection
             }
         }
+
+        private void btnSIClearExpiration_Click(object sender, EventArgs e)
+        {
+            dtpSIExpiration.CustomFormat = " "; // Set to a standard date format
+            dtpSIExpiration.Format = DateTimePickerFormat.Custom; // Ensure it uses the custom format
+            dtpSIExpiration.Value = DateTime.Now; // Optionally reset to current date or set to a specific default date
+
+        }
+
+        private void dtpSIExpiration_MouseDown(object sender, MouseEventArgs e)
+        {
+            dtpSIExpiration.CustomFormat = "yyyy-MM-dd"; // Restore date selection
+            dtpSIExpiration.Format = DateTimePickerFormat.Custom; // Ensure it applies
+        }
+
         private void btnSIAdd_Click(object sender, EventArgs e)
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -539,7 +571,16 @@ namespace DUH_Trends_Palas_POS.Views
                         insertProductCmd.Parameters.AddWithValue("@Price", price);
                         insertProductCmd.Parameters.AddWithValue("@EmployeeID", employeeID);
                         insertProductCmd.Parameters.AddWithValue("@DeliveryDate", deliveryDate);
-                        insertProductCmd.Parameters.AddWithValue("@ExpirationDate", expirationDate);
+
+                        // Handle NULL expiration date
+                        if (dtpSIExpiration.CustomFormat == " ")
+                        {
+                            insertProductCmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value); // Store NULL in database
+                        }
+                        else
+                        {
+                            insertProductCmd.Parameters.AddWithValue("@ExpirationDate", dtpSIExpiration.Value);
+                        }
                         insertProductCmd.ExecuteNonQuery();
                     }
 
@@ -571,14 +612,25 @@ namespace DUH_Trends_Palas_POS.Views
                         insertSupplyDetailsCmd.Parameters.AddWithValue("@ProductName", productName);
                         insertSupplyDetailsCmd.Parameters.AddWithValue("@Quantity", quantity);
                         insertSupplyDetailsCmd.Parameters.AddWithValue("@Price", price);
-                        insertSupplyDetailsCmd.Parameters.AddWithValue("@ExpirationDate", expirationDate);
                         insertSupplyDetailsCmd.Parameters.AddWithValue("@ReceivedBy", employeeFullName); // Insert Full Name
+
+                        if (dtpSIExpiration.CustomFormat == " ")
+                        {
+                            insertSupplyDetailsCmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value);
+                        }
+                        else
+                        {
+                            insertSupplyDetailsCmd.Parameters.AddWithValue("@ExpirationDate", dtpSIExpiration.Value);
+                        }
+
                         insertSupplyDetailsCmd.ExecuteNonQuery();
                     }
 
                     transaction.Commit();
                     MessageBox.Show("Product successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadStockInList(); // Refresh data
+                    LoadProductList(); // Refresh the Product List tab
+
                 }
                 catch (Exception ex)
                 {
@@ -618,7 +670,7 @@ namespace DUH_Trends_Palas_POS.Views
                         // Get selected Employee Name (Receiver)
                         string updatedEmployee = cmbSIReceived.Text.Trim();
 
-                        // ✅ **Update `supply_details` table**
+                        // **Update `supply_details` table**
                         string updateSupplyDetailsQuery = @"
                 UPDATE supply_details 
                 SET 
@@ -637,13 +689,22 @@ namespace DUH_Trends_Palas_POS.Views
                             cmd.Parameters.AddWithValue("@ProductName", updatedProductName);
                             cmd.Parameters.AddWithValue("@Quantity", updatedQuantity);
                             cmd.Parameters.AddWithValue("@Price", updatedPrice);
-                            cmd.Parameters.AddWithValue("@ExpirationDate", updatedExpirationDate);
                             cmd.Parameters.AddWithValue("@ReceivedBy", updatedEmployee);
                             cmd.Parameters.AddWithValue("@OldBarcode", oldProductBarcode);
+
+                            // Handle NULL expiration date
+                            if (dtpSIExpiration.CustomFormat == " ")
+                            {
+                                cmd.Parameters.AddWithValue("@ExpirationDate", DBNull.Value);
+                            }
+                            else
+                            {
+                                cmd.Parameters.AddWithValue("@ExpirationDate", updatedExpirationDate);
+                            }
                             cmd.ExecuteNonQuery();
                         }
 
-                        // ✅ **Update `supply` table** (for supply_date)
+                        // **Update `supply` table** (for supply_date)
                         string updateSupplyQuery = @"
                 UPDATE supply 
                 SET 
@@ -661,6 +722,8 @@ namespace DUH_Trends_Palas_POS.Views
                         transaction.Commit();
                         MessageBox.Show("Stock-in details updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadStockInList(); // Refresh DataGridView
+                        LoadProductList(); // Refresh the Product List tab
+
                     }
                     catch (Exception ex)
                     {
@@ -748,6 +811,45 @@ namespace DUH_Trends_Palas_POS.Views
             LoadProductList(); // Refresh dgvProductList when stock-in changes
         }
 
+        private void LoadStockInHistory()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+                    string query = @"
+                SELECT 
+                    s.supply_id, 
+                    CONCAT(bp.Firstname, ' ', bp.Lastname) AS BrandPartnerName, 
+                    sd.product_barcode, 
+                    sd.product_name, 
+                    sd.quantity, 
+                    sd.price, 
+                    sd.supply_receivedby, 
+                    s.supply_date 
+                FROM 
+                    supply s
+                INNER JOIN 
+                    supply_details sd ON s.supply_id = sd.supply_id
+                INNER JOIN 
+                    brandpartner bp ON s.BrandPartner_ID = bp.BrandPartner_ID
+                ORDER BY 
+                    s.supply_date DESC"; // You can adjust the order as needed
+
+                    MySqlCommand command = new MySqlCommand(query, databaseConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable stockInHistoryData = new DataTable();
+                    adapter.Fill(stockInHistoryData);
+
+                    dgvStockInHistory.DataSource = stockInHistoryData; // Bind the data to the DataGridView
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading stock-in history: " + ex.Message);
+                }
+            }
+        }
 
 
         /// This will load the data in the product table, with a CRUD process
@@ -844,15 +946,24 @@ namespace DUH_Trends_Palas_POS.Views
                 {
                     databaseConnection.Open();
                     string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS BrandPartnerName FROM brandpartner ORDER BY Firstname";
+
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             cmbProductBrandPartner.Items.Clear();
+                            AutoCompleteStringCollection autoCompleteCollection = new AutoCompleteStringCollection();
+
                             while (reader.Read())
                             {
+                                string brandPartnerName = reader["BrandPartnerName"].ToString();
                                 cmbProductBrandPartner.Items.Add(reader["BrandPartnerName"].ToString());
+                                autoCompleteCollection.Add(brandPartnerName); // Add to AutoComplete Source
                             }
+                            // Enable AutoComplete Suggest & Filter Feature
+                            cmbProductBrandPartner.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                            cmbProductBrandPartner.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                            cmbProductBrandPartner.AutoCompleteCustomSource = autoCompleteCollection;
                         }
                     }
                 }
@@ -909,6 +1020,22 @@ namespace DUH_Trends_Palas_POS.Views
             {
                 dgvProductList.ClearSelection(); // Clear the selection
             }
+        }
+
+        private void btnAddProduct_Click(object sender, EventArgs e)
+        {
+            // Show confirmation message box
+            DialogResult result = MessageBox.Show("Do you want to add a new product?", "Add Product", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                // Show message indicating redirection
+                MessageBox.Show("You will be redirected to adding new product.", "Redirecting", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Assuming you have a TabControl named tabControl and the tab for StockInDetails is at index 1
+                tabControl2.SelectedIndex = 1; // Change this index based on your actual tab order
+            }
+            // If the user clicks "No", just close the message box and do nothing
         }
 
         private void btnUpdateProduct_Click(object sender, EventArgs e)
@@ -980,11 +1107,17 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        private void dtpProductExpirationDate_MouseDown(object sender, MouseEventArgs e)
+        {
+            dtpProductExpirationDate.CustomFormat = "yyyy-MM-dd"; // Restore date selection
+            dtpProductExpirationDate.Format = DateTimePickerFormat.Custom; // Ensure it applies
+        }
 
         private void btnClearExpirationDate_Click(object sender, EventArgs e)
         {
-            dtpProductExpirationDate.CustomFormat = " "; // Hide the date
-            dtpProductExpirationDate.Format = DateTimePickerFormat.Custom;
+            dtpProductExpirationDate.CustomFormat = " "; // Set to a standard date format
+            dtpProductExpirationDate.Format = DateTimePickerFormat.Custom; // Ensure it uses the custom format
+            dtpProductExpirationDate.Value = DateTime.Now; // Optionally reset to current date or set to a specific default date
         }
 
         private void btnDeleteProduct_Click(object sender, EventArgs e)
@@ -1032,6 +1165,160 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
+        private int GetLastActiveEmployeeId()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                databaseConnection.Open();
+                string query = @"
+            SELECT employee_id 
+            FROM login_history 
+            WHERE logout_time IS NULL 
+            ORDER BY login_time DESC 
+            LIMIT 1"; // Get the last login without a logout time
+
+                using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
+                {
+                    object result = command.ExecuteScalar();
+                    return result != null ? Convert.ToInt32(result) : 0; // Return 0 if no active session found
+                }
+            }
+        }
+
+        private void btnPulloutProduct_Click(object sender, EventArgs e)
+        {
+            // Ensure a product is selected
+            if (string.IsNullOrWhiteSpace(txtProductBarcode.Text))
+            {
+                MessageBox.Show("Please select a product to pull out.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string productBarcode = txtProductBarcode.Text;
+            int currentQuantity = int.Parse(txtProductQuantity.Text); // Get current stock
+
+            // Show confirmation dialog
+            DialogResult result = MessageBox.Show("Do you want to pull out this product?", "Confirm Pullout", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result != DialogResult.Yes) return;
+
+            // Prompt for quantity
+            string quantityInput = Microsoft.VisualBasic.Interaction.InputBox("Enter quantity to pull out (leave blank for full pullout):", "Quantity for Pullout", "");
+
+            int quantityToPullOut;
+            bool isQuantityValid = int.TryParse(quantityInput, out quantityToPullOut);
+
+            if (!isQuantityValid || quantityToPullOut < 1) quantityToPullOut = currentQuantity; // Pull out all if input is invalid
+
+            // Ensure valid pullout quantity
+            if (quantityToPullOut > currentQuantity)
+            {
+                MessageBox.Show("Insufficient stock to pull out this quantity.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Check reason selection
+            if (cmbPulloutReason.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a reason for the pullout.", "No Reason Selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string reason = cmbPulloutReason.SelectedItem.ToString();
+
+            // Get the last active employee ID
+            int employeeId = GetLastActiveEmployeeId();
+
+            // Check if the employee ID is valid
+            if (employeeId <= 0)
+            {
+                MessageBox.Show("No active employee found. Please log in again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                databaseConnection.Open();
+                MySqlTransaction transaction = databaseConnection.BeginTransaction(); // Ensure atomicity
+
+                try
+                {
+                    // Insert into product_pullout table
+                    string insertPulloutQuery = @"
+            INSERT INTO product_pullout (product_barcode, quantity_pulled, reason, employee_id) 
+            VALUES (@barcode, @quantity, @reason, @employee_id)";
+
+                    using (MySqlCommand cmd = new MySqlCommand(insertPulloutQuery, databaseConnection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@barcode", productBarcode);
+                        cmd.Parameters.AddWithValue("@quantity", quantityToPullOut);
+                        cmd.Parameters.AddWithValue("@reason", reason);
+                        cmd.Parameters.AddWithValue("@employee_id", employeeId);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    // Update product quantity in product table
+                    string updateProductQuery = @"
+            UPDATE product 
+            SET quantity = CASE 
+                WHEN quantity - @quantity > 0 THEN quantity - @quantity 
+                ELSE 0 
+            END
+            WHERE product_barcode = @barcode";
+
+                    using (MySqlCommand cmd = new MySqlCommand(updateProductQuery, databaseConnection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@quantity", quantityToPullOut);
+                        cmd.Parameters.AddWithValue("@barcode", productBarcode);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    MessageBox.Show($"Pulled out {quantityToPullOut} units of {txtProductName.Text}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadProductList(); // Refresh UI after pullout
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    MessageBox.Show("Error pulling out product: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        /// 
+        /// Pullout Product - TAB
+        ///
+        private void LoadPulloutItems()
+        {
+            using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    databaseConnection.Open();
+                    string query = @"
+                SELECT 
+                    pullout_id, 
+                    product_barcode, 
+                    quantity_pulled, 
+                    reason, 
+                    pullout_date 
+                FROM 
+                    product_pullout 
+                ORDER BY 
+                    pullout_date DESC"; // You can adjust the order as needed
+
+                    MySqlCommand command = new MySqlCommand(query, databaseConnection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable pulloutData = new DataTable();
+                    adapter.Fill(pulloutData);
+
+                    dgvPulloutItems.DataSource = pulloutData; // Bind the data to the DataGridView
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error loading pullout items: " + ex.Message);
+                }
+            }
+        }
 
 
         /// This will load the products, and put the latest or nearest expiration date first
@@ -1931,15 +2218,6 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
-
-        private void btnAddProduct_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-
 
         //
     }

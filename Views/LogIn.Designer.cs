@@ -37,6 +37,8 @@
             txtUsername = new TextBox();
             txtPassword = new TextBox();
             btnShowPassword = new Button();
+            label2 = new Label();
+            lblSignUp = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -128,12 +130,41 @@
             btnShowPassword.UseVisualStyleBackColor = true;
             btnShowPassword.Click += btnShowPassword_Click;
             // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.ForeColor = SystemColors.ControlLightLight;
+            label2.Location = new Point(436, 383);
+            label2.Name = "label2";
+            label2.Size = new Size(224, 19);
+            label2.TabIndex = 8;
+            label2.Text = "Do you have an account?";
+            // 
+            // lblSignUp
+            // 
+            lblSignUp.ActiveLinkColor = SystemColors.Highlight;
+            lblSignUp.AutoSize = true;
+            lblSignUp.DisabledLinkColor = SystemColors.ActiveCaption;
+            lblSignUp.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSignUp.LinkColor = SystemColors.ActiveCaption;
+            lblSignUp.Location = new Point(666, 381);
+            lblSignUp.Name = "lblSignUp";
+            lblSignUp.Size = new Size(82, 23);
+            lblSignUp.TabIndex = 10;
+            lblSignUp.TabStop = true;
+            lblSignUp.Text = "Sign Up";
+            lblSignUp.LinkClicked += lblSignUp_LinkClicked;
+            // 
             // LogIn
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaptionText;
             ClientSize = new Size(883, 445);
+            Controls.Add(lblSignUp);
+            Controls.Add(label2);
             Controls.Add(btnShowPassword);
             Controls.Add(txtPassword);
             Controls.Add(txtUsername);
@@ -161,5 +192,7 @@
         private TextBox txtUsername;
         private TextBox txtPassword;
         private Button btnShowPassword;
+        private Label label2;
+        private LinkLabel lblSignUp;
     }
 }

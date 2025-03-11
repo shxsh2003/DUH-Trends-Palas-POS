@@ -53,7 +53,7 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.DimGray;
+            panel1.BackColor = Color.Black;
             panel1.Controls.Add(panel5);
             panel1.Controls.Add(panel4);
             panel1.Controls.Add(label9);
@@ -110,7 +110,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.BackColor = Color.DimGray;
+            label9.BackColor = Color.Black;
             label9.Font = new Font("Century Gothic", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ButtonHighlight;
             label9.Location = new Point(33, 51);
@@ -165,9 +165,9 @@
             // 
             // btnCheckout
             // 
-            btnCheckout.BackColor = Color.Red;
+            btnCheckout.BackColor = SystemColors.ControlDarkDark;
             btnCheckout.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            btnCheckout.ForeColor = SystemColors.ControlText;
+            btnCheckout.ForeColor = SystemColors.ButtonHighlight;
             btnCheckout.Location = new Point(151, 165);
             btnCheckout.Name = "btnCheckout";
             btnCheckout.Size = new Size(203, 49);

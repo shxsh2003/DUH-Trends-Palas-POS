@@ -60,7 +60,13 @@ namespace DUH_Trends_Palas_POS.Views
             dgvOrders.Refresh();
         }
 
-
+        // Force Close, Logout
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            // Call the logout method when the form is closing
+            btnLogout_Click(this, EventArgs.Empty);
+            base.OnFormClosing(e); // Call the base class method
+        }
 
         private void LoadProductList()
         {
@@ -157,57 +163,61 @@ namespace DUH_Trends_Palas_POS.Views
                     }
                 }
 
-                // Prompt user for quantity
+                // Prompt for quantity
                 string input = Microsoft.VisualBasic.Interaction.InputBox($"Enter quantity (Stock: {stock}):", "Add to Order", "1");
 
-                if (int.TryParse(input, out int quantity) && quantity > 0 && quantity <= stock)
+                if (!int.TryParse(input, out int quantity) || quantity <= 0)
                 {
-                    bool itemExists = false;
+                    MessageBox.Show("Invalid quantity! Enter a positive number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-                    foreach (DataGridViewRow orderRow in dgvOrders.Rows)
+                if (quantity > stock)
+                {
+                    MessageBox.Show("Insufficient stock!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                bool itemExists = false;
+                foreach (DataGridViewRow orderRow in dgvOrders.Rows)
+                {
+                    if (orderRow.Cells["product_barcode"].Value.ToString() == barcode)
                     {
-                        if (orderRow.Cells["product_barcode"].Value.ToString() == barcode)
+                        int existingQuantity = Convert.ToInt32(orderRow.Cells["quantity"].Value);
+                        int newTotalQuantity = existingQuantity + quantity;
+
+                        if (newTotalQuantity > stock)
                         {
-                            // Update existing order
-                            int existingQuantity = Convert.ToInt32(orderRow.Cells["quantity"].Value);
-                            int newTotalQuantity = existingQuantity + quantity;
-
-                            orderRow.Cells["quantity"].Value = newTotalQuantity;
-                            orderRow.Cells["subtotal"].Value = newTotalQuantity * price;
-
-                            // Deduct from product quantity
-                            productRow.Cells["quantity"].Value = stock - newTotalQuantity; // Deduct total quantity from stock
-                            itemExists = true;
-                            break;
+                            MessageBox.Show("Not enough stock for this quantity!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
                         }
+
+                        orderRow.Cells["quantity"].Value = newTotalQuantity;
+                        orderRow.Cells["subtotal"].Value = newTotalQuantity * price;
+                        productRow.Cells["quantity"].Value = stock - newTotalQuantity;
+                        itemExists = true;
+                        break;
                     }
-
-                    if (!itemExists)
-                    {
-                        // Add new order
-                        DataRow newRow = orderData.NewRow();
-                        newRow["product_barcode"] = barcode;
-                        newRow["quantity"] = quantity;
-                        newRow["price"] = price;
-                        newRow["subtotal"] = quantity * price;
-                        orderData.Rows.Add(newRow);
-
-                        // Deduct from stock
-                        productRow.Cells["quantity"].Value = stock - quantity; // Deduct only the quantity added
-                    }
-
-                    MessageBox.Show("Item added to order.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                else
+
+                if (!itemExists)
                 {
-                    MessageBox.Show("Invalid quantity!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    DataRow newRow = orderData.NewRow();
+                    newRow["product_barcode"] = barcode;
+                    newRow["quantity"] = quantity;
+                    newRow["price"] = price;
+                    newRow["subtotal"] = quantity * price;
+                    orderData.Rows.Add(newRow);
+
+                    productRow.Cells["quantity"].Value = stock - quantity;
                 }
 
-                // Enable checkout button
+                MessageBox.Show("Item added to order.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 btnCheckout.Enabled = orderData.Rows.Count > 0;
                 CalculateTotal();
             }
         }
+
 
 
         private void Order_Load(object sender, EventArgs e)
@@ -225,44 +235,47 @@ namespace DUH_Trends_Palas_POS.Views
                 DataGridViewRow orderRow = dgvOrders.Rows[e.RowIndex];
                 string barcode = orderRow.Cells["product_barcode"].Value.ToString();
                 int currentQuantity = Convert.ToInt32(orderRow.Cells["quantity"].Value);
+                decimal price = Convert.ToDecimal(orderRow.Cells["price"].Value);
 
                 DialogResult result = MessageBox.Show("Edit quantity or remove order?", "Order Action", MessageBoxButtons.YesNoCancel);
 
                 if (result == DialogResult.Yes) // Edit quantity
                 {
                     string input = Microsoft.VisualBasic.Interaction.InputBox("Enter new quantity:", "Edit Quantity", currentQuantity.ToString());
-                    if (int.TryParse(input, out int newQuantity) && newQuantity > 0)
+
+                    if (!int.TryParse(input, out int newQuantity) || newQuantity <= 0)
                     {
-                        // Restore the previous quantity to stock
-                        foreach (DataGridViewRow productRow in dgvProducts.Rows)
-                        {
-                            if (productRow.Cells["product_barcode"].Value.ToString() == barcode)
-                            {
-                                int stock = Convert.ToInt32(productRow.Cells["quantity"].Value);
-                                productRow.Cells["quantity"].Value = stock + currentQuantity; // Restore stock
-                                break;
-                            }
-                        }
+                        MessageBox.Show("Invalid quantity! Enter a positive number.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
 
-                        // Update order row
-                        orderRow.Cells["quantity"].Value = newQuantity;
-                        orderRow.Cells["subtotal"].Value = newQuantity * Convert.ToDecimal(orderRow.Cells["price"].Value);
-
-                        // Deduct the new quantity from stock
-                        foreach (DataGridViewRow productRow in dgvProducts.Rows)
+                    int stock = 0;
+                    foreach (DataGridViewRow productRow in dgvProducts.Rows)
+                    {
+                        if (productRow.Cells["product_barcode"].Value.ToString() == barcode)
                         {
-                            if (productRow.Cells["product_barcode"].Value.ToString() == barcode)
-                            {
-                                int stock = Convert.ToInt32(productRow.Cells["quantity"].Value);
-                                productRow.Cells["quantity"].Value = stock - newQuantity; // Deduct new quantity
-                                break;
-                            }
+                            stock = Convert.ToInt32(productRow.Cells["quantity"].Value) + currentQuantity; // Restore previous quantity first
+                            break;
                         }
                     }
-                    else
+
+                    if (newQuantity > stock)
                     {
-                        MessageBox.Show("Invalid quantity!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Not enough stock for this quantity!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
+
+                    foreach (DataGridViewRow productRow in dgvProducts.Rows)
+                    {
+                        if (productRow.Cells["product_barcode"].Value.ToString() == barcode)
+                        {
+                            productRow.Cells["quantity"].Value = stock - newQuantity;
+                            break;
+                        }
+                    }
+
+                    orderRow.Cells["quantity"].Value = newQuantity;
+                    orderRow.Cells["subtotal"].Value = newQuantity * price;
                 }
                 else if (result == DialogResult.No) // Remove item
                 {
@@ -270,18 +283,18 @@ namespace DUH_Trends_Palas_POS.Views
                     {
                         if (productRow.Cells["product_barcode"].Value.ToString() == barcode)
                         {
-                            int stock = Convert.ToInt32(productRow.Cells["quantity"].Value);
-                            productRow.Cells["quantity"].Value = stock + currentQuantity; // Restore stock
+                            productRow.Cells["quantity"].Value = Convert.ToInt32(productRow.Cells["quantity"].Value) + currentQuantity;
                             break;
                         }
                     }
 
-                    orderData.Rows.RemoveAt(e.RowIndex); // Remove order item
+                    orderData.Rows.RemoveAt(e.RowIndex);
                 }
 
-                CalculateTotal(); // Update total
+                CalculateTotal();
             }
         }
+
 
         private bool IsEmployeeValid(int employeeId)
         {

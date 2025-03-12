@@ -347,6 +347,7 @@
             // 
             // cmbPulloutReason
             // 
+            cmbPulloutReason.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPulloutReason.FormattingEnabled = true;
             cmbPulloutReason.Location = new Point(818, 182);
             cmbPulloutReason.Name = "cmbPulloutReason";
@@ -401,6 +402,7 @@
             // 
             // cmbProductBrandPartner
             // 
+            cmbProductBrandPartner.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbProductBrandPartner.FormattingEnabled = true;
             cmbProductBrandPartner.Location = new Point(267, 104);
             cmbProductBrandPartner.Name = "cmbProductBrandPartner";
@@ -580,9 +582,9 @@
             tabPage9.Controls.Add(groupBox3);
             tabPage9.Controls.Add(dgvStockInProducts);
             tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 29);
+            tabPage9.Location = new Point(4, 32);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 892);
+            tabPage9.Size = new Size(1673, 889);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -622,7 +624,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 244);
+            groupBox3.Size = new Size(1617, 241);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
@@ -640,6 +642,7 @@
             // 
             // cmbSIReceived
             // 
+            cmbSIReceived.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbSIReceived.FormattingEnabled = true;
             cmbSIReceived.Location = new Point(267, 147);
             cmbSIReceived.Name = "cmbSIReceived";
@@ -648,6 +651,7 @@
             // 
             // cmbSIBPName
             // 
+            cmbSIBPName.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbSIBPName.FormattingEnabled = true;
             cmbSIBPName.Location = new Point(267, 104);
             cmbSIBPName.Name = "cmbSIBPName";
@@ -845,9 +849,9 @@
             tabPage10.Controls.Add(textBox19);
             tabPage10.Controls.Add(dgvPulloutItems);
             tabPage10.Controls.Add(label30);
-            tabPage10.Location = new Point(4, 29);
+            tabPage10.Location = new Point(4, 32);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1673, 892);
+            tabPage10.Size = new Size(1673, 889);
             tabPage10.TabIndex = 5;
             tabPage10.Text = "Pull Out Items";
             tabPage10.UseVisualStyleBackColor = true;
@@ -986,6 +990,7 @@
             // 
             // cmbStoragePrice
             // 
+            cmbStoragePrice.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbStoragePrice.FormattingEnabled = true;
             cmbStoragePrice.Items.AddRange(new object[] { "1000.00", "1200.00", "1500.00", "2200.00", "2500.00", "3000.00", "3500.00", "5500.00" });
             cmbStoragePrice.Location = new Point(806, 104);
@@ -1313,6 +1318,7 @@
             // 
             // cmbUserLevel
             // 
+            cmbUserLevel.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbUserLevel.FormattingEnabled = true;
             cmbUserLevel.Items.AddRange(new object[] { "Owner", "Cashier", "Admin" });
             cmbUserLevel.Location = new Point(804, 63);
@@ -1524,9 +1530,9 @@
             // 
             tabPage8.Controls.Add(dgvStockInHistory);
             tabPage8.Controls.Add(label6);
-            tabPage8.Location = new Point(4, 32);
+            tabPage8.Location = new Point(4, 29);
             tabPage8.Name = "tabPage8";
-            tabPage8.Size = new Size(1679, 895);
+            tabPage8.Size = new Size(1679, 898);
             tabPage8.TabIndex = 1;
             tabPage8.Text = "Stock In History";
             tabPage8.UseVisualStyleBackColor = true;
@@ -1542,7 +1548,7 @@
             dgvStockInHistory.Name = "dgvStockInHistory";
             dgvStockInHistory.ReadOnly = true;
             dgvStockInHistory.RowHeadersWidth = 51;
-            dgvStockInHistory.Size = new Size(1607, 747);
+            dgvStockInHistory.Size = new Size(1607, 750);
             dgvStockInHistory.TabIndex = 15;
             // 
             // label6

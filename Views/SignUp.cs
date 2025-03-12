@@ -11,7 +11,8 @@ using System.Windows.Forms;
 namespace DUH_Trends_Palas_POS.Views
 {
     public partial class SignUp : Form
-    {
+    { 
+    
         public SignUp()
         {
             InitializeComponent();

@@ -132,27 +132,26 @@
             // 
             // label2
             // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.ForeColor = SystemColors.ControlLightLight;
-            label2.Location = new Point(436, 383);
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(436, 387);
             label2.Name = "label2";
-            label2.Size = new Size(224, 19);
+            label2.Size = new Size(206, 19);
             label2.TabIndex = 8;
-            label2.Text = "Do you have an account?";
+            label2.Text = "Don't have an account?";
             // 
             // lblSignUp
             // 
-            lblSignUp.ActiveLinkColor = SystemColors.Highlight;
             lblSignUp.AutoSize = true;
-            lblSignUp.DisabledLinkColor = SystemColors.ActiveCaption;
-            lblSignUp.Font = new Font("Century Gothic", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblSignUp.LinkColor = SystemColors.ActiveCaption;
-            lblSignUp.Location = new Point(666, 381);
+            lblSignUp.DisabledLinkColor = Color.LightBlue;
+            lblSignUp.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblSignUp.ForeColor = Color.White;
+            lblSignUp.LinkColor = Color.White;
+            lblSignUp.Location = new Point(643, 384);
             lblSignUp.Name = "lblSignUp";
-            lblSignUp.Size = new Size(82, 23);
-            lblSignUp.TabIndex = 10;
+            lblSignUp.Size = new Size(75, 22);
+            lblSignUp.TabIndex = 9;
             lblSignUp.TabStop = true;
             lblSignUp.Text = "Sign Up";
             lblSignUp.LinkClicked += lblSignUp_LinkClicked;

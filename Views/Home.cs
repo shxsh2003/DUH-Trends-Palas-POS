@@ -66,6 +66,14 @@ namespace DUH_Trends_Palas_POS.Views
 
         }
 
+        // Force Close, Logout
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            // Call the logout method when the form is closing
+            btnLogout_Click(this, EventArgs.Empty);
+            base.OnFormClosing(e); // Call the base class method
+        }
+
         private void LoadLoginHistory()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -348,7 +356,6 @@ namespace DUH_Trends_Palas_POS.Views
                     {
                         MySqlDataReader reader = command.ExecuteReader();
                         List<BrandPartner> brandPartners = new List<BrandPartner>();
-                        AutoCompleteStringCollection autoCompleteCollection = new AutoCompleteStringCollection();
 
                         while (reader.Read())
                         {
@@ -358,17 +365,14 @@ namespace DUH_Trends_Palas_POS.Views
                                 FullName = reader["FullName"].ToString(),
                                 Id = reader["BrandPartner_ID"].ToString()
                             });
-                            autoCompleteCollection.Add(fullName); // Add to AutoComplete suggestions
                         }
 
                         cmbSIBPName.DataSource = brandPartners;
                         cmbSIBPName.DisplayMember = "FullName"; // Display the full name
                         cmbSIBPName.ValueMember = "Id"; // Use the ID as the value
 
-                        // Enable AutoComplete functionality
-                        cmbSIBPName.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                        cmbSIBPName.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                        cmbSIBPName.AutoCompleteCustomSource = autoCompleteCollection;
+                        cmbSIBPName.AutoCompleteMode = AutoCompleteMode.None;
+                        cmbSIBPName.AutoCompleteSource = AutoCompleteSource.None;
                     }
                 }
                 catch (Exception ex)
@@ -509,6 +513,18 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnSIAdd_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtSIBarcode.Text) ||
+                string.IsNullOrWhiteSpace(txtSIProdName.Text) ||
+                string.IsNullOrWhiteSpace(txtSIQty.Text) ||
+                string.IsNullOrWhiteSpace(txtSIPrice.Text) ||
+                cmbSIBPName.SelectedItem == null ||
+                cmbSIReceived.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields and select a brand partner and receiver.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
                 MySqlTransaction transaction = null; // Declare transaction outside try
@@ -642,6 +658,18 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnSIUpdate_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtSIBarcode.Text) ||
+                string.IsNullOrWhiteSpace(txtSIProdName.Text) ||
+                string.IsNullOrWhiteSpace(txtSIQty.Text) ||
+                string.IsNullOrWhiteSpace(txtSIPrice.Text) ||
+                cmbSIBPName.SelectedItem == null ||
+                cmbSIReceived.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields and select a brand partner and receiver.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (dgvStockInProducts.SelectedRows.Count > 0)
             {
                 string oldProductBarcode = dgvStockInProducts.SelectedRows[0].Cells["product_barcode"].Value.ToString();
@@ -952,18 +980,12 @@ namespace DUH_Trends_Palas_POS.Views
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
                             cmbProductBrandPartner.Items.Clear();
-                            AutoCompleteStringCollection autoCompleteCollection = new AutoCompleteStringCollection();
 
                             while (reader.Read())
                             {
                                 string brandPartnerName = reader["BrandPartnerName"].ToString();
                                 cmbProductBrandPartner.Items.Add(reader["BrandPartnerName"].ToString());
-                                autoCompleteCollection.Add(brandPartnerName); // Add to AutoComplete Source
                             }
-                            // Enable AutoComplete Suggest & Filter Feature
-                            cmbProductBrandPartner.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                            cmbProductBrandPartner.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                            cmbProductBrandPartner.AutoCompleteCustomSource = autoCompleteCollection;
                         }
                     }
                 }
@@ -1024,6 +1046,7 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnAddProduct_Click(object sender, EventArgs e)
         {
+           
             // Show confirmation message box
             DialogResult result = MessageBox.Show("Do you want to add a new product?", "Add Product", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -1040,6 +1063,16 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnUpdateProduct_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtProductBarcode.Text) ||
+                string.IsNullOrWhiteSpace(txtProductName.Text) ||
+                string.IsNullOrWhiteSpace(txtProductQuantity.Text) ||
+                string.IsNullOrWhiteSpace(txtProductPrice.Text) ||
+                cmbProductBrandPartner.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields and select a brand partner.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
                 try
@@ -1614,6 +1647,17 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnBPUpdate_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtBPFirstname.Text) ||
+                string.IsNullOrWhiteSpace(txtBPLastname.Text) ||
+                string.IsNullOrWhiteSpace(txtBPContactnum.Text) ||
+                string.IsNullOrWhiteSpace(txtBPEmail.Text) ||
+                string.IsNullOrWhiteSpace(txtBPAddress.Text) ||
+                cmbStoragePrice.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields and select a storage price.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             if (dgvBrandPartnerList.SelectedCells.Count > 0)
             {
                 int selectedRowIndex = dgvBrandPartnerList.SelectedCells[0].RowIndex;
@@ -1775,6 +1819,17 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnBPAdd_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtBPFirstname.Text) ||
+                string.IsNullOrWhiteSpace(txtBPLastname.Text) ||
+                string.IsNullOrWhiteSpace(txtBPContactnum.Text) ||
+                string.IsNullOrWhiteSpace(txtBPEmail.Text) ||
+                string.IsNullOrWhiteSpace(txtBPAddress.Text) ||
+                cmbStoragePrice.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields and select a storage price.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
                 try
@@ -2137,13 +2192,26 @@ namespace DUH_Trends_Palas_POS.Views
         {
             if (dgvEmployees.SelectedRows.Count > 0)
             {
-                int employeeId = Convert.ToInt32(dgvEmployees.SelectedRows[0].Cells["Employee_ID"].Value);
-                using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
+                // Validate input fields
+                if (string.IsNullOrWhiteSpace(txtEmployeeFirstname.Text) ||
+                    string.IsNullOrWhiteSpace(txtEmployeeLastname.Text) ||
+                    string.IsNullOrWhiteSpace(txtEmployeeContactNumber.Text) ||
+                    string.IsNullOrWhiteSpace(txtEmployeeAddress.Text) ||
+                    string.IsNullOrWhiteSpace(txtEmployeeEmail.Text) ||
+                    cmbUserLevel.SelectedItem == null)
                 {
-                    try
+                    MessageBox.Show("Please fill in all fields and select a user level.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                if (dgvEmployees.SelectedRows.Count > 0)
+                {
+                    int employeeId = Convert.ToInt32(dgvEmployees.SelectedRows[0].Cells["Employee_ID"].Value);
+                    using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
                     {
-                        databaseConnection.Open();
-                        string updateQuery = @"
+                        try
+                        {
+                            databaseConnection.Open();
+                            string updateQuery = @"
                     UPDATE employee 
                     SET 
                         Firstname = @Firstname,
@@ -2156,36 +2224,48 @@ namespace DUH_Trends_Palas_POS.Views
                     WHERE 
                         Employee_ID = @EmployeeID";
 
-                        using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
-                        {
-                            updateCommand.Parameters.AddWithValue("@Firstname", txtEmployeeFirstname.Text);
-                            updateCommand.Parameters.AddWithValue("@Lastname", txtEmployeeLastname.Text);
-                            updateCommand.Parameters.AddWithValue("@ContactNumber", txtEmployeeContactNumber.Text);
-                            updateCommand.Parameters.AddWithValue("@Address", txtEmployeeAddress.Text);
-                            updateCommand.Parameters.AddWithValue("@Email", txtEmployeeEmail.Text);
-                            updateCommand.Parameters.AddWithValue("@UserLevel", cmbUserLevel.SelectedItem.ToString()); // Get user level from ComboBox
-                            updateCommand.Parameters.AddWithValue("@IsActive", true); // Set to true or false based on your logic
-                            updateCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
-                            updateCommand.ExecuteNonQuery();
-                        }
+                            using (MySqlCommand updateCommand = new MySqlCommand(updateQuery, databaseConnection))
+                            {
+                                updateCommand.Parameters.AddWithValue("@Firstname", txtEmployeeFirstname.Text);
+                                updateCommand.Parameters.AddWithValue("@Lastname", txtEmployeeLastname.Text);
+                                updateCommand.Parameters.AddWithValue("@ContactNumber", txtEmployeeContactNumber.Text);
+                                updateCommand.Parameters.AddWithValue("@Address", txtEmployeeAddress.Text);
+                                updateCommand.Parameters.AddWithValue("@Email", txtEmployeeEmail.Text);
+                                updateCommand.Parameters.AddWithValue("@UserLevel", cmbUserLevel.SelectedItem.ToString()); // Get user level from ComboBox
+                                updateCommand.Parameters.AddWithValue("@IsActive", true); // Set to true or false based on your logic
+                                updateCommand.Parameters.AddWithValue("@EmployeeID", employeeId);
+                                updateCommand.ExecuteNonQuery();
+                            }
 
-                        MessageBox.Show("Employee updated successfully.");
-                        LoadEmployeeList(); // Refresh the employee list
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error updating employee: " + ex.Message);
+                            MessageBox.Show("Employee updated successfully.");
+                            LoadEmployeeList(); // Refresh the employee list
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error updating employee: " + ex.Message);
+                        }
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show("Please select an employee to update.");
+                else
+                {
+                    MessageBox.Show("Please select an employee to update.");
+                }
             }
         }
 
         private void btnEmployeeAdd_Click(object sender, EventArgs e)
         {
+            // Validate input fields
+            if (string.IsNullOrWhiteSpace(txtEmployeeFirstname.Text) ||
+                string.IsNullOrWhiteSpace(txtEmployeeLastname.Text) ||
+                string.IsNullOrWhiteSpace(txtEmployeeContactNumber.Text) ||
+                string.IsNullOrWhiteSpace(txtEmployeeAddress.Text) ||
+                string.IsNullOrWhiteSpace(txtEmployeeEmail.Text) ||
+                cmbUserLevel.SelectedItem == null)
+    {
+                MessageBox.Show("Please fill in all fields and select a user level.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
             {
                 try
@@ -2222,3 +2302,4 @@ namespace DUH_Trends_Palas_POS.Views
         //
     }
 }
+    

@@ -39,6 +39,10 @@
             txtSearch = new TextBox();
             dgvProducts = new DataGridView();
             panel3 = new Panel();
+            label3 = new Label();
+            txtChange = new TextBox();
+            label2 = new Label();
+            txtRenderedMoney = new TextBox();
             btnCheckout = new Button();
             label1 = new Label();
             txtTotal = new TextBox();
@@ -111,13 +115,13 @@
             // 
             label9.AutoSize = true;
             label9.BackColor = Color.Black;
-            label9.Font = new Font("Century Gothic", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label9.Font = new Font("Century Gothic", 22.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ButtonHighlight;
             label9.Location = new Point(33, 51);
             label9.Name = "label9";
-            label9.Size = new Size(291, 40);
+            label9.Size = new Size(90, 44);
             label9.TabIndex = 5;
-            label9.Text = "DUH Trends Palas";
+            label9.Text = "POS";
             // 
             // panel2
             // 
@@ -154,6 +158,10 @@
             // panel3
             // 
             panel3.BackColor = Color.LightGray;
+            panel3.Controls.Add(label3);
+            panel3.Controls.Add(txtChange);
+            panel3.Controls.Add(label2);
+            panel3.Controls.Add(txtRenderedMoney);
             panel3.Controls.Add(btnCheckout);
             panel3.Controls.Add(label1);
             panel3.Controls.Add(txtTotal);
@@ -163,12 +171,49 @@
             panel3.Size = new Size(899, 240);
             panel3.TabIndex = 3;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.Location = new Point(74, 140);
+            label3.Name = "label3";
+            label3.Size = new Size(133, 34);
+            label3.TabIndex = 6;
+            label3.Text = "Change:";
+            // 
+            // txtChange
+            // 
+            txtChange.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtChange.Location = new Point(339, 140);
+            txtChange.Name = "txtChange";
+            txtChange.ReadOnly = true;
+            txtChange.Size = new Size(216, 38);
+            txtChange.TabIndex = 5;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Location = new Point(74, 87);
+            label2.Name = "label2";
+            label2.Size = new Size(258, 34);
+            label2.TabIndex = 4;
+            label2.Text = "Rendered money:";
+            // 
+            // txtRenderedMoney
+            // 
+            txtRenderedMoney.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            txtRenderedMoney.Location = new Point(339, 87);
+            txtRenderedMoney.Name = "txtRenderedMoney";
+            txtRenderedMoney.Size = new Size(216, 38);
+            txtRenderedMoney.TabIndex = 3;
+            // 
             // btnCheckout
             // 
             btnCheckout.BackColor = SystemColors.ControlDarkDark;
             btnCheckout.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnCheckout.ForeColor = SystemColors.ButtonHighlight;
-            btnCheckout.Location = new Point(151, 165);
+            btnCheckout.Location = new Point(614, 80);
             btnCheckout.Name = "btnCheckout";
             btnCheckout.Size = new Size(203, 49);
             btnCheckout.TabIndex = 2;
@@ -179,18 +224,19 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Century Gothic", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(72, 81);
+            label1.Font = new Font("Century Gothic", 16.2F, FontStyle.Bold);
+            label1.Location = new Point(74, 33);
             label1.Name = "label1";
-            label1.Size = new Size(124, 40);
+            label1.Size = new Size(86, 34);
             label1.TabIndex = 1;
-            label1.Text = "TOTAL:";
+            label1.Text = "Total:";
             // 
             // txtTotal
             // 
             txtTotal.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            txtTotal.Location = new Point(270, 86);
+            txtTotal.Location = new Point(339, 31);
             txtTotal.Name = "txtTotal";
+            txtTotal.ReadOnly = true;
             txtTotal.Size = new Size(216, 38);
             txtTotal.TabIndex = 0;
             // 
@@ -253,5 +299,9 @@
         private Button btnCheckout;
         private Panel panel5;
         private DataGridView dgvOrders;
+        private Label label2;
+        private TextBox txtRenderedMoney;
+        private Label label3;
+        private TextBox txtChange;
     }
 }

@@ -78,7 +78,7 @@
             // 
             // btnLogin
             // 
-            btnLogin.BackColor = SystemColors.Highlight;
+            btnLogin.BackColor = Color.LightSteelBlue;
             btnLogin.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnLogin.Location = new Point(452, 324);
             btnLogin.Name = "btnLogin";
@@ -90,7 +90,7 @@
             // 
             // btnExit
             // 
-            btnExit.BackColor = Color.Red;
+            btnExit.BackColor = Color.OrangeRed;
             btnExit.Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnExit.Location = new Point(619, 324);
             btnExit.Name = "btnExit";
@@ -120,6 +120,7 @@
             // 
             // btnShowPassword
             // 
+            btnShowPassword.BackColor = Color.LightSteelBlue;
             btnShowPassword.BackgroundImageLayout = ImageLayout.Zoom;
             btnShowPassword.Font = new Font("Century Gothic", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnShowPassword.Location = new Point(775, 253);
@@ -127,7 +128,7 @@
             btnShowPassword.Size = new Size(61, 36);
             btnShowPassword.TabIndex = 7;
             btnShowPassword.Text = "Show";
-            btnShowPassword.UseVisualStyleBackColor = true;
+            btnShowPassword.UseVisualStyleBackColor = false;
             btnShowPassword.Click += btnShowPassword_Click;
             // 
             // label2
@@ -135,7 +136,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Century Gothic", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.White;
-            label2.Location = new Point(436, 387);
+            label2.Location = new Point(457, 387);
             label2.Name = "label2";
             label2.Size = new Size(206, 19);
             label2.TabIndex = 8;
@@ -148,7 +149,7 @@
             lblSignUp.Font = new Font("Century Gothic", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblSignUp.ForeColor = Color.White;
             lblSignUp.LinkColor = Color.White;
-            lblSignUp.Location = new Point(643, 384);
+            lblSignUp.Location = new Point(664, 384);
             lblSignUp.Name = "lblSignUp";
             lblSignUp.Size = new Size(75, 22);
             lblSignUp.TabIndex = 9;

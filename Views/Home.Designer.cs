@@ -31,9 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
-            panel4 = new Panel();
-            btnLogout = new Button();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             btnOrder = new Button();
+            btnLogout = new Button();
             label9 = new Label();
             pictureBox1 = new PictureBox();
             tabControl1 = new TabControl();
@@ -159,7 +159,7 @@
             dgvStockInHistory = new DataGridView();
             label6 = new Label();
             panel1.SuspendLayout();
-            panel4.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -192,8 +192,10 @@
             // 
             // panel1
             // 
-            panel1.BackColor = Color.Black;
-            panel1.Controls.Add(panel4);
+            panel1.BackColor = Color.Transparent;
+            panel1.BackgroundImage = Properties.Resources.bg1;
+            panel1.BackgroundImageLayout = ImageLayout.Stretch;
+            panel1.Controls.Add(flowLayoutPanel1);
             panel1.Controls.Add(label9);
             panel1.Controls.Add(pictureBox1);
             panel1.Dock = DockStyle.Top;
@@ -202,15 +204,29 @@
             panel1.Size = new Size(1695, 149);
             panel1.TabIndex = 0;
             // 
-            // panel4
+            // flowLayoutPanel1
             // 
-            panel4.Controls.Add(btnLogout);
-            panel4.Controls.Add(btnOrder);
-            panel4.Dock = DockStyle.Right;
-            panel4.Location = new Point(1475, 0);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(220, 149);
-            panel4.TabIndex = 12;
+            flowLayoutPanel1.BackColor = Color.Transparent;
+            flowLayoutPanel1.Controls.Add(btnOrder);
+            flowLayoutPanel1.Controls.Add(btnLogout);
+            flowLayoutPanel1.Location = new Point(1524, 35);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(160, 76);
+            flowLayoutPanel1.TabIndex = 14;
+            // 
+            // btnOrder
+            // 
+            btnOrder.BackColor = Color.Transparent;
+            btnOrder.BackgroundImage = Properties.Resources.order;
+            btnOrder.BackgroundImageLayout = ImageLayout.Zoom;
+            btnOrder.FlatStyle = FlatStyle.Flat;
+            btnOrder.ForeColor = Color.DimGray;
+            btnOrder.Location = new Point(3, 3);
+            btnOrder.Name = "btnOrder";
+            btnOrder.Size = new Size(72, 64);
+            btnOrder.TabIndex = 8;
+            btnOrder.UseVisualStyleBackColor = false;
+            btnOrder.Click += btnOrder_Click;
             // 
             // btnLogout
             // 
@@ -218,30 +234,17 @@
             btnLogout.BackgroundImageLayout = ImageLayout.Zoom;
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.ForeColor = Color.DimGray;
-            btnLogout.Location = new Point(132, 11);
+            btnLogout.Location = new Point(81, 3);
             btnLogout.Name = "btnLogout";
             btnLogout.Size = new Size(73, 64);
             btnLogout.TabIndex = 10;
             btnLogout.UseVisualStyleBackColor = true;
             btnLogout.Click += btnLogout_Click;
             // 
-            // btnOrder
-            // 
-            btnOrder.BackColor = Color.Tan;
-            btnOrder.BackgroundImage = Properties.Resources.order;
-            btnOrder.BackgroundImageLayout = ImageLayout.Zoom;
-            btnOrder.FlatStyle = FlatStyle.Flat;
-            btnOrder.ForeColor = Color.DimGray;
-            btnOrder.Location = new Point(38, 10);
-            btnOrder.Name = "btnOrder";
-            btnOrder.Size = new Size(72, 64);
-            btnOrder.TabIndex = 8;
-            btnOrder.UseVisualStyleBackColor = false;
-            btnOrder.Click += btnOrder_Click;
-            // 
             // label9
             // 
             label9.AutoSize = true;
+            label9.BackColor = Color.Transparent;
             label9.Font = new Font("Century Gothic", 19.8000011F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label9.ForeColor = SystemColors.ButtonHighlight;
             label9.Location = new Point(209, 52);
@@ -463,6 +466,7 @@
             txtProductBarcode.Font = new Font("Segoe UI Variable Display", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtProductBarcode.Location = new Point(267, 29);
             txtProductBarcode.Name = "txtProductBarcode";
+            txtProductBarcode.ReadOnly = true;
             txtProductBarcode.Size = new Size(355, 31);
             txtProductBarcode.TabIndex = 9;
             // 
@@ -582,9 +586,9 @@
             tabPage9.Controls.Add(groupBox3);
             tabPage9.Controls.Add(dgvStockInProducts);
             tabPage9.Controls.Add(label23);
-            tabPage9.Location = new Point(4, 32);
+            tabPage9.Location = new Point(4, 29);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 889);
+            tabPage9.Size = new Size(1673, 892);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -624,7 +628,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 241);
+            groupBox3.Size = new Size(1617, 244);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
@@ -849,9 +853,9 @@
             tabPage10.Controls.Add(textBox19);
             tabPage10.Controls.Add(dgvPulloutItems);
             tabPage10.Controls.Add(label30);
-            tabPage10.Location = new Point(4, 32);
+            tabPage10.Location = new Point(4, 29);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1673, 889);
+            tabPage10.Size = new Size(1673, 892);
             tabPage10.TabIndex = 5;
             tabPage10.Text = "Pull Out Items";
             tabPage10.UseVisualStyleBackColor = true;
@@ -1457,7 +1461,7 @@
             dgvEmployees.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvEmployees.Size = new Size(1616, 525);
             dgvEmployees.TabIndex = 11;
-            dgvEmployees.CellContentClick += dgvEmployees_CellContentClick;
+            dgvEmployees.CellClick += dgvEmployees_CellClick;
             // 
             // label12
             // 
@@ -1575,7 +1579,7 @@
             WindowState = FormWindowState.Maximized;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            panel4.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
@@ -1707,7 +1711,6 @@
         private TabPage tabPage6;
         private DataGridView dgvLoginHistory;
         private Label label47;
-        private Panel panel4;
         private Button btnLogout;
         private Button btnOrder;
         private DateTimePicker dtpEndDate;
@@ -1772,5 +1775,6 @@
         private Button btnSIClearExpiration;
         private Button btnPulloutProduct;
         private ComboBox cmbPulloutReason;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -30,98 +30,68 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SignUp));
             label1 = new Label();
-            txtUsername = new TextBox();
-            txtPassword = new TextBox();
-            cmbUserLevel = new ComboBox();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
+            txtSUUsername = new TextBox();
+            txtSUPassword = new TextBox();
+            cmbSUUserLevel = new ComboBox();
             btnCreateAccount = new Button();
             btnBackToLogIn = new Button();
+            txtSUFirstname = new TextBox();
+            txtSULastname = new TextBox();
+            txtSUEmail = new TextBox();
+            txtSUConfirmPassword = new TextBox();
+            btnSUShowPassword = new Button();
             SuspendLayout();
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
+            label1.BackColor = Color.Transparent;
             label1.Font = new Font("Century Gothic", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = SystemColors.ControlLightLight;
-            label1.Location = new Point(265, 117);
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(252, 62);
             label1.Name = "label1";
             label1.Size = new Size(180, 51);
             label1.TabIndex = 2;
             label1.Text = "Sign Up";
             // 
-            // txtUsername
+            // txtSUUsername
             // 
-            txtUsername.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtUsername.Location = new Point(335, 291);
-            txtUsername.Name = "txtUsername";
-            txtUsername.PlaceholderText = "Username";
-            txtUsername.Size = new Size(344, 34);
-            txtUsername.TabIndex = 6;
+            txtSUUsername.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUUsername.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUUsername.Location = new Point(28, 310);
+            txtSUUsername.Name = "txtSUUsername";
+            txtSUUsername.PlaceholderText = "Username";
+            txtSUUsername.Size = new Size(628, 34);
+            txtSUUsername.TabIndex = 6;
             // 
-            // txtPassword
+            // txtSUPassword
             // 
-            txtPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPassword.Location = new Point(335, 352);
-            txtPassword.Name = "txtPassword";
-            txtPassword.PlaceholderText = "Password";
-            txtPassword.Size = new Size(344, 34);
-            txtPassword.TabIndex = 7;
+            txtSUPassword.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUPassword.Location = new Point(28, 366);
+            txtSUPassword.Name = "txtSUPassword";
+            txtSUPassword.PlaceholderText = "Password";
+            txtSUPassword.Size = new Size(550, 34);
+            txtSUPassword.TabIndex = 7;
             // 
-            // cmbUserLevel
+            // cmbSUUserLevel
             // 
-            cmbUserLevel.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbUserLevel.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            cmbUserLevel.FormattingEnabled = true;
-            cmbUserLevel.Items.AddRange(new object[] { "Owner", "Admin", "Cashier" });
-            cmbUserLevel.Location = new Point(335, 221);
-            cmbUserLevel.Name = "cmbUserLevel";
-            cmbUserLevel.Size = new Size(344, 33);
-            cmbUserLevel.TabIndex = 8;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.BackColor = Color.Black;
-            label2.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.ForeColor = Color.White;
-            label2.Location = new Point(86, 221);
-            label2.Name = "label2";
-            label2.Size = new Size(206, 27);
-            label2.TabIndex = 9;
-            label2.Text = "Employee Name:";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.BackColor = Color.Black;
-            label3.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.ForeColor = Color.White;
-            label3.Location = new Point(86, 291);
-            label3.Name = "label3";
-            label3.Size = new Size(131, 27);
-            label3.TabIndex = 10;
-            label3.Text = "Username:";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.BackColor = Color.Black;
-            label4.Font = new Font("Century Gothic", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.ForeColor = Color.White;
-            label4.Location = new Point(86, 350);
-            label4.Name = "label4";
-            label4.Size = new Size(121, 27);
-            label4.TabIndex = 11;
-            label4.Text = "Password:";
+            cmbSUUserLevel.BackColor = Color.FromArgb(224, 224, 224);
+            cmbSUUserLevel.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSUUserLevel.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            cmbSUUserLevel.FormattingEnabled = true;
+            cmbSUUserLevel.Items.AddRange(new object[] { "Owner", "Admin", "Cashier" });
+            cmbSUUserLevel.Location = new Point(28, 257);
+            cmbSUUserLevel.Name = "cmbSUUserLevel";
+            cmbSUUserLevel.Size = new Size(628, 33);
+            cmbSUUserLevel.TabIndex = 8;
             // 
             // btnCreateAccount
             // 
             btnCreateAccount.BackColor = SystemColors.GradientActiveCaption;
             btnCreateAccount.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCreateAccount.Location = new Point(244, 427);
+            btnCreateAccount.Location = new Point(235, 487);
             btnCreateAccount.Name = "btnCreateAccount";
             btnCreateAccount.Size = new Size(233, 39);
             btnCreateAccount.TabIndex = 12;
@@ -130,9 +100,9 @@
             // 
             // btnBackToLogIn
             // 
-            btnBackToLogIn.BackColor = Color.Crimson;
+            btnBackToLogIn.BackColor = Color.OrangeRed;
             btnBackToLogIn.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackToLogIn.Location = new Point(306, 477);
+            btnBackToLogIn.Location = new Point(297, 537);
             btnBackToLogIn.Name = "btnBackToLogIn";
             btnBackToLogIn.Size = new Size(108, 39);
             btnBackToLogIn.TabIndex = 13;
@@ -140,20 +110,75 @@
             btnBackToLogIn.UseVisualStyleBackColor = false;
             btnBackToLogIn.Click += btnBackToLogIn_Click;
             // 
+            // txtSUFirstname
+            // 
+            txtSUFirstname.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUFirstname.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUFirstname.Location = new Point(28, 151);
+            txtSUFirstname.Name = "txtSUFirstname";
+            txtSUFirstname.PlaceholderText = "Firstname";
+            txtSUFirstname.Size = new Size(311, 34);
+            txtSUFirstname.TabIndex = 14;
+            // 
+            // txtSULastname
+            // 
+            txtSULastname.BackColor = Color.FromArgb(224, 224, 224);
+            txtSULastname.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSULastname.Location = new Point(345, 151);
+            txtSULastname.Name = "txtSULastname";
+            txtSULastname.PlaceholderText = "Lastname";
+            txtSULastname.Size = new Size(311, 34);
+            txtSULastname.TabIndex = 15;
+            // 
+            // txtSUEmail
+            // 
+            txtSUEmail.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUEmail.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUEmail.Location = new Point(28, 205);
+            txtSUEmail.Name = "txtSUEmail";
+            txtSUEmail.PlaceholderText = "Email";
+            txtSUEmail.Size = new Size(628, 34);
+            txtSUEmail.TabIndex = 16;
+            // 
+            // txtSUConfirmPassword
+            // 
+            txtSUConfirmPassword.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUConfirmPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUConfirmPassword.Location = new Point(28, 419);
+            txtSUConfirmPassword.Name = "txtSUConfirmPassword";
+            txtSUConfirmPassword.PlaceholderText = "Confirm Password";
+            txtSUConfirmPassword.Size = new Size(550, 34);
+            txtSUConfirmPassword.TabIndex = 17;
+            // 
+            // btnSUShowPassword
+            // 
+            btnSUShowPassword.BackColor = Color.LightSteelBlue;
+            btnSUShowPassword.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnSUShowPassword.Location = new Point(592, 391);
+            btnSUShowPassword.Name = "btnSUShowPassword";
+            btnSUShowPassword.Size = new Size(64, 31);
+            btnSUShowPassword.TabIndex = 18;
+            btnSUShowPassword.Text = "Show";
+            btnSUShowPassword.UseVisualStyleBackColor = false;
+            btnSUShowPassword.Click += btnSUShowPassword_Click;
+            // 
             // SignUp
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.ActiveCaptionText;
-            ClientSize = new Size(745, 589);
+            BackColor = Color.Black;
+            BackgroundImage = Properties.Resources.bg1;
+            ClientSize = new Size(685, 622);
+            Controls.Add(btnSUShowPassword);
+            Controls.Add(txtSUConfirmPassword);
+            Controls.Add(txtSUEmail);
+            Controls.Add(txtSULastname);
+            Controls.Add(txtSUFirstname);
             Controls.Add(btnBackToLogIn);
             Controls.Add(btnCreateAccount);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(cmbUserLevel);
-            Controls.Add(txtPassword);
-            Controls.Add(txtUsername);
+            Controls.Add(cmbSUUserLevel);
+            Controls.Add(txtSUPassword);
+            Controls.Add(txtSUUsername);
             Controls.Add(label1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "SignUp";
@@ -166,13 +191,15 @@
         #endregion
 
         private Label label1;
-        private TextBox txtUsername;
-        private TextBox txtPassword;
-        private ComboBox cmbUserLevel;
-        private Label label2;
-        private Label label3;
-        private Label label4;
+        private TextBox txtSUUsername;
+        private TextBox txtSUPassword;
+        private ComboBox cmbSUUserLevel;
         private Button btnCreateAccount;
         private Button btnBackToLogIn;
+        private TextBox txtSUFirstname;
+        private TextBox txtSULastname;
+        private TextBox txtSUEmail;
+        private TextBox txtSUConfirmPassword;
+        private Button btnSUShowPassword;
     }
 }

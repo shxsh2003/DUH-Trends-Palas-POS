@@ -43,6 +43,7 @@ namespace DUH_Trends_Palas_POS.Views
             LoadPulloutItems(); // Load pullout reasons into the ComboBox
             LoadStockInHistory(); // Load stock-in history data
 
+
             cmbPulloutReason.Items.Add("Pullout");
             cmbPulloutReason.Items.Add("Defective");
             cmbPulloutReason.Items.Add("Lost");
@@ -69,8 +70,7 @@ namespace DUH_Trends_Palas_POS.Views
         // Force Close, Logout
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // Call the logout method when the form is closing
-            btnLogout_Click(this, EventArgs.Empty);
+            btnLogout.Click -= btnLogout_Click; // Detach the event handler
             base.OnFormClosing(e); // Call the base class method
         }
 
@@ -342,7 +342,7 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
-        // To combobox Firstname + Lastname
+        // To combobox Firstname + Lastname (Only Active Brand Partners)
         private void LoadBrandPartners()
         {
             using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
@@ -350,7 +350,7 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS FullName, BrandPartner_ID FROM brandpartner";
+                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS FullName, BrandPartner_ID FROM brandpartner WHERE is_active = 1 ORDER BY Firstname, Lastname";
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
@@ -359,7 +359,6 @@ namespace DUH_Trends_Palas_POS.Views
 
                         while (reader.Read())
                         {
-                            string fullName = reader["FullName"].ToString();
                             brandPartners.Add(new BrandPartner
                             {
                                 FullName = reader["FullName"].ToString(),
@@ -367,20 +366,22 @@ namespace DUH_Trends_Palas_POS.Views
                             });
                         }
 
+                        cmbSIBPName.DataSource = null; // Clear previous data
                         cmbSIBPName.DataSource = brandPartners;
                         cmbSIBPName.DisplayMember = "FullName"; // Display the full name
                         cmbSIBPName.ValueMember = "Id"; // Use the ID as the value
 
-                        cmbSIBPName.AutoCompleteMode = AutoCompleteMode.None;
-                        cmbSIBPName.AutoCompleteSource = AutoCompleteSource.None;
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error loading brand partners: " + ex.Message);
+                    MessageBox.Show("Error loading active brand partners: " + ex.Message);
                 }
             }
         }
+
+
+
 
         // To cmb employees firstname + lastname
         private void LoadEmployees()
@@ -418,6 +419,8 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+
 
         private void SearchStockInProducts()
         {
@@ -475,6 +478,7 @@ namespace DUH_Trends_Palas_POS.Views
             LoadBrandPartners(); // Load brand partners into the ComboBox
             LoadEmployees(); // Load employees into the ComboBox
         }
+
 
         // In Stock-in CRUD
         private void btnSIClear_Click(object sender, EventArgs e)
@@ -646,6 +650,7 @@ namespace DUH_Trends_Palas_POS.Views
                     MessageBox.Show("Product successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadStockInList(); // Refresh data
                     LoadProductList(); // Refresh the Product List tab
+                    LoadExpirationProductList();
 
                 }
                 catch (Exception ex)
@@ -765,6 +770,8 @@ namespace DUH_Trends_Palas_POS.Views
                 MessageBox.Show("Please select a product to update.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+
 
 
         private int GetBrandPartnerID(string fullName, MySqlConnection conn, MySqlTransaction transaction)
@@ -973,7 +980,7 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS BrandPartnerName FROM brandpartner ORDER BY Firstname";
+                    string query = "SELECT CONCAT(Firstname, ' ', Lastname) AS BrandPartnerName FROM brandpartner WHERE is_active = 1 ORDER BY Firstname";
 
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
@@ -984,17 +991,18 @@ namespace DUH_Trends_Palas_POS.Views
                             while (reader.Read())
                             {
                                 string brandPartnerName = reader["BrandPartnerName"].ToString();
-                                cmbProductBrandPartner.Items.Add(reader["BrandPartnerName"].ToString());
+                                cmbProductBrandPartner.Items.Add(brandPartnerName);
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error loading brand partners: " + ex.Message);
+                    MessageBox.Show("Error loading active brand partners: " + ex.Message);
                 }
             }
         }
+
 
         private void dgvProductList_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -1046,7 +1054,7 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void btnAddProduct_Click(object sender, EventArgs e)
         {
-           
+
             // Show confirmation message box
             DialogResult result = MessageBox.Show("Do you want to add a new product?", "Add Product", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -1132,6 +1140,7 @@ namespace DUH_Trends_Palas_POS.Views
 
                     MessageBox.Show("Product updated successfully.");
                     LoadProductList();
+                    LoadExpirationProductList();
                 }
                 catch (Exception ex)
                 {
@@ -1189,6 +1198,7 @@ namespace DUH_Trends_Palas_POS.Views
                         }
 
                         btnClearProduct_Click(sender, e);
+                        LoadExpirationProductList();
                     }
                     catch (Exception ex)
                     {
@@ -1308,6 +1318,7 @@ namespace DUH_Trends_Palas_POS.Views
                     transaction.Commit();
                     MessageBox.Show($"Pulled out {quantityToPullOut} units of {txtProductName.Text}.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadProductList(); // Refresh UI after pullout
+                    LoadPulloutItems();
                 }
                 catch (Exception ex)
                 {
@@ -1740,9 +1751,9 @@ namespace DUH_Trends_Palas_POS.Views
                 // Get the selected row
                 DataGridViewRow selectedRow = dgvBrandPartnerList.SelectedRows[0];
 
-                // Get the BrandPartner_ID and Storage_ID from the selected row
+                // Get BrandPartner_ID and Storage_ID
                 int brandPartnerId = Convert.ToInt32(selectedRow.Cells["BrandPartner_ID"].Value);
-                int storageId = Convert.ToInt32(selectedRow.Cells["Storage_ID"].Value); // Assuming Storage_ID is in the DataGridView
+                int storageId = Convert.ToInt32(selectedRow.Cells["Storage_ID"].Value);
 
                 using (MySqlConnection databaseConnection = new MySqlConnection(connectionString))
                 {
@@ -1750,7 +1761,7 @@ namespace DUH_Trends_Palas_POS.Views
                     {
                         databaseConnection.Open();
 
-                        // Step 1: Check how many storage types exist for this brand partner
+                        // Step 1: Check how many storages exist for this brand partner
                         string countStorageQuery = "SELECT COUNT(*) FROM StorageType WHERE ContractID IN (SELECT Contract_ID FROM Contract WHERE BrandPartner_ID=@BrandPartnerId)";
                         int storageCount;
 
@@ -1760,32 +1771,36 @@ namespace DUH_Trends_Palas_POS.Views
                             storageCount = Convert.ToInt32(countStorageCommand.ExecuteScalar());
                         }
 
-                        // Step 2: If there's only one storage type, show a warning
+                        // Step 2: If only one storage remains, warn the user
                         if (storageCount == 1)
                         {
-                            DialogResult warningResult = MessageBox.Show("This brand partner has only one storage type. Deleting it will remove all associated data. Do you want to proceed?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            DialogResult warningResult = MessageBox.Show("This brand partner has only one storage left. If you proceed, they will be set to inactive. Do you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                             if (warningResult == DialogResult.No)
                             {
-                                return; // Cancel the deletion
+                                return;
                             }
-                        }
 
-                        // Step 3: Confirm deletion
-                        DialogResult result = MessageBox.Show("Are you sure you want to delete this storage type for the selected brand partner?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-                        if (result == DialogResult.Yes)
-                        {
-                            // Step 4: Delete the specific StorageType
-                            string deleteStorageQuery = "DELETE FROM StorageType WHERE Storage_ID=@StorageID";
-                            using (MySqlCommand deleteStorageCommand = new MySqlCommand(deleteStorageQuery, databaseConnection))
+                            // Step 3: Set the brand partner to inactive
+                            string setInactiveQuery = "UPDATE BrandPartner SET is_active = 0 WHERE BrandPartner_ID = @BrandPartnerId";
+                            using (MySqlCommand setInactiveCommand = new MySqlCommand(setInactiveQuery, databaseConnection))
                             {
-                                deleteStorageCommand.Parameters.AddWithValue("@StorageID", storageId);
-                                deleteStorageCommand.ExecuteNonQuery();
+                                setInactiveCommand.Parameters.AddWithValue("@BrandPartnerId", brandPartnerId);
+                                setInactiveCommand.ExecuteNonQuery();
                             }
-
-                            MessageBox.Show("Storage type deleted successfully.");
-                            LoadBrandPartnerList(); // Refresh data
                         }
+
+                        // Step 4: Delete the specific StorageType
+                        string deleteStorageQuery = "DELETE FROM StorageType WHERE Storage_ID = @StorageID";
+                        using (MySqlCommand deleteStorageCommand = new MySqlCommand(deleteStorageQuery, databaseConnection))
+                        {
+                            deleteStorageCommand.Parameters.AddWithValue("@StorageID", storageId);
+                            deleteStorageCommand.ExecuteNonQuery();
+                        }
+
+                        MessageBox.Show("Storage deleted successfully. The brand partner has been set to inactive if they had only one storage.");
+
+                        // Step 5: Refresh the DataGridView to archive inactive brand partners
+                        LoadBrandPartnerList();
                     }
                     catch (Exception ex)
                     {
@@ -1798,6 +1813,7 @@ namespace DUH_Trends_Palas_POS.Views
                 MessageBox.Show("Please select a storage type to delete.");
             }
         }
+
 
 
 
@@ -2028,33 +2044,6 @@ namespace DUH_Trends_Palas_POS.Views
             }
         }
 
-        private void dgvEmployees_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0) // Ensure a valid row is clicked
-            {
-                DataGridViewRow row = dgvEmployees.Rows[e.RowIndex];
-
-                // Display employee details
-                txtEmployeeFirstname.Text = row.Cells["Firstname"].Value?.ToString() ?? "";
-                txtEmployeeLastname.Text = row.Cells["Lastname"].Value?.ToString() ?? "";
-                txtEmployeeContactNumber.Text = row.Cells["ContactNumber"].Value?.ToString() ?? "";
-                txtEmployeeAddress.Text = row.Cells["Address"].Value?.ToString() ?? "";
-                txtEmployeeEmail.Text = row.Cells["Email"].Value?.ToString() ?? "";
-
-                // Set the selected user level in the ComboBox
-                string userLevel = row.Cells["user_level"].Value?.ToString() ?? "";
-
-                // Ensure the value exists in the ComboBox before setting it
-                if (cmbUserLevel.Items.Contains(userLevel))
-                {
-                    cmbUserLevel.SelectedItem = userLevel;
-                }
-                else
-                {
-                    cmbUserLevel.SelectedIndex = -1; // If not found, deselect
-                }
-            }
-        }
 
         // Search for an employee
         private void SearchEmployees()
@@ -2089,6 +2078,33 @@ namespace DUH_Trends_Palas_POS.Views
         private void txtSearchEmployee_TextChanged(object sender, EventArgs e)
         {
             SearchEmployees(); // Call the search method whenever the text changes
+        }
+        private void dgvEmployees_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) // Ensure a valid row is clicked
+            {
+                DataGridViewRow row = dgvEmployees.Rows[e.RowIndex];
+
+                // Display employee details
+                txtEmployeeFirstname.Text = row.Cells["Firstname"].Value?.ToString() ?? "";
+                txtEmployeeLastname.Text = row.Cells["Lastname"].Value?.ToString() ?? "";
+                txtEmployeeContactNumber.Text = row.Cells["ContactNumber"].Value?.ToString() ?? "";
+                txtEmployeeAddress.Text = row.Cells["Address"].Value?.ToString() ?? "";
+                txtEmployeeEmail.Text = row.Cells["Email"].Value?.ToString() ?? "";
+
+                // Set the selected user level in the ComboBox
+                string userLevel = row.Cells["user_level"].Value?.ToString() ?? "";
+
+                // Ensure the value exists in the ComboBox before setting it
+                if (cmbUserLevel.Items.Contains(userLevel))
+                {
+                    cmbUserLevel.SelectedItem = userLevel;
+                }
+                else
+                {
+                    cmbUserLevel.SelectedIndex = -1; // If not found, deselect
+                }
+            }
         }
 
         private void btnEmployeeClear_Click(object sender, EventArgs e)
@@ -2262,7 +2278,7 @@ namespace DUH_Trends_Palas_POS.Views
                 string.IsNullOrWhiteSpace(txtEmployeeAddress.Text) ||
                 string.IsNullOrWhiteSpace(txtEmployeeEmail.Text) ||
                 cmbUserLevel.SelectedItem == null)
-    {
+            {
                 MessageBox.Show("Please fill in all fields and select a user level.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }

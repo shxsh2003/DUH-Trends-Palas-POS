@@ -11,8 +11,8 @@ using System.Windows.Forms;
 namespace DUH_Trends_Palas_POS.Views
 {
     public partial class SignUp : Form
-    { 
-    
+    {
+
         public SignUp()
         {
             InitializeComponent();
@@ -23,6 +23,13 @@ namespace DUH_Trends_Palas_POS.Views
             LogIn login = new LogIn();
             login.Show();
             this.Hide();
+        }
+
+        private void btnSUShowPassword_Click(object sender, EventArgs e)
+        {
+            txtSUPassword.PasswordChar = txtSUPassword.PasswordChar == '•' ? '\0' : '•';
+            txtSUConfirmPassword.PasswordChar = txtSUConfirmPassword.PasswordChar == '•' ? '\0' : '•';
+            btnSUShowPassword.Text = txtSUConfirmPassword.PasswordChar == '•' ? "Show" : "Hide";
         }
     }
 }

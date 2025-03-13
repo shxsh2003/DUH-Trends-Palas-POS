@@ -19,6 +19,7 @@ namespace DUH_Trends_Palas_POS.Views
 
 
 
+
         public Order(int loginHistoryId, string userLevel, int employeeId)
         {
             InitializeComponent();
@@ -40,10 +41,13 @@ namespace DUH_Trends_Palas_POS.Views
             InitializeOrderTable();
             LoadProductList();
 
+            txtRenderedMoney.TextChanged += txtRenderedMoney_TextChanged;
             txtSearch.TextChanged += TxtSearch_TextChanged;
             dgvProducts.CellClick += DgvProducts_CellClick;
             dgvOrders.CellClick += DgvOrders_CellClick;
+            btnCheckout.Click -= btnCheckout_Click; // Detach any existing handlers
             btnCheckout.Click += btnCheckout_Click;
+            btnLogout.Click -= btnLogout_Click; // Detach any existing handlers
             btnLogout.Click += btnLogout_Click; // Ensure logout event is assigned here
 
         }
@@ -63,8 +67,8 @@ namespace DUH_Trends_Palas_POS.Views
         // Force Close, Logout
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            // Call the logout method when the form is closing
-            btnLogout_Click(this, EventArgs.Empty);
+            btnCheckout.Click -= btnCheckout_Click; // Detach the event handler
+            btnLogout.Click -= btnLogout_Click; // Detach the event handler
             base.OnFormClosing(e); // Call the base class method
         }
 
@@ -222,9 +226,10 @@ namespace DUH_Trends_Palas_POS.Views
 
         private void Order_Load(object sender, EventArgs e)
         {
-            // This method can be called when the form is shown
             LoadProductList(); // Reload the product list
-            txtTotal.Text = "0.00"; // Reset total
+            txtTotal.Text = "₱0.00"; // Reset total with peso sign
+            txtRenderedMoney.Text = "₱0.00"; // Initialize rendered money
+            txtChange.Text = "₱0.00"; // Initialize change
             btnCheckout.Enabled = false; // Disable checkout button
         }
 
@@ -441,19 +446,32 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
+
         private void btnCheckout_Click(object sender, EventArgs e)
         {
+           
             // Check if the employee ID is valid
             if (employeeId <= 0)
             {
                 MessageBox.Show("Invalid employee ID. Cannot proceed with checkout.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            // Check if there are items in the order
-            if (orderData.Rows.Count == 0)
+            
+            // Validate the rendered money
+            if (!decimal.TryParse(txtRenderedMoney.Text.Replace("₱", "").Trim(), out decimal renderedMoney) || renderedMoney < 0)
             {
-                MessageBox.Show("No items in the order.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Invalid amount entered in Rendered Money. Please enter a valid amount.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Get the total amount from txtTotal
+            decimal totalAmount = decimal.Parse(txtTotal.Text.Replace("₱", "").Trim());
+
+            // Check if the rendered money is sufficient
+            if (renderedMoney < totalAmount)
+            {
+                MessageBox.Show("Insufficient amount paid. Please enter a valid amount.", "Checkout Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -468,7 +486,6 @@ namespace DUH_Trends_Palas_POS.Views
                     string insertOrderQuery = "INSERT INTO orders (employee_id, total, order_date) VALUES (@employeeId, @total, CURDATE()); SELECT LAST_INSERT_ID();";
                     MySqlCommand orderCommand = new MySqlCommand(insertOrderQuery, databaseConnection, transaction);
                     orderCommand.Parameters.AddWithValue("@employeeId", employeeId);
-                    decimal totalAmount = CalculateTotal();
                     orderCommand.Parameters.AddWithValue("@total", totalAmount);
                     int orderId = Convert.ToInt32(orderCommand.ExecuteScalar());
 
@@ -503,7 +520,9 @@ namespace DUH_Trends_Palas_POS.Views
                     dgvOrders.Rows.Clear(); // Clear the rows in the DataGridView
                     InitializeOrderTable(); // Reinitialize the order table
                     LoadProductList(); // Refresh product list
-                    txtTotal.Text = "0.00"; // Reset total
+                    txtTotal.Text = "₱0.00"; // Reset total
+                    txtRenderedMoney.Text = "₱0.00"; // Reset rendered money
+                    txtChange.Text = "₱0.00"; // Reset change
                     btnCheckout.Enabled = false; // Disable checkout button
                 }
                 catch (MySqlException ex)
@@ -515,11 +534,85 @@ namespace DUH_Trends_Palas_POS.Views
         }
 
 
+
+
         private void dgvOrders_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
 
+        private void txtRenderedMoney_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get the total amount from txtTotal, removing the peso sign
+                decimal totalAmount = decimal.Parse(txtTotal.Text.Replace("₱", "").Trim());
+
+                // Get the rendered money amount, removing the peso sign
+                if (decimal.TryParse(txtRenderedMoney.Text.Replace("₱", "").Trim(), out decimal renderedMoney))
+                {
+                    // Check if the rendered money is less than the total amount
+                    if (renderedMoney < totalAmount)
+                    {
+                        txtChange.Text = "Insufficient amount!";
+                    }
+                    else
+                    {
+                        // Calculate change
+                        decimal change = renderedMoney - totalAmount;
+                        txtChange.Text = $"₱{change:F2}"; // Format to 2 decimal places with peso sign
+                    }
+                }
+                else
+                {
+                    // If the input is not a valid decimal, clear the change textbox
+                    txtChange.Text = string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error calculating change: " + ex.Message, "Calculation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void TxtRenderedMoney_Leave(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(txtRenderedMoney.Text, out decimal value))
+            {
+                txtRenderedMoney.Text = $"₱{value:F2}";
+            }
+        }
+
+        private void TxtRenderedMoney_Enter(object sender, EventArgs e)
+        {
+            txtRenderedMoney.Text = txtRenderedMoney.Text.Replace("₱", "").Trim();
+        }
+
+        private void TxtTotal_Leave(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(txtTotal.Text, out decimal value))
+            {
+                txtTotal.Text = $"₱{value:F2}";
+            }
+        }
+
+        private void TxtTotal_Enter(object sender, EventArgs e)
+        {
+            txtTotal.Text = txtTotal.Text.Replace("₱", "").Trim();
+        }
+
+        private void TxtChange_Leave(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(txtChange.Text, out decimal value))
+            {
+                txtChange.Text = $"₱{value:F2}";
+            }
+        }
+
+        private void TxtChange_Enter(object sender, EventArgs e)
+        {
+            txtChange.Text = txtChange.Text.Replace("₱", "").Trim();
+        }
 
         //
 

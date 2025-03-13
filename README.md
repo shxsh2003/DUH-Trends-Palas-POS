@@ -33,6 +33,14 @@ Employee profiles and role management
 
 Generate detailed reports for sales, inventory, and employee activities
 
+## SYSTEM PROTOTYPE
+![Picture1](https://github.com/user-attachments/assets/4191c900-eded-4f7c-8d87-cf395e91d4b3)
+![Picture2](https://github.com/user-attachments/assets/bcbf63b8-a00b-4ebb-96dd-e77055c27505)
+![Picture3](https://github.com/user-attachments/assets/1a5be05e-329b-433b-8aca-333b81d74b49)
+![Picture4](https://github.com/user-attachments/assets/6343b212-4b55-46ba-8990-75899a510bda)
+
+
+
 ## License
 
 📜 This project is developed for academic purposes only as part of a school requirement. It is not intended for commercial use.

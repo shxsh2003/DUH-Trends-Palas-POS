@@ -35,10 +35,16 @@ Generate detailed reports for sales, inventory, and employee activities
 
 ## SYSTEM PROTOTYPE
 ![Picture1](https://github.com/user-attachments/assets/4191c900-eded-4f7c-8d87-cf395e91d4b3)
+-  Users can securely log in to access their accounts, manage information, and stay updated with the latest features.
+  
 ![Picture2](https://github.com/user-attachments/assets/bcbf63b8-a00b-4ebb-96dd-e77055c27505)
+- Users can sign up to create their accounts, personalize their profiles, and gain access to exclusive features and updates.
+  
 ![Picture3](https://github.com/user-attachments/assets/1a5be05e-329b-433b-8aca-333b81d74b49)
+- Users can seamlessly process transactions while conveniently browsing available stock items for quick and efficient purchasing decisions.
+  
 ![Picture4](https://github.com/user-attachments/assets/6343b212-4b55-46ba-8990-75899a510bda)
-
+- Users can efficiently monitor sales, manage product pullouts, track employee activities, and generate detailed reports—all in one organized system.
 
 
 ## License

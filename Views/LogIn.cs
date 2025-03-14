@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Configuration;
+using static Mysqlx.Notice.Warning.Types;
 
 namespace DUH_Trends_Palas_POS.Views
 {
@@ -25,10 +26,14 @@ namespace DUH_Trends_Palas_POS.Views
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
-
 
         private void login()
         {
@@ -68,11 +73,14 @@ namespace DUH_Trends_Palas_POS.Views
 
                                 reader.Close();
 
-                                if (password == dbPassword)
+                                // Hash the entered password and compare with the stored hashed password
+                                string hashedInputPassword = HashPassword(password);
+
+                                if (hashedInputPassword == dbPassword)
                                 {
                                     if (dbUserLevel != selectedUserLevel)
                                     {
-                                        MessageBox.Show("User level does not match!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                        MessageBox.Show("User  level does not match!", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                         return;
                                     }
 
@@ -157,13 +165,6 @@ namespace DUH_Trends_Palas_POS.Views
             {
                 btnLogin.Enabled = true;
             }
-        }
-
-        private void lblSignUp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            SignUp signup = new SignUp();
-            signup.Show();
-            this.Hide();
         }
     }
 }

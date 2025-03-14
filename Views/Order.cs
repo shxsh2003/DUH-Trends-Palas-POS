@@ -18,8 +18,6 @@ namespace DUH_Trends_Palas_POS.Views
         public event Action CheckoutCompleted;
 
 
-
-
         public Order(int loginHistoryId, string userLevel, int employeeId)
         {
             InitializeComponent();

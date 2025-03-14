@@ -34,12 +34,14 @@
             txtSUPassword = new TextBox();
             cmbSUUserLevel = new ComboBox();
             btnCreateAccount = new Button();
-            btnBackToLogIn = new Button();
+            btnBackToHome = new Button();
             txtSUFirstname = new TextBox();
             txtSULastname = new TextBox();
             txtSUEmail = new TextBox();
             txtSUConfirmPassword = new TextBox();
             btnSUShowPassword = new Button();
+            txtContactNumber = new TextBox();
+            txtSUAddress = new TextBox();
             SuspendLayout();
             // 
             // label1
@@ -49,17 +51,17 @@
             label1.BackColor = Color.Transparent;
             label1.Font = new Font("Century Gothic", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.White;
-            label1.Location = new Point(252, 62);
+            label1.Location = new Point(159, 58);
             label1.Name = "label1";
-            label1.Size = new Size(180, 51);
+            label1.Size = new Size(368, 51);
             label1.TabIndex = 2;
-            label1.Text = "Sign Up";
+            label1.Text = "Create new user";
             // 
             // txtSUUsername
             // 
             txtSUUsername.BackColor = Color.FromArgb(224, 224, 224);
             txtSUUsername.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSUUsername.Location = new Point(28, 310);
+            txtSUUsername.Location = new Point(28, 411);
             txtSUUsername.Name = "txtSUUsername";
             txtSUUsername.PlaceholderText = "Username";
             txtSUUsername.Size = new Size(628, 34);
@@ -69,7 +71,7 @@
             // 
             txtSUPassword.BackColor = Color.FromArgb(224, 224, 224);
             txtSUPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSUPassword.Location = new Point(28, 366);
+            txtSUPassword.Location = new Point(28, 467);
             txtSUPassword.Name = "txtSUPassword";
             txtSUPassword.PlaceholderText = "Password";
             txtSUPassword.Size = new Size(550, 34);
@@ -91,24 +93,25 @@
             // 
             btnCreateAccount.BackColor = SystemColors.GradientActiveCaption;
             btnCreateAccount.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCreateAccount.Location = new Point(235, 487);
+            btnCreateAccount.Location = new Point(235, 588);
             btnCreateAccount.Name = "btnCreateAccount";
             btnCreateAccount.Size = new Size(233, 39);
             btnCreateAccount.TabIndex = 12;
             btnCreateAccount.Text = "Create Account";
             btnCreateAccount.UseVisualStyleBackColor = false;
+            btnCreateAccount.Click += btnCreateAccount_Click;
             // 
-            // btnBackToLogIn
+            // btnBackToHome
             // 
-            btnBackToLogIn.BackColor = Color.OrangeRed;
-            btnBackToLogIn.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnBackToLogIn.Location = new Point(297, 537);
-            btnBackToLogIn.Name = "btnBackToLogIn";
-            btnBackToLogIn.Size = new Size(108, 39);
-            btnBackToLogIn.TabIndex = 13;
-            btnBackToLogIn.Text = "Back";
-            btnBackToLogIn.UseVisualStyleBackColor = false;
-            btnBackToLogIn.Click += btnBackToLogIn_Click;
+            btnBackToHome.BackColor = Color.OrangeRed;
+            btnBackToHome.Font = new Font("Century Gothic", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnBackToHome.Location = new Point(297, 638);
+            btnBackToHome.Name = "btnBackToHome";
+            btnBackToHome.Size = new Size(108, 39);
+            btnBackToHome.TabIndex = 13;
+            btnBackToHome.Text = "Back";
+            btnBackToHome.UseVisualStyleBackColor = false;
+            btnBackToHome.Click += btnBackToHome_Click;
             // 
             // txtSUFirstname
             // 
@@ -144,7 +147,7 @@
             // 
             txtSUConfirmPassword.BackColor = Color.FromArgb(224, 224, 224);
             txtSUConfirmPassword.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtSUConfirmPassword.Location = new Point(28, 419);
+            txtSUConfirmPassword.Location = new Point(28, 520);
             txtSUConfirmPassword.Name = "txtSUConfirmPassword";
             txtSUConfirmPassword.PlaceholderText = "Confirm Password";
             txtSUConfirmPassword.Size = new Size(550, 34);
@@ -154,7 +157,7 @@
             // 
             btnSUShowPassword.BackColor = Color.LightSteelBlue;
             btnSUShowPassword.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnSUShowPassword.Location = new Point(592, 391);
+            btnSUShowPassword.Location = new Point(592, 492);
             btnSUShowPassword.Name = "btnSUShowPassword";
             btnSUShowPassword.Size = new Size(64, 31);
             btnSUShowPassword.TabIndex = 18;
@@ -162,19 +165,41 @@
             btnSUShowPassword.UseVisualStyleBackColor = false;
             btnSUShowPassword.Click += btnSUShowPassword_Click;
             // 
+            // txtContactNumber
+            // 
+            txtContactNumber.BackColor = Color.FromArgb(224, 224, 224);
+            txtContactNumber.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtContactNumber.Location = new Point(28, 351);
+            txtContactNumber.Name = "txtContactNumber";
+            txtContactNumber.PlaceholderText = "Contact number";
+            txtContactNumber.Size = new Size(628, 34);
+            txtContactNumber.TabIndex = 19;
+            // 
+            // txtSUAddress
+            // 
+            txtSUAddress.BackColor = Color.FromArgb(224, 224, 224);
+            txtSUAddress.Font = new Font("Century Gothic", 13.2000008F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtSUAddress.Location = new Point(28, 304);
+            txtSUAddress.Name = "txtSUAddress";
+            txtSUAddress.PlaceholderText = "Address";
+            txtSUAddress.Size = new Size(628, 34);
+            txtSUAddress.TabIndex = 20;
+            // 
             // SignUp
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
             BackgroundImage = Properties.Resources.bg1;
-            ClientSize = new Size(685, 622);
+            ClientSize = new Size(685, 748);
+            Controls.Add(txtSUAddress);
+            Controls.Add(txtContactNumber);
             Controls.Add(btnSUShowPassword);
             Controls.Add(txtSUConfirmPassword);
             Controls.Add(txtSUEmail);
             Controls.Add(txtSULastname);
             Controls.Add(txtSUFirstname);
-            Controls.Add(btnBackToLogIn);
+            Controls.Add(btnBackToHome);
             Controls.Add(btnCreateAccount);
             Controls.Add(cmbSUUserLevel);
             Controls.Add(txtSUPassword);
@@ -195,11 +220,13 @@
         private TextBox txtSUPassword;
         private ComboBox cmbSUUserLevel;
         private Button btnCreateAccount;
-        private Button btnBackToLogIn;
+        private Button btnBackToHome;
         private TextBox txtSUFirstname;
         private TextBox txtSULastname;
         private TextBox txtSUEmail;
         private TextBox txtSUConfirmPassword;
         private Button btnSUShowPassword;
+        private TextBox txtContactNumber;
+        private TextBox txtSUAddress;
     }
 }

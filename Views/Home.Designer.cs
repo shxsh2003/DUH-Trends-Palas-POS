@@ -32,8 +32,10 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             panel1 = new Panel();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            btnAddUser = new Button();
             btnOrder = new Button();
             btnLogout = new Button();
+            label13 = new Label();
             label9 = new Label();
             pictureBox1 = new PictureBox();
             tabControl1 = new TabControl();
@@ -201,18 +203,34 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1695, 149);
+            panel1.Size = new Size(1924, 149);
             panel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
             // 
             flowLayoutPanel1.BackColor = Color.Transparent;
+            flowLayoutPanel1.Controls.Add(btnAddUser);
             flowLayoutPanel1.Controls.Add(btnOrder);
             flowLayoutPanel1.Controls.Add(btnLogout);
-            flowLayoutPanel1.Location = new Point(1524, 35);
+            flowLayoutPanel1.Controls.Add(label13);
+            flowLayoutPanel1.Location = new Point(1679, 39);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(160, 76);
+            flowLayoutPanel1.Size = new Size(238, 95);
             flowLayoutPanel1.TabIndex = 14;
+            // 
+            // btnAddUser
+            // 
+            btnAddUser.BackColor = Color.Transparent;
+            btnAddUser.BackgroundImage = Properties.Resources.user;
+            btnAddUser.BackgroundImageLayout = ImageLayout.Zoom;
+            btnAddUser.FlatStyle = FlatStyle.Flat;
+            btnAddUser.ForeColor = Color.DimGray;
+            btnAddUser.Location = new Point(3, 3);
+            btnAddUser.Name = "btnAddUser";
+            btnAddUser.Size = new Size(72, 64);
+            btnAddUser.TabIndex = 11;
+            btnAddUser.UseVisualStyleBackColor = false;
+            btnAddUser.Click += btnAddUser_Click;
             // 
             // btnOrder
             // 
@@ -221,7 +239,7 @@
             btnOrder.BackgroundImageLayout = ImageLayout.Zoom;
             btnOrder.FlatStyle = FlatStyle.Flat;
             btnOrder.ForeColor = Color.DimGray;
-            btnOrder.Location = new Point(3, 3);
+            btnOrder.Location = new Point(81, 3);
             btnOrder.Name = "btnOrder";
             btnOrder.Size = new Size(72, 64);
             btnOrder.TabIndex = 8;
@@ -234,12 +252,23 @@
             btnLogout.BackgroundImageLayout = ImageLayout.Zoom;
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.ForeColor = Color.DimGray;
-            btnLogout.Location = new Point(81, 3);
+            btnLogout.Location = new Point(159, 3);
             btnLogout.Name = "btnLogout";
             btnLogout.Size = new Size(73, 64);
             btnLogout.TabIndex = 10;
             btnLogout.UseVisualStyleBackColor = true;
             btnLogout.Click += btnLogout_Click;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label13.ForeColor = SystemColors.ButtonHighlight;
+            label13.Location = new Point(3, 70);
+            label13.Name = "label13";
+            label13.Size = new Size(87, 21);
+            label13.TabIndex = 15;
+            label13.Text = "Add User";
             // 
             // label9
             // 
@@ -275,7 +304,7 @@
             tabControl1.Location = new Point(0, 207);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1695, 967);
+            tabControl1.Size = new Size(1924, 967);
             tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -284,7 +313,7 @@
             tabPage1.Location = new Point(4, 32);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1687, 931);
+            tabPage1.Size = new Size(1916, 931);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Products";
             tabPage1.UseVisualStyleBackColor = true;
@@ -299,7 +328,7 @@
             tabControl2.Location = new Point(3, 3);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(1681, 925);
+            tabControl2.Size = new Size(1910, 925);
             tabControl2.SizeMode = TabSizeMode.FillToRight;
             tabControl2.TabIndex = 0;
             // 
@@ -312,7 +341,7 @@
             tabPage5.Location = new Point(4, 32);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(1673, 889);
+            tabPage5.Size = new Size(1902, 889);
             tabPage5.TabIndex = 0;
             tabPage5.Text = "Products";
             tabPage5.UseVisualStyleBackColor = true;
@@ -343,7 +372,7 @@
             groupBox2.Controls.Add(label41);
             groupBox2.Location = new Point(18, 620);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1617, 241);
+            groupBox2.Size = new Size(1846, 241);
             groupBox2.TabIndex = 9;
             groupBox2.TabStop = false;
             groupBox2.Text = "Product Details:";
@@ -566,7 +595,7 @@
             dgvProductList.ReadOnly = true;
             dgvProductList.RowHeadersWidth = 51;
             dgvProductList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dgvProductList.Size = new Size(1617, 526);
+            dgvProductList.Size = new Size(1846, 526);
             dgvProductList.TabIndex = 3;
             // 
             // label2
@@ -588,7 +617,7 @@
             tabPage9.Controls.Add(label23);
             tabPage9.Location = new Point(4, 29);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(1673, 892);
+            tabPage9.Size = new Size(1902, 892);
             tabPage9.TabIndex = 4;
             tabPage9.Text = "Stock In Details";
             tabPage9.UseVisualStyleBackColor = true;
@@ -628,7 +657,7 @@
             groupBox3.Controls.Add(label22);
             groupBox3.Location = new Point(18, 620);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1617, 244);
+            groupBox3.Size = new Size(1846, 244);
             groupBox3.TabIndex = 8;
             groupBox3.TabStop = false;
             groupBox3.Text = "Product Details:";
@@ -835,7 +864,7 @@
             dgvStockInProducts.Name = "dgvStockInProducts";
             dgvStockInProducts.ReadOnly = true;
             dgvStockInProducts.RowHeadersWidth = 51;
-            dgvStockInProducts.Size = new Size(1617, 525);
+            dgvStockInProducts.Size = new Size(1846, 525);
             dgvStockInProducts.TabIndex = 7;
             // 
             // label23
@@ -855,7 +884,7 @@
             tabPage10.Controls.Add(label30);
             tabPage10.Location = new Point(4, 29);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1673, 892);
+            tabPage10.Size = new Size(1902, 892);
             tabPage10.TabIndex = 5;
             tabPage10.Text = "Pull Out Items";
             tabPage10.UseVisualStyleBackColor = true;
@@ -880,7 +909,7 @@
             dgvPulloutItems.Name = "dgvPulloutItems";
             dgvPulloutItems.ReadOnly = true;
             dgvPulloutItems.RowHeadersWidth = 51;
-            dgvPulloutItems.Size = new Size(1617, 761);
+            dgvPulloutItems.Size = new Size(1846, 761);
             dgvPulloutItems.TabIndex = 11;
             // 
             // label30
@@ -900,7 +929,7 @@
             tabPage11.Controls.Add(label31);
             tabPage11.Location = new Point(4, 29);
             tabPage11.Name = "tabPage11";
-            tabPage11.Size = new Size(1673, 892);
+            tabPage11.Size = new Size(1902, 892);
             tabPage11.TabIndex = 6;
             tabPage11.Text = "Stocks Expiration";
             tabPage11.UseVisualStyleBackColor = true;
@@ -925,7 +954,7 @@
             dgvExpiration.Name = "dgvExpiration";
             dgvExpiration.ReadOnly = true;
             dgvExpiration.RowHeadersWidth = 51;
-            dgvExpiration.Size = new Size(1617, 759);
+            dgvExpiration.Size = new Size(1846, 759);
             dgvExpiration.TabIndex = 15;
             // 
             // label31
@@ -947,7 +976,7 @@
             tabPage2.Location = new Point(4, 32);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1687, 931);
+            tabPage2.Size = new Size(1916, 931);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Brand Partners";
             tabPage2.UseVisualStyleBackColor = true;
@@ -1202,7 +1231,7 @@
             tabPage3.Controls.Add(label46);
             tabPage3.Location = new Point(4, 32);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1687, 931);
+            tabPage3.Size = new Size(1916, 931);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Sales";
             tabPage3.UseVisualStyleBackColor = true;
@@ -1251,7 +1280,7 @@
             tabPage7.Controls.Add(label12);
             tabPage7.Location = new Point(4, 32);
             tabPage7.Name = "tabPage7";
-            tabPage7.Size = new Size(1687, 931);
+            tabPage7.Size = new Size(1916, 931);
             tabPage7.TabIndex = 4;
             tabPage7.Text = "Employees";
             tabPage7.UseVisualStyleBackColor = true;
@@ -1459,6 +1488,7 @@
             dgvEmployees.ReadOnly = true;
             dgvEmployees.RowHeadersWidth = 51;
             dgvEmployees.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvEmployees.Size = new Size(1616, 525);
             dgvEmployees.TabIndex = 11;
             dgvEmployees.CellClick += dgvEmployees_CellClick;
@@ -1478,7 +1508,7 @@
             tabPage4.Controls.Add(tabControl3);
             tabPage4.Location = new Point(4, 32);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(1687, 931);
+            tabPage4.Size = new Size(1916, 931);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Report";
             tabPage4.UseVisualStyleBackColor = true;
@@ -1491,7 +1521,7 @@
             tabControl3.Location = new Point(0, 0);
             tabControl3.Name = "tabControl3";
             tabControl3.SelectedIndex = 0;
-            tabControl3.Size = new Size(1687, 931);
+            tabControl3.Size = new Size(1916, 931);
             tabControl3.TabIndex = 0;
             // 
             // tabPage6
@@ -1501,7 +1531,7 @@
             tabPage6.Location = new Point(4, 32);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(1679, 895);
+            tabPage6.Size = new Size(1908, 895);
             tabPage6.TabIndex = 0;
             tabPage6.Text = "Login History";
             tabPage6.UseVisualStyleBackColor = true;
@@ -1517,7 +1547,7 @@
             dgvLoginHistory.Name = "dgvLoginHistory";
             dgvLoginHistory.ReadOnly = true;
             dgvLoginHistory.RowHeadersWidth = 51;
-            dgvLoginHistory.Size = new Size(1607, 747);
+            dgvLoginHistory.Size = new Size(1836, 747);
             dgvLoginHistory.TabIndex = 13;
             // 
             // label47
@@ -1569,7 +1599,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1695, 1174);
+            ClientSize = new Size(1924, 1174);
             Controls.Add(tabControl1);
             Controls.Add(panel1);
             Font = new Font("Century Gothic", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -1580,6 +1610,7 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
@@ -1776,5 +1807,6 @@
         private Button btnPulloutProduct;
         private ComboBox cmbPulloutReason;
         private FlowLayoutPanel flowLayoutPanel1;
+        private Button btnAddUser;
     }
 }

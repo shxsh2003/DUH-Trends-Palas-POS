@@ -954,18 +954,14 @@ namespace DUH_Trends_Palas_POS.Views
                                 dgvProductList.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.White; // Optional: Change text color for better visibility
                             }
                         }
-                    }
-                }
-
-                // Highlight inactive products
-                if (dgvProductList.Columns.Contains("is_active") && dgvProductList.Rows[e.RowIndex].Cells["is_active"].Value != null)
-                {
-                    if (dgvProductList.Rows[e.RowIndex].Cells["is_active"].Value.ToString() == "0")
-                    {
-                        for (int i = 0; i < dgvProductList.Columns.Count; i++)
+                        else
                         {
-                            dgvProductList.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.Gray;
-                            dgvProductList.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.White; // Optional: Change text color for better visibility
+                            // Reset the style for non-expired products
+                            for (int i = 0; i < dgvProductList.Columns.Count; i++)
+                            {
+                                dgvProductList.Rows[e.RowIndex].Cells[i].Style.BackColor = Color.White; // Reset to default
+                                dgvProductList.Rows[e.RowIndex].Cells[i].Style.ForeColor = Color.Black; // Reset to default
+                            }
                         }
                     }
                 }
@@ -2313,6 +2309,17 @@ namespace DUH_Trends_Palas_POS.Views
                     MessageBox.Show("Error adding employee: " + ex.Message);
                 }
             }
+        }
+
+        private void btnAddUser_Click(object sender, EventArgs e)
+        {
+            SignUp signup = new SignUp
+            {
+                Owner = this // Set the owner to the current Home form
+            };
+            signup.FormClosed += (s, args) => this.Enabled = true; // Re-enable Home form when SignUp is closed
+            this.Enabled = false; // Disable Home form while SignUp is open
+            signup.Show(); // Show SignUp form
         }
 
         //

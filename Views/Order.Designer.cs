@@ -272,7 +272,7 @@
             dgvOrders.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvOrders.BackgroundColor = Color.LightGray;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.Silver;
+            dataGridViewCellStyle2.BackColor = Color.DarkGray;
             dataGridViewCellStyle2.Font = new Font("Century Gothic", 10F);
             dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;

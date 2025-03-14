@@ -165,6 +165,7 @@
             dgvProducts.Location = new Point(17, 83);
             dgvProducts.Name = "dgvProducts";
             dgvProducts.RowHeadersWidth = 51;
+            dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProducts.Size = new Size(991, 809);
             dgvProducts.TabIndex = 0;
             // 
@@ -285,6 +286,7 @@
             dgvOrders.Name = "dgvOrders";
             dgvOrders.ReadOnly = true;
             dgvOrders.RowHeadersWidth = 51;
+            dgvOrders.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvOrders.Size = new Size(899, 714);
             dgvOrders.TabIndex = 3;
             dgvOrders.CellContentClick += dgvOrders_CellContentClick;

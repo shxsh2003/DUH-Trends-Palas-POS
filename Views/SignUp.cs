@@ -67,7 +67,7 @@ namespace DUH_Trends_Palas_POS.Views
                     return;
                 }
 
-                if (!Regex.IsMatch(firstName, "^[A-Za-z]+$") || !Regex.IsMatch(lastName, "^[A-Za-z]+$"))
+                if (!Regex.IsMatch(firstName, "^[A-Za-z ]+$") || !Regex.IsMatch(lastName, "^[A-Za-z]+$"))
                 {
                     MessageBox.Show("First name and last name must contain only letters.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -91,12 +91,11 @@ namespace DUH_Trends_Palas_POS.Views
                     return;
                 }
 
-                if (password.Length < 8 || !Regex.IsMatch(password, "[A-Z]") || !Regex.IsMatch(password, "[0-9]") || !Regex.IsMatch(password, "[!@#$%^&*]"))
+                if (password.Length < 8 || !Regex.IsMatch(password, "[A-Z]") || !Regex.IsMatch(password, "[0-9]") || !Regex.IsMatch(password, "[,.!@#$%^&*]"))
                 {
                     MessageBox.Show("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
-                }
-
+                } 
                 string hashedPassword = HashPassword(password);
 
                 using (MySqlConnection conn = new MySqlConnection(connectionString))

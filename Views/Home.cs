@@ -81,7 +81,15 @@ namespace DUH_Trends_Palas_POS.Views
                 try
                 {
                     databaseConnection.Open();
-                    string query = "SELECT id, employee_id, login_time, logout_time FROM login_history ORDER BY login_time DESC";
+                    string query = @"
+                SELECT lh.id, 
+                       CONCAT(e.Firstname, ' ', e.Lastname) AS EmployeeName, 
+                       lh.login_time, 
+                       lh.logout_time 
+                FROM login_history lh
+                JOIN employee e ON lh.employee_id = e.Employee_ID
+                ORDER BY lh.login_time DESC";
+
                     using (MySqlCommand command = new MySqlCommand(query, databaseConnection))
                     {
                         MySqlDataAdapter adapter = new MySqlDataAdapter(command);
@@ -96,6 +104,7 @@ namespace DUH_Trends_Palas_POS.Views
                 }
             }
         }
+
 
         /// 
         /// Brand Partner - TAB
@@ -1378,6 +1387,8 @@ namespace DUH_Trends_Palas_POS.Views
                     product p
                 JOIN 
                     brandpartner b ON p.brandpartner_id = b.BrandPartner_ID
+                 WHERE 
+                    p.is_active = 1
                 ORDER BY 
                     CASE 
                         WHEN p.expiration_date IS NULL THEN 1 
@@ -1809,8 +1820,6 @@ namespace DUH_Trends_Palas_POS.Views
                 MessageBox.Show("Please select a storage type to delete.");
             }
         }
-
-
 
 
 
@@ -2320,6 +2329,11 @@ namespace DUH_Trends_Palas_POS.Views
             signup.FormClosed += (s, args) => this.Enabled = true; // Re-enable Home form when SignUp is closed
             this.Enabled = false; // Disable Home form while SignUp is open
             signup.Show(); // Show SignUp form
+        }
+
+        private void dgvBrandPartnerList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
 
         //

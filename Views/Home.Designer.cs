@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             panel1 = new Panel();
             flowLayoutPanel1 = new FlowLayoutPanel();
             btnAddUser = new Button();
@@ -571,7 +571,7 @@
             // 
             // txtProductSearch
             // 
-            txtProductSearch.Location = new Point(1281, 26);
+            txtProductSearch.Location = new Point(1512, 28);
             txtProductSearch.Name = "txtProductSearch";
             txtProductSearch.PlaceholderText = "Search Product";
             txtProductSearch.Size = new Size(352, 32);
@@ -583,9 +583,9 @@
             dgvProductList.AllowUserToDeleteRows = false;
             dgvProductList.AllowUserToResizeColumns = false;
             dgvProductList.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.Black;
-            dgvProductList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Font = new Font("Century Gothic", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.Black;
+            dgvProductList.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             dgvProductList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvProductList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvProductList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -595,6 +595,7 @@
             dgvProductList.ReadOnly = true;
             dgvProductList.RowHeadersWidth = 51;
             dgvProductList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvProductList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvProductList.Size = new Size(1846, 526);
             dgvProductList.TabIndex = 3;
             // 
@@ -624,7 +625,7 @@
             // 
             // txtStockInSearch
             // 
-            txtStockInSearch.Location = new Point(1281, 26);
+            txtStockInSearch.Location = new Point(1512, 24);
             txtStockInSearch.Name = "txtStockInSearch";
             txtStockInSearch.PlaceholderText = "Search Product";
             txtStockInSearch.Size = new Size(352, 32);
@@ -864,6 +865,7 @@
             dgvStockInProducts.Name = "dgvStockInProducts";
             dgvStockInProducts.ReadOnly = true;
             dgvStockInProducts.RowHeadersWidth = 51;
+            dgvStockInProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvStockInProducts.Size = new Size(1846, 525);
             dgvStockInProducts.TabIndex = 7;
             // 
@@ -882,16 +884,16 @@
             tabPage10.Controls.Add(textBox19);
             tabPage10.Controls.Add(dgvPulloutItems);
             tabPage10.Controls.Add(label30);
-            tabPage10.Location = new Point(4, 29);
+            tabPage10.Location = new Point(4, 32);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(1902, 892);
+            tabPage10.Size = new Size(1902, 889);
             tabPage10.TabIndex = 5;
             tabPage10.Text = "Pull Out Items";
             tabPage10.UseVisualStyleBackColor = true;
             // 
             // textBox19
             // 
-            textBox19.Location = new Point(1281, 26);
+            textBox19.Location = new Point(1512, 28);
             textBox19.Name = "textBox19";
             textBox19.PlaceholderText = "Search Product";
             textBox19.Size = new Size(352, 32);
@@ -909,6 +911,7 @@
             dgvPulloutItems.Name = "dgvPulloutItems";
             dgvPulloutItems.ReadOnly = true;
             dgvPulloutItems.RowHeadersWidth = 51;
+            dgvPulloutItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvPulloutItems.Size = new Size(1846, 761);
             dgvPulloutItems.TabIndex = 11;
             // 
@@ -936,7 +939,7 @@
             // 
             // txtExpiredProduct
             // 
-            txtExpiredProduct.Location = new Point(1281, 26);
+            txtExpiredProduct.Location = new Point(1512, 24);
             txtExpiredProduct.Name = "txtExpiredProduct";
             txtExpiredProduct.PlaceholderText = "Search Product";
             txtExpiredProduct.Size = new Size(352, 32);
@@ -946,6 +949,8 @@
             // 
             dgvExpiration.AllowUserToAddRows = false;
             dgvExpiration.AllowUserToDeleteRows = false;
+            dgvExpiration.AllowUserToResizeColumns = false;
+            dgvExpiration.AllowUserToResizeRows = false;
             dgvExpiration.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvExpiration.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvExpiration.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -954,6 +959,7 @@
             dgvExpiration.Name = "dgvExpiration";
             dgvExpiration.ReadOnly = true;
             dgvExpiration.RowHeadersWidth = 51;
+            dgvExpiration.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvExpiration.Size = new Size(1846, 759);
             dgvExpiration.TabIndex = 15;
             // 
@@ -984,7 +990,7 @@
             // txtSearchBrandPartner
             // 
             txtSearchBrandPartner.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtSearchBrandPartner.Location = new Point(1465, 51);
+            txtSearchBrandPartner.Location = new Point(1673, 55);
             txtSearchBrandPartner.Name = "txtSearchBrandPartner";
             txtSearchBrandPartner.PlaceholderText = "Search Brand Partner";
             txtSearchBrandPartner.Size = new Size(193, 32);
@@ -1016,7 +1022,7 @@
             groupBox5.Controls.Add(label36);
             groupBox5.Location = new Point(43, 645);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(1616, 237);
+            groupBox5.Size = new Size(1823, 237);
             groupBox5.TabIndex = 8;
             groupBox5.TabStop = false;
             groupBox5.Text = "Brand Partner Details:";
@@ -1203,6 +1209,8 @@
             // 
             dgvBrandPartnerList.AllowUserToAddRows = false;
             dgvBrandPartnerList.AllowUserToDeleteRows = false;
+            dgvBrandPartnerList.AllowUserToResizeColumns = false;
+            dgvBrandPartnerList.AllowUserToResizeRows = false;
             dgvBrandPartnerList.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvBrandPartnerList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvBrandPartnerList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -1211,8 +1219,10 @@
             dgvBrandPartnerList.ReadOnly = true;
             dgvBrandPartnerList.RowHeadersWidth = 51;
             dgvBrandPartnerList.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dgvBrandPartnerList.Size = new Size(1616, 525);
+            dgvBrandPartnerList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvBrandPartnerList.Size = new Size(1823, 525);
             dgvBrandPartnerList.TabIndex = 7;
+            dgvBrandPartnerList.CellContentClick += dgvBrandPartnerList_CellContentClick;
             // 
             // label37
             // 
@@ -1238,7 +1248,7 @@
             // 
             // txtSalesSearch
             // 
-            txtSalesSearch.Location = new Point(1298, 50);
+            txtSalesSearch.Location = new Point(1522, 54);
             txtSalesSearch.Name = "txtSalesSearch";
             txtSalesSearch.PlaceholderText = "Search for Barcode";
             txtSalesSearch.Size = new Size(352, 32);
@@ -1259,7 +1269,8 @@
             dgvSales.Name = "dgvSales";
             dgvSales.ReadOnly = true;
             dgvSales.RowHeadersWidth = 51;
-            dgvSales.Size = new Size(1616, 793);
+            dgvSales.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvSales.Size = new Size(1839, 793);
             dgvSales.TabIndex = 11;
             // 
             // label46
@@ -1288,7 +1299,7 @@
             // txtSearchEmployee
             // 
             txtSearchEmployee.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtSearchEmployee.Location = new Point(1457, 50);
+            txtSearchEmployee.Location = new Point(1692, 50);
             txtSearchEmployee.Name = "txtSearchEmployee";
             txtSearchEmployee.PlaceholderText = "Search Employee";
             txtSearchEmployee.Size = new Size(193, 32);
@@ -1316,7 +1327,7 @@
             groupBox1.Controls.Add(label10);
             groupBox1.Location = new Point(35, 644);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1616, 237);
+            groupBox1.Size = new Size(1850, 237);
             groupBox1.TabIndex = 12;
             groupBox1.TabStop = false;
             groupBox1.Text = "Employee Details:";
@@ -1480,6 +1491,8 @@
             // 
             dgvEmployees.AllowUserToAddRows = false;
             dgvEmployees.AllowUserToDeleteRows = false;
+            dgvEmployees.AllowUserToResizeColumns = false;
+            dgvEmployees.AllowUserToResizeRows = false;
             dgvEmployees.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -1489,7 +1502,7 @@
             dgvEmployees.RowHeadersWidth = 51;
             dgvEmployees.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvEmployees.Size = new Size(1616, 525);
+            dgvEmployees.Size = new Size(1850, 525);
             dgvEmployees.TabIndex = 11;
             dgvEmployees.CellClick += dgvEmployees_CellClick;
             // 
@@ -1547,6 +1560,7 @@
             dgvLoginHistory.Name = "dgvLoginHistory";
             dgvLoginHistory.ReadOnly = true;
             dgvLoginHistory.RowHeadersWidth = 51;
+            dgvLoginHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvLoginHistory.Size = new Size(1836, 747);
             dgvLoginHistory.TabIndex = 13;
             // 
@@ -1566,7 +1580,7 @@
             tabPage8.Controls.Add(label6);
             tabPage8.Location = new Point(4, 29);
             tabPage8.Name = "tabPage8";
-            tabPage8.Size = new Size(1679, 898);
+            tabPage8.Size = new Size(1908, 898);
             tabPage8.TabIndex = 1;
             tabPage8.Text = "Stock In History";
             tabPage8.UseVisualStyleBackColor = true;
@@ -1575,6 +1589,8 @@
             // 
             dgvStockInHistory.AllowUserToAddRows = false;
             dgvStockInHistory.AllowUserToDeleteRows = false;
+            dgvStockInHistory.AllowUserToResizeColumns = false;
+            dgvStockInHistory.AllowUserToResizeRows = false;
             dgvStockInHistory.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvStockInHistory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvStockInHistory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -1582,7 +1598,8 @@
             dgvStockInHistory.Name = "dgvStockInHistory";
             dgvStockInHistory.ReadOnly = true;
             dgvStockInHistory.RowHeadersWidth = 51;
-            dgvStockInHistory.Size = new Size(1607, 750);
+            dgvStockInHistory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvStockInHistory.Size = new Size(1836, 750);
             dgvStockInHistory.TabIndex = 15;
             // 
             // label6
